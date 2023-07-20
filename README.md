@@ -21,6 +21,7 @@ $ npm i --prefix server
 
 ### 環境変数ファイルの作成
 
+
 ```sh
 $ cp .env.example .env
 $ cp server/.env.example server/.env
