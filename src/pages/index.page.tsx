@@ -5,29 +5,28 @@ import { useEffect, useState } from 'react';
 import { Loading } from 'src/components/Loading/Loading';
 import { BasicHeader } from 'src/pages/@components/BasicHeader/BasicHeader';
 import { apiClient } from 'src/utils/apiClient';
-import { returnNull } from 'src/utils/returnNull';
 import { userAtom } from '../atoms/user';
 import styles from './index.module.css';
 
 const Home = () => {
   const [user] = useAtom(userAtom);
   const [tasks, setTasks] = useState<TaskModel[]>();
-  const [label, setLabel] = useState('');
-  const inputLabel = (e: ChangeEvent<HTMLInputElement>) => {
-    setLabel(e.target.value);
-  };
-  const fetchTasks = async () => {
-    const tasks = await apiClient.tasks.$get().catch(returnNull);
-
-    if (tasks !== null) setTasks(tasks);
+  const [roomId, setRoomId] = useState('');
+  const [chat, setChat] = useState([]);
+  const [roomIdasse, setRooomIdasse] = useState(['a', 'b']);
+  const inputRoomId = (e: ChangeEvent<HTMLInputElement>) => {
+    setRoomId(e.target.value);
   };
   const createTask = async (e: FormEvent) => {
     e.preventDefault();
-    if (!label) return;
+    if (!user) return;
+    const a = await apiClient.user.post({ body: { roomId } });
+  };
 
-    await apiClient.tasks.post({ body: { label } });
-    setLabel('');
-    await fetchTasks();
+  const fetchTasks = async () => {
+    const tasks = await apiClient.tasks.$get().catch();
+
+    if (tasks !== null) setTasks(tasks);
   };
   const toggleDone = async (task: TaskModel) => {
     await apiClient.tasks._taskId(task.id).patch({ body: { done: !task.done } });
@@ -39,7 +38,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-    fetchTasks();
+    console.log('a');
   }, []);
 
   if (!tasks || !user) return <Loading visible />;
@@ -52,7 +51,7 @@ const Home = () => {
       </div>
 
       <form style={{ textAlign: 'center', marginTop: '80px' }} onSubmit={createTask}>
-        <input value={label} type="text" onChange={inputLabel} />
+        <input value={roomId} type="text" onChange={inputRoomId} />
         <input type="submit" value="ADD" />
       </form>
       <ul className={styles.tasks}>
