@@ -38,3 +38,9 @@
 .btn:hover {
   background: #444;
 }
+
+.d {
+  font-size: 80px;
+  font-weight: bold;
+  text-shadow: 1px 1px white;
+}
