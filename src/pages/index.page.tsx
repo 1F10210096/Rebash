@@ -14,11 +14,14 @@ const Home = () => {
   // const [roomIdasse, setRooomIdasse] = useState(['a', 'b']);
   const inputRoomId = (e: ChangeEvent<HTMLInputElement>) => {
     setRoomId(e.target.value);
+    console.log(user);
   };
-  const createTask = async (e: FormEvent) => {
+  const inputId = async (e: FormEvent) => {
     e.preventDefault();
+    console.log('a');
     if (!user) return;
     const a = await apiClient.user.post({ body: { roomId } });
+    console.log(a);
   };
   useEffect(() => {
     console.log('a');
@@ -32,6 +35,10 @@ const Home = () => {
       <div className={styles.title} style={{ marginTop: '160px' }}>
         Welcome to Rebash
       </div>
+      <form style={{ textAlign: 'center', marginTop: '80px' }} onSubmit={inputId}>
+        <input value={roomId} type="text" onChange={inputRoomId} />
+        <input type="submit" value="  in  " />
+      </form>
     </>
   );
 };

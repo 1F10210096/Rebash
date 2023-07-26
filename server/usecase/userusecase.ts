@@ -12,9 +12,10 @@ export const userUsecase = {
     return newUser;
   },
   user: async (roomId: string, userId: string): Promise<User1Model> => {
+    console.log('a');
     const user = await userrepository.findUser(roomId, userId);
     assert(user, 'userなし');
-    user.roomId.push('新しいルームID'); // 新しいルームIDを追加する
+    console.log(user);
     return user;
   },
 };
