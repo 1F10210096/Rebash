@@ -1,11 +1,10 @@
-
-import { userUsecase } from '$/usecase/userusecase'
-import { defineController } from './$relay'
+import { userUsecase } from '$/usecase/userusecase';
+import { defineController } from './$relay';
 
 export default defineController(() => ({
   get: () => ({ status: 200, body: 'Hello' }),
-  post: async ({ body,user }) => ({
+  post: async ({ body, user }) => ({
     status: 201,
-    body: await userUsecase.user(body.roomId,user.id),
+    body: await userUsecase.user(body.roomId, user.id),
   }),
-}))
+}));
