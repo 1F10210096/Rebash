@@ -10,18 +10,19 @@ import styles from './index.module.css';
 const Home = () => {
   const [user] = useAtom(userAtom);
   const [roomId, setRoomId] = useState('');
+  const [aroom, setARoomId] = useState<string[]>([]);
   const [chat, setChat] = useState([]);
   // const [roomIdasse, setRooomIdasse] = useState(['a', 'b']);
   const inputRoomId = (e: ChangeEvent<HTMLInputElement>) => {
     setRoomId(e.target.value);
-    console.log(user);
   };
   const inputId = async (e: FormEvent) => {
     e.preventDefault();
-    console.log('a');
     if (!user) return;
-    const a = await apiClient.user.post({ body: { roomId } });
-    console.log(a);
+    const userId = user.id;
+    const a = await apiClient.user.post({ body: { roomId, userId } });
+    console.log(a.body.roomId);
+    setARoomId(a.body.roomId);
   };
   useEffect(() => {
     console.log('a');
@@ -34,6 +35,10 @@ const Home = () => {
       <BasicHeader user={user} />
       <div className={styles.title} style={{ marginTop: '160px' }}>
         Welcome to Rebash
+      </div>
+      <div>
+        <p>User: {user.id}</p>
+        <p>User: {aroom}</p>
       </div>
       <form style={{ textAlign: 'center', marginTop: '80px' }} onSubmit={inputId}>
         <input value={roomId} type="text" onChange={inputRoomId} />

@@ -15,7 +15,9 @@ export const userUsecase = {
     console.log('a');
     const user = await userrepository.findUser(roomId, userId);
     assert(user, 'userなし');
+    user.roomId.push(roomId); // 新しいルームIDを追加する
     console.log(user);
+    await userrepository.save(user);
     return user;
   },
 };

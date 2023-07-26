@@ -1,11 +1,12 @@
-import type { User1Model } from "$/commonTypesWithClient/models";
+import type { UserId } from '$/commonTypesWithClient/branded';
+import type { User1Model } from '$/commonTypesWithClient/models';
 
 export type Methods = {
   get: {
-    resBody: string
-  }
+    resBody: string;
+  };
   post: {
-    reqBody: { roomId: string };
+    reqBody: { roomId: string; userId: UserId};
     resBody: User1Model;
   };
-}
+};
