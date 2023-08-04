@@ -25,7 +25,9 @@ const Home = () => {
     if (!user) return;
     const userId = user.id;
     const a = await apiClient.user.post({ body: { roomId, userId } });
+    const room = await apiClient.roomcreate.post({ body: { roomId } });
     console.log(a.body.roomId);
+    console.log(room.body.roomid);
     setARoomId(a.body.roomId);
   };
 
@@ -38,23 +40,22 @@ const Home = () => {
   return (
     <>
       <BasicHeader user={user} />
-      <div className={styles.title} style={{ marginTop: '160px' }}>
-        Welcome to Rebash
-      </div>
       <div>
         <p>User: {user.id}</p>
         <div>
-          <p>Room IDs:</p>
-          {aroom.map((roomId) => (
-            <>
-              <p key={roomId}>{roomId}</p>
-            </>
-          ))}
+          <div className={styles.roomIds}>
+            <p>Room IDs:</p>
+            {aroom.map((roomId) => (
+              <>
+                <p key={roomId}>{roomId}</p>
+              </>
+            ))}
+          </div>
         </div>
       </div>
-      <form style={{ textAlign: 'center', marginTop: '80px' }} onSubmit={inputId}>
+      <form style={{ textAlign: 'left', marginTop: '400px' }} onSubmit={inputId}>
         <input value={roomId} type="text" onChange={inputRoomId} />
-        <input type="submit" value="  in  " />
+        <input type="submit" value="  create  " />
       </form>
     </>
   );

@@ -1,4 +1,4 @@
-import type { RoomId, TaskId, UserId } from './branded';
+import type { TaskId, UserId } from './branded';
 
 export type UserModel = {
   id: UserId;
@@ -15,7 +15,8 @@ export type TaskModel = {
 };
 
 export type RoomModel = {
-  roomId: RoomId;
+  roomid: string;
+  comment: string[];
   created: number;
 };
 

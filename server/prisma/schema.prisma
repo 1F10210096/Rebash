@@ -16,11 +16,12 @@ model Task {
 
 model Room {
   roomId    String   @id
+  comment   String[]
   createdAt DateTime
 }
 
 model user {
-  userId String @id
-  comment   String
+  userId     String   @id
+  comment    String
   roomIdasse String[]
 }
