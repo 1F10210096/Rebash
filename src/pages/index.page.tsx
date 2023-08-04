@@ -13,6 +13,10 @@ const Home = () => {
   const [aroom, setARoomId] = useState<string[]>([]);
   const [chat, setChat] = useState([]);
   // const [roomIdasse, setRooomIdasse] = useState(['a', 'b']);
+
+  const createUserdata = async () => {
+    const newGame = await apiClient.create.$post();
+  };
   const inputRoomId = (e: ChangeEvent<HTMLInputElement>) => {
     setRoomId(e.target.value);
   };
@@ -24,8 +28,9 @@ const Home = () => {
     console.log(a.body.roomId);
     setARoomId(a.body.roomId);
   };
+
   useEffect(() => {
-    console.log('a');
+    createUserdata();
   }, []);
 
   if (!user) return <Loading visible />;
@@ -38,7 +43,14 @@ const Home = () => {
       </div>
       <div>
         <p>User: {user.id}</p>
-        <p>User: {aroom}</p>
+        <div>
+          <p>Room IDs:</p>
+          {aroom.map((roomId) => (
+            <>
+              <p key={roomId}>{roomId}</p>
+            </>
+          ))}
+        </div>
       </div>
       <form style={{ textAlign: 'center', marginTop: '80px' }} onSubmit={inputId}>
         <input value={roomId} type="text" onChange={inputRoomId} />
