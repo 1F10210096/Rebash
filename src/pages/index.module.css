@@ -23,4 +23,13 @@
 
 .roomIds {
   margin-top: 40px;
+  margin-left: 100px;
+}
+.comment {
+  margin-left: 600px;
+  margin-top: -450px;
+}
+
+.form {
+  margin-top: 400px;
 }

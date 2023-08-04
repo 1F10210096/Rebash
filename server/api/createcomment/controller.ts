@@ -4,6 +4,6 @@ import { defineController } from './$relay';
 export default defineController(() => ({
   post: async ({ body }) => ({
     status: 201,
-    body: await roomUsecase.room(body.roomId),
+    body: await roomUsecase.comment(body.roomId, body.acomment),
   }),
 }));
