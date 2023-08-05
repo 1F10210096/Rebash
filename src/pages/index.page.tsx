@@ -44,12 +44,13 @@ const Home = () => {
     const sender_id = user.id;
     const content = message;
     const a = await apiClient.message.post({ body: { roomId, sender_id, content } });
+    await LookMessage();
   };
-  const LookRoom = async (roomId: string) => {
-    const room = await apiClient.room.post({ body: { roomId } });
-    const comments = room.body.map((roomModel) => roomModel.comment);
-    setComment(comments.flat()); // commentsをフラット化してstring[]型にする
-  };
+const LookRoom = async (roomId: string) => {
+  const room = await apiClient.room.post({ body: { roomId } });
+  const comments = room.body.map((roomModel) => roomModel.comment);
+  setComment(comments.flat()); // commentsをフラット化してstring[]型にする
+};
 
   const LookMessage = useCallback(async () => {
     const messages = await apiClient.message_get.$post({ body: { roomId } });
