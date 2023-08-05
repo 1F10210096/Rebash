@@ -45,10 +45,10 @@ const Home = () => {
     const content = message;
     const a = await apiClient.message.post({ body: { roomId, sender_id, content } });
   };
-
   const LookRoom = async (roomId: string) => {
     const room = await apiClient.room.post({ body: { roomId } });
-    setComment(room.body.comment);
+    const comments = room.body.map((roomModel) => roomModel.comment);
+    setComment(comments.flat()); // commentsをフラット化してstring[]型にする
   };
 
   const LookMessage = useCallback(async () => {
