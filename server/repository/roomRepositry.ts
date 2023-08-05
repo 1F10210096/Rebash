@@ -22,16 +22,13 @@ export const roomsRepository = {
       },
     });
   },
-  findRoom: async (label: string | undefined): Promise<RoomModel | undefined> => {
+  findRoom: async (roomId: string | undefined): Promise<RoomModel[] | undefined> => {
     const roomlist = await prismaClient.room.findMany({
-      orderBy: { createdAt: 'desc' },
+      where: {
+        roomId,
+      },
+      orderBy: { roomId: 'desc' },
     });
-    const rooms = roomlist.find((room) => room.roomId === label);
-
-    return rooms && toRoomModel(rooms);
+    return roomlist.map(toRoomModel);
   },
-  //  getRoomInfo: async (RoomId:RoomId): Promise<RoomModel> => {
-  //   const roomInfo = RoomId
-  //   return roomInfo;
-  // }
 };

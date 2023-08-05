@@ -6,7 +6,7 @@ export type Methods = {
     resBody: string;
   };
   post: {
-    reqBody: { roomId: string; userId: UserId };
+    reqBody: { aroom: string[]; userId: UserId };
     resBody: User1Model;
   };
 };

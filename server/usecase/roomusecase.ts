@@ -11,19 +11,11 @@ export const roomUsecase = {
     await roomsRepository.save(newRoom);
     return newRoom;
   },
-  room: async (roomId: string): Promise<RoomModel> => {
+  room: async (roomId: string): Promise<RoomModel[]> => {
     const room = await roomsRepository.findRoom(roomId);
     assert(room, 'userなし');
     console.log(room);
-    await roomsRepository.save(room);
+    await Promise.all(room.map(roomsRepository.save)); // すべてのコメントを保存
     return room;
-  },
-  comment: async (roomId: string, comment: string): Promise<RoomModel> => {
-    const room = await roomsRepository.findRoom(roomId);
-    assert(room, 'userなし');
-    room.comment.push(comment);
-    console.log(room);
-    await roomsRepository.save(room);
-    return room;
-  },
+  }
 };

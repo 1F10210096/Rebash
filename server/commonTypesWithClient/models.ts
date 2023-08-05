@@ -25,3 +25,11 @@ export type User1Model = {
   comment: string;
   roomId: string[];
 };
+
+export type MessageModel = {
+  id2: string;
+  room: string;
+  sender_Id: string;
+  contentmess: string;
+  sent_at: number;
+};

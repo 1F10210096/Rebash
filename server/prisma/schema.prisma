@@ -25,3 +25,11 @@ model user {
   comment    String
   roomIdasse String[]
 }
+
+model message {
+  id2       String   @id
+  roomId    String
+  sender_id String
+  content   String
+  sent_at   DateTime
+}
