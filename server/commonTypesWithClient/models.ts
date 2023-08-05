@@ -13,3 +13,23 @@ export type TaskModel = {
   done: boolean;
   created: number;
 };
+
+export type RoomModel = {
+  roomid: string;
+  comment: string[];
+  created: number;
+};
+
+export type User1Model = {
+  id: string;
+  comment: string;
+  roomId: string[];
+};
+
+export type MessageModel = {
+  id2: string;
+  room: string;
+  sender_Id: string;
+  contentmess: string;
+  sent_at: number;
+};

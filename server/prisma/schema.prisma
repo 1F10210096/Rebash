@@ -13,3 +13,23 @@ model Task {
   done      Boolean
   createdAt DateTime
 }
+
+model Room {
+  roomId    String   @id
+  comment   String[]
+  createdAt DateTime
+}
+
+model user {
+  userId     String   @id
+  comment    String
+  roomIdasse String[]
+}
+
+model message {
+  id2       String   @id
+  roomId    String
+  sender_id String
+  content   String
+  sent_at   DateTime
+}
