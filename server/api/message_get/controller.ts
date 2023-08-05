@@ -1,5 +1,5 @@
 import { messageRepository } from '$/repository/messageRepositry';
-import { defineController } from './$relay'
+import { defineController } from './$relay';
 
 export default defineController(() => ({
   post: async ({ body }) => ({

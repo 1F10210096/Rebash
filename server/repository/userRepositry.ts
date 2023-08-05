@@ -23,7 +23,7 @@ export const userrepository = {
       },
     });
   },
-  findUser: async ( userId: string | undefined): Promise<User1Model | undefined> => {
+  findUser: async (userId: string | undefined): Promise<User1Model | undefined> => {
     const userlist = await prismaClient.user.findMany();
     const users = userlist.find((user) => user.userId === userId);
     return users && toUser1Model(users);

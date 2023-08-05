@@ -17,5 +17,5 @@ export const roomUsecase = {
     console.log(room);
     await Promise.all(room.map(roomsRepository.save)); // すべてのコメントを保存
     return room;
-  }
+  },
 };

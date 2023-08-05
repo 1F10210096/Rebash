@@ -53,7 +53,7 @@ const Home = () => {
 
   const LookMessage = useCallback(async () => {
     const messages = await apiClient.message_get.$post({ body: { roomId } });
-    console.log(message)
+    console.log(message);
     const myId = user?.id;
     const myMessages = messages?.filter((message: MessageModel) => message.sender_Id === myId);
     console.log(myMessages);

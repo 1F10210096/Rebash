@@ -12,7 +12,7 @@ export const userUsecase = {
     return newUser;
   },
   user: async (aroom: string[], userId: string): Promise<User1Model> => {
-    console.log(aroom)
+    console.log(aroom);
     const user = await userrepository.findUser(userId);
     assert(user, 'userなし');
     console.log(user);
