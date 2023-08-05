@@ -17,9 +17,15 @@ const Home = () => {
   const [myMessages, setMyMessages] = useState<string[]>([]);
   const [otherMessages, setOtherMessages] = useState<string[]>([]);
 
-  const createUserdata = async () => {
-    await apiClient.create.$post();
-  };
+  const createUserdata = useCallback(async () => {
+    if (!user) return;
+    const userId = user.id;
+    const userroom = await apiClient.usercheck.$post({ body: { userId } });
+    console.log(userroom);
+    if (userroom === undefined) {
+      await apiClient.create.$post();
+    }
+  }, [user]);
   const inputRoomId = (e: ChangeEvent<HTMLInputElement>) => {
     setRoomId(e.target.value);
   };
@@ -46,11 +52,11 @@ const Home = () => {
     const a = await apiClient.message.post({ body: { roomId, sender_id, content } });
     await LookMessage();
   };
-const LookRoom = async (roomId: string) => {
-  const room = await apiClient.room.post({ body: { roomId } });
-  const comments = room.body.map((roomModel) => roomModel.comment);
-  setComment(comments.flat()); // commentsをフラット化してstring[]型にする
-};
+  const LookRoom = async (roomId: string) => {
+    const room = await apiClient.room.post({ body: { roomId } });
+    const comments = room.body.map((roomModel) => roomModel.comment);
+    setComment(comments.flat()); // commentsをフラット化してstring[]型にする
+  };
 
   const LookMessage = useCallback(async () => {
     const messages = await apiClient.message_get.$post({ body: { roomId } });
@@ -75,7 +81,7 @@ const LookRoom = async (roomId: string) => {
   useEffect(() => {
     createUserdata();
     LookMessage();
-  }, [LookMessage]);
+  }, [createUserdata, LookMessage]);
 
   if (!user) return <Loading visible />;
 
