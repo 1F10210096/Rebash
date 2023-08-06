@@ -18,12 +18,12 @@ const Home = () => {
   const [otherMessages, setOtherMessages] = useState<string[]>([]);
 
   const createUserdata = useCallback(async () => {
-    if (!user) return;
-    const userId = user.id;
-    const userroom = await apiClient.usercheck.$post({ body: { userId } });
-    console.log(userroom);
-    if (userroom === undefined) {
+    if (user === null) {
       await apiClient.create.$post();
+    } else {
+      const userId = user.id;
+      const userroom = await apiClient.usercheck.$post({ body: { userId } });
+      console.log(userroom);
     }
   }, [user]);
   const inputRoomId = (e: ChangeEvent<HTMLInputElement>) => {
