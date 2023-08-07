@@ -43,7 +43,6 @@ const Home = () => {
     setARoomId(a.body.roomId);
   };
 
-
   const inputcomment = async (e: FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -68,6 +67,7 @@ const Home = () => {
     }
   };
 
+  
   useEffect(() => {
     createUserdata();
   }, [createUserdata]);
