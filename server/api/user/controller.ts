@@ -5,6 +5,6 @@ export default defineController(() => ({
   get: () => ({ status: 200, body: 'Hello' }),
   post: async ({ body, user }) => ({
     status: 201,
-    body: await userUsecase.user(body.aroom, user.id),
+    body: await userUsecase.user(body.roomId, user.id),
   }),
 }));

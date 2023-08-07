@@ -38,13 +38,11 @@ const Home = () => {
     e.preventDefault();
     if (!user) return;
     const userId = user.id;
-    aroom.push(roomId);
-    setARoomId(aroom);
-    const a = await apiClient.user.post({ body: { aroom, userId } });
+    const a = await apiClient.user.post({ body: { roomId, userId } });
     console.log(roomId);
-    await apiClient.roomcreate.post({ body: { roomId } });
     setARoomId(a.body.roomId);
   };
+
 
   const inputcomment = async (e: FormEvent) => {
     e.preventDefault();
@@ -54,6 +52,7 @@ const Home = () => {
     const a = await apiClient.message.post({ body: { roomId, sender_id, content } });
     await LookMessage();
   };
+
   const LookRoom = async (roomId: string) => {
     const room = await apiClient.room.post({ body: { roomId } });
     setRoomId(roomId);
