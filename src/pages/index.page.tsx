@@ -81,6 +81,11 @@ const Home = () => {
       <div>
         <p>User: {user.id}</p>
         <div>
+          <div className={styles.currentroomId}>
+            {/* 他のコンテンツ */}
+            <p>現在のRoom ID: {roomId}</p>
+            {/* 他のコンテンツ */}
+          </div>
           <div className={styles.roomIds}>
             <p>Room IDs:</p>
             {aroom.map((roomId) => (
