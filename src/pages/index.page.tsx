@@ -13,7 +13,9 @@ const Home = () => {
   const [roomId, setRoomId] = useState('');
   const [aroom, setARoomId] = useState<string[]>([]);
   const [message, setaComment] = useState('');
+  const [myId, setmyId] = useState<string>('');
   const [comment, setComment] = useState<string[]>([]);
+  const [messages, setMessages] = useState<MessageModel[]>([]);
   const [myMessages, setMyMessages] = useState<string[]>([]);
   const [otherMessages, setOtherMessages] = useState<string[]>([]);
 
@@ -55,33 +57,21 @@ const Home = () => {
   const LookRoom = async (roomId: string) => {
     const room = await apiClient.room.post({ body: { roomId } });
     const comments = room.body.map((roomModel) => roomModel.comment);
-    setComment(comments.flat()); // commentsをフラット化してstring[]型にする
+    setComment(comments.flat());
   };
-
-  const LookMessage = useCallback(async () => {
+  const LookMessage = async () => {
     const messages = await apiClient.message_get.$post({ body: { roomId } });
-    console.log(message);
-    const myId = user?.id;
-    const myMessages = messages?.filter((message: MessageModel) => message.sender_Id === myId);
-    console.log(myMessages);
-    console.log('asd');
-    const otherMessages = messages?.filter((message: MessageModel) => message.sender_Id !== myId);
-    if (myMessages === undefined || otherMessages === undefined) {
-      console.log('自分のmessageがありません');
-      console.log('相手のmessageがありません');
+    if (messages === undefined) {
+      console.log('messagesがありません');
     } else {
-      const allmyContentMess = myMessages.map((message) => message.contentmess);
-      setMyMessages(allmyContentMess);
-      console.log(myMessages);
-      const allotherMessages = otherMessages.map((message) => message.contentmess); // <- 修正: otherMessagesを使う
-      setOtherMessages(allotherMessages);
+      setMessages(messages);
+      setmyId(user?.id || '');
     }
-  }, [message, roomId, user?.id]);
+  };
 
   useEffect(() => {
     createUserdata();
-    LookMessage();
-  }, [createUserdata, LookMessage]);
+  }, [createUserdata]);
 
   if (!user) return <Loading visible />;
 
@@ -109,14 +99,19 @@ const Home = () => {
         </div>
       </div>
       <div className={styles.comment}>
-        <p>自分のコメント</p>
-        {myMessages.map((comment) => (
-          <p key={comment}>{comment}</p>
-        ))}
-        <p>他の人のコメント</p>
-        {otherMessages.map((comment) => (
-          <p key={comment}>{comment}</p>
-        ))}
+        {/* メッセージを時間順にソート */}
+        {messages
+          .sort((a, b) => a.sent_at - b.sent_at)
+          .map((message) => (
+            <div
+              key={message.id2}
+              className={`${styles.commentBubble} ${
+                message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+              }`}
+            >
+              {message.contentmess}
+            </div>
+          ))}
       </div>
 
       <div className={styles.form}>
