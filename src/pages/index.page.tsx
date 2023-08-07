@@ -56,8 +56,8 @@ const Home = () => {
   };
   const LookRoom = async (roomId: string) => {
     const room = await apiClient.room.post({ body: { roomId } });
-    const comments = room.body.map((roomModel) => roomModel.comment);
-    setComment(comments.flat());
+    setRoomId(roomId);
+    await LookMessage();
   };
   const LookMessage = async () => {
     const messages = await apiClient.message_get.$post({ body: { roomId } });
