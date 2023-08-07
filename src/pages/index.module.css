@@ -33,3 +33,21 @@
 .form {
   margin-top: 400px;
 }
+
+.myMessage {
+  text-align: left;
+  margin-left: 50px;
+}
+
+.otherMessage {
+  text-align: right;
+  margin-right: 100px;
+}
+
+.commentBubble {
+}
+.currentroomId{
+  position: relative;
+  left: 700px;
+
+}
