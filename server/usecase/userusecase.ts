@@ -11,13 +11,11 @@ export const userUsecase = {
     await userrepository.save(newUser);
     return newUser;
   },
-  user: async (aroom: string[], userId: string): Promise<User1Model> => {
+  user: async (aroom: string, userId: string): Promise<User1Model> => {
     console.log(aroom);
     const user = await userrepository.findUser(userId);
     assert(user, 'userなし');
-    console.log(user);
-    user.roomId.push(...aroom);
-    console.log(user);
+    user.roomId.push(aroom);
     await userrepository.save(user);
     return user;
   },

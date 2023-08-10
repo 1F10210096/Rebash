@@ -1,7 +1,8 @@
 import type { MessageModel } from '$/commonTypesWithClient/models';
 import { useAtom } from 'jotai';
+import { useRouter } from 'next/router';
 import type { ChangeEvent, FormEvent } from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Loading } from 'src/components/Loading/Loading';
 import { BasicHeader } from 'src/pages/@components/BasicHeader/BasicHeader';
 import { apiClient } from 'src/utils/apiClient';
@@ -18,9 +19,38 @@ const Home = () => {
   const [messages, setMessages] = useState<MessageModel[]>([]);
   const [myMessages, setMyMessages] = useState<string[]>([]);
   const [otherMessages, setOtherMessages] = useState<string[]>([]);
+  const router = useRouter(); // Next.js のルーターを取得
+  const [roomId1, setRoomId1] = useState(''); // 状態変数 roomId を宣言
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const mediaStreamRef = useRef<MediaStream | undefined>();
+
+  useEffect(() => {
+    const initializeVideo = async () => {
+      mediaStreamRef.current = await navigator.mediaDevices.getUserMedia({
+        video: true,
+      });
+
+      if (videoRef.current) {
+        videoRef.current.srcObject = mediaStreamRef.current;
+      }
+    };
+
+    const cleanupMediaStream = () => {
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current.getTracks()[0].stop();
+      }
+    };
+
+    initializeVideo();
+
+    return () => {
+      cleanupMediaStream();
+    };
+  }, []);
 
   const createUserdata = useCallback(async () => {
     if (user === null) {
+      console.log('a');
       await apiClient.create.$post();
     } else {
       const userId = user.id;
@@ -38,11 +68,8 @@ const Home = () => {
     e.preventDefault();
     if (!user) return;
     const userId = user.id;
-    aroom.push(roomId);
-    setARoomId(aroom);
-    const a = await apiClient.user.post({ body: { aroom, userId } });
+    const a = await apiClient.user.post({ body: { roomId, userId } });
     console.log(roomId);
-    await apiClient.roomcreate.post({ body: { roomId } });
     setARoomId(a.body.roomId);
   };
 
@@ -54,6 +81,7 @@ const Home = () => {
     const a = await apiClient.message.post({ body: { roomId, sender_id, content } });
     await LookMessage();
   };
+
   const LookRoom = async (roomId: string) => {
     const room = await apiClient.room.post({ body: { roomId } });
     setRoomId(roomId);
@@ -124,6 +152,9 @@ const Home = () => {
           <input value={message} type="text" onChange={inputComment} />
           <input type="submit" value="  createcomment  " />
         </form>
+      </div>
+      <div className="video-container">
+        <video ref={videoRef} style={{ width: '100%', maxWidth: '100%' }} autoPlay playsInline />
       </div>
     </>
   );
