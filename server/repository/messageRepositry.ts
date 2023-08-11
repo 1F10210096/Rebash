@@ -21,7 +21,7 @@ export const messageRepository = {
         sender_id: message.sender_Id,
         content: message.contentmess,
         sent_at: new Date(message.sent_at),
-        username: message.username
+        username: message.username,
       },
     });
   },

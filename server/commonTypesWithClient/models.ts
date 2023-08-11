@@ -34,5 +34,3 @@ export type MessageModel = {
   sent_at: number;
   username: string;
 };
-
-

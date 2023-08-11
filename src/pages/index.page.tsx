@@ -66,7 +66,7 @@ const Home = () => {
   };
   const inputId = async (e: FormEvent) => {
     e.preventDefault();
-    console.log("a")
+    console.log('a');
     if (!user) return;
     const userId = user.id;
     const a = await apiClient.user.post({ body: { roomId, userId } });
@@ -79,11 +79,11 @@ const Home = () => {
     if (!user) return;
     const sender_id = user.id;
     const content = message;
-    const name = user.displayName
-    if (name === undefined){
-      console.log("usernameなし")
+    const name = user.displayName;
+    if (name === undefined) {
+      console.log('usernameなし');
     } else {
-    const a = await apiClient.message.post({ body: { roomId, sender_id, content ,name} });
+      const a = await apiClient.message.post({ body: { roomId, sender_id, content, name } });
     }
     await LookMessage();
   };
@@ -157,9 +157,9 @@ const Home = () => {
         </form>
       </div>
       <form style={{ textAlign: 'left', marginTop: '300px' }} onSubmit={inputId}>
-              <input value={roomId} type="text" onChange={inputRoomId} />
-              <input type="submit" value="  create  " />
-            </form>
+        <input value={roomId} type="text" onChange={inputRoomId} />
+        <input type="submit" value="  create  " />
+      </form>
       <div className="video-container">
         <video ref={videoRef} style={{ width: '100%', maxWidth: '100%' }} autoPlay playsInline />
       </div>
