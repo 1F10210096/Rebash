@@ -97,7 +97,7 @@ const Home = () => {
 
   const LookMessage = async () => {
     const messages = await apiClient.message_get.$post({ body: { roomId } });
-    console.log(messages)
+    console.log(messages);
     if (messages === undefined) {
       console.log('messagesがありません');
     } else {
@@ -143,8 +143,9 @@ const Home = () => {
           .map((message) => (
             <div
               key={message.id2}
-              className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                }`}
+              className={`${styles.commentBubble} ${
+                message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+              }`}
             >
               <div className={styles.username}>
                 {message.sender_Id === myId ? null : message.username}
