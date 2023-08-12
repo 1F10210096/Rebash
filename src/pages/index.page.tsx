@@ -26,6 +26,8 @@ const Home = () => {
   const mediaStreamRef = useRef<MediaStream | undefined>();
   const [showForm, setShowForm] = useState(false);
   const [searchRoomId, setSearchRoomId] = useState('');
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [editedMessage, setEditedMessage] = useState('');
   //a
   useEffect(() => {
     const initializeVideo = async () => {
@@ -155,6 +157,27 @@ const Home = () => {
     setShowForm(!showForm);
   };
 
+  const handleRightClick =
+    (messageId: string, contentmess: string) =>
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.preventDefault();
+      setEditingMessageId(messageId);
+      setEditedMessage(contentmess);
+    };
+  const handleSaveEdit = async () => {
+    console.log(editingMessageId);
+    console.log(editedMessage);
+    if (editingMessageId === null) {
+      console.log('id2なし');
+    }
+    {
+      await apiClient.edit.$post({ body: { editingMessageId, editedMessage } });
+      await LookMessage();
+      setEditingMessageId(null);
+      setEditedMessage('');
+    }
+  };
+
   useEffect(() => {
     createUserdata();
     Roomlist();
@@ -188,23 +211,34 @@ const Home = () => {
         </div>
       </div>
       <div className={styles.comment}>
-        {/* メッセージを時間順にソート */}
         {messages
           .sort((a, b) => a.sent_at - b.sent_at)
+          // eslint-disable-next-line complexity
           .map((message) => (
             <div
               key={message.id2}
               className={`${styles.commentBubble} ${
                 message.sender_Id === myId ? styles.myMessage : styles.otherMessage
               }`}
+              onContextMenu={(e) => handleRightClick(message.id2, message.contentmess)(e)}
             >
-              <div className={styles.username}>
-                {message.sender_Id === myId ? null : message.username}
-              </div>
-              <div className={styles.username}>
-                {message.sender_Id === myId ? message.username : null}
-              </div>
-              <div className={styles.messageContent}>{message.contentmess}</div>
+              {editingMessageId === message.id2 ? (
+                <textarea
+                  value={editedMessage}
+                  onChange={(e) => setEditedMessage(e.target.value)}
+                />
+              ) : (
+                <>
+                  <div className={styles.username}>
+                    {message.sender_Id === myId ? null : message.username}
+                  </div>
+                  <div className={styles.username}>
+                    {message.sender_Id === myId ? message.username : null}
+                  </div>
+                  <div className={styles.messageContent}>{message.contentmess}</div>
+                </>
+              )}
+              {editingMessageId === message.id2 && <button onClick={handleSaveEdit}>Save</button>}
             </div>
           ))}
       </div>

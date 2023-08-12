@@ -25,4 +25,13 @@ export const messageUsecase = {
     await Promise.all(roomList.map(messageRepository.save)); // すべてのコメントを保存
     return roomList;
   },
+  edit: async (editingMessageId: string | null, editedMessage: string): Promise<MessageModel> => {
+    console.log(editedMessage);
+    const message = await messageRepository.editMessage(editingMessageId);
+    assert(message, 'コメントが見つかりません');
+    message.contentmess = editedMessage;
+    await messageRepository.save(message);
+    console.log(message);
+    return message;
+  },
 };
