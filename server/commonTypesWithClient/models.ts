@@ -32,4 +32,5 @@ export type MessageModel = {
   sender_Id: string;
   contentmess: string;
   sent_at: number;
+  username: string;
 };

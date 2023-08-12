@@ -8,6 +8,7 @@ const toMessageModel = (prismaRoom: message): MessageModel => ({
   sender_Id: prismaRoom.sender_id,
   contentmess: prismaRoom.content,
   sent_at: prismaRoom.sent_at.getTime(),
+  username: prismaRoom.username,
 });
 export const messageRepository = {
   save: async (message: MessageModel) => {
@@ -20,6 +21,7 @@ export const messageRepository = {
         sender_id: message.sender_Id,
         content: message.contentmess,
         sent_at: new Date(message.sent_at),
+        username: message.username,
       },
     });
   },

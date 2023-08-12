@@ -58,3 +58,11 @@
   /* 必要なスタイルを追加 */
 }
 
+.username {
+  position: relative;
+}
+
+.messageContent {
+  /* ここにメッセージのコンテンツに関するスタイルを定義 */
+  position: relative;
+}

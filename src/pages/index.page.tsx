@@ -14,6 +14,7 @@ const Home = () => {
   const [aroom, setARoomId] = useState<string[]>([]);
   const [message, setaComment] = useState('');
   const [myId, setmyId] = useState<string>('');
+
   const [comment, setComment] = useState<string[]>([]);
   const [messages, setMessages] = useState<MessageModel[]>([]);
   const [myMessages, setMyMessages] = useState<string[]>([]);
@@ -65,6 +66,7 @@ const Home = () => {
   };
   const inputId = async (e: FormEvent) => {
     e.preventDefault();
+    console.log('a');
     if (!user) return;
     const userId = user.id;
     const a = await apiClient.user.post({ body: { roomId, userId } });
@@ -77,7 +79,12 @@ const Home = () => {
     if (!user) return;
     const sender_id = user.id;
     const content = message;
-    const a = await apiClient.message.post({ body: { roomId, sender_id, content } });
+    const name = user.displayName;
+    if (name === undefined) {
+      console.log('usernameなし');
+    } else {
+      const a = await apiClient.message.post({ body: { roomId, sender_id, content, name } });
+    }
     await LookMessage();
   };
 
@@ -86,8 +93,10 @@ const Home = () => {
     setRoomId(roomId);
     await LookMessage();
   };
+
   const LookMessage = async () => {
     const messages = await apiClient.message_get.$post({ body: { roomId } });
+    console.log(messages);
     if (messages === undefined) {
       console.log('messagesがありません');
     } else {
@@ -122,10 +131,6 @@ const Home = () => {
                 </p>
               </>
             ))}
-            <form style={{ textAlign: 'left', marginTop: '400px' }} onSubmit={inputId}>
-              <input value={roomId} type="text" onChange={inputRoomId} />
-              <input type="submit" value="  create  " />
-            </form>
           </div>
           <div />
         </div>
@@ -137,24 +142,33 @@ const Home = () => {
           .map((message) => (
             <div
               key={message.id2}
-              className={`${styles.commentBubble} ${
-                message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-              }`}
+              className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                }`}
             >
-              {message.contentmess}
+              <div className={styles.username}>
+                {message.sender_Id === myId ? null : message.username}
+              </div>
+              <div className={styles.messageContent}>{message.contentmess}</div>
+              <div className={styles.username}>
+                {message.sender_Id === myId ? message.username : null}
+              </div>
             </div>
           ))}
       </div>
-
       <div className={styles.form}>
         <form style={{ marginLeft: '700px' }} onSubmit={inputcomment}>
           <input value={message} type="text" onChange={inputComment} />
           <input type="submit" value="  createcomment  " />
         </form>
       </div>
-      {/* <div className="video-container">
+
+      <form style={{ textAlign: 'left', marginTop: '300px' }} onSubmit={inputId}>
+        <input value={roomId} type="text" onChange={inputRoomId} />
+        <input type="submit" value="  create  " />
+      </form>
+      <div className="video-container">
         <video ref={videoRef} style={{ width: '100%', maxWidth: '100%' }} autoPlay playsInline />
-      </div> */}
+      </div>
     </>
   );
 };

@@ -32,4 +32,5 @@ model message {
   sender_id String
   content   String
   sent_at   DateTime
+  username  String
 }
