@@ -28,4 +28,9 @@ export const userrepository = {
     const users = userlist.find((user) => user.userId === userId);
     return users && toUser1Model(users);
   },
+  findRoom: async (userId: string | undefined): Promise<User1Model | undefined> => {
+    const userlist = await prismaClient.user.findMany();
+    const users = userlist.find((user) => user.userId === userId);
+    return users && toUser1Model(users);
+  },
 };

@@ -11,11 +11,13 @@ import styles from './index.module.css';
 const Home = () => {
   const [user] = useAtom(userAtom);
   const [roomId, setRoomId] = useState('');
+  const [roomId2, setRoomId2] = useState('');
+  const [serchroomId, setserchRoomId] = useState('');
   const [aroom, setARoomId] = useState<string[]>([]);
   const [message, setaComment] = useState('');
   const [myId, setmyId] = useState<string>('');
 
-  const [comment, setComment] = useState<string[]>([]);
+  const [userasse, setuserasse] = useState<string[]>([]);
   const [messages, setMessages] = useState<MessageModel[]>([]);
   const [myMessages, setMyMessages] = useState<string[]>([]);
   const [otherMessages, setOtherMessages] = useState<string[]>([]);
@@ -23,7 +25,7 @@ const Home = () => {
   const [roomId1, setRoomId1] = useState(''); // 状態変数 roomId を宣言
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaStreamRef = useRef<MediaStream | undefined>();
-
+  //a
   useEffect(() => {
     const initializeVideo = async () => {
       mediaStreamRef.current = await navigator.mediaDevices.getUserMedia({
@@ -48,18 +50,32 @@ const Home = () => {
     };
   }, []);
 
+  const Roomlist = useCallback(async () => {
+    const roomlist = await apiClient.roomlist.$post();
+    console.log(roomlist);
+  }, []);
+
   const createUserdata = useCallback(async () => {
-    if (user === null) {
+    const user1 = await apiClient.roomlist.$post();
+    console.log(user1);
+    if (user1 === null) {
       console.log('a');
       await apiClient.create.$post();
     } else {
-      const userId = user.id;
-      const userroom = await apiClient.usercheck.$post({ body: { userId } });
-      console.log(userroom);
+      if (user === null) {
+        console.log(user);
+      } else {
+        const userId = user.id;
+        const userroom = await apiClient.usercheck.$post({ body: { userId } });
+        console.log(userroom);
+      }
     }
   }, [user]);
   const inputRoomId = (e: ChangeEvent<HTMLInputElement>) => {
     setRoomId(e.target.value);
+  };
+  const serchRoomId = (e: ChangeEvent<HTMLInputElement>) => {
+    setserchRoomId(e.target.value);
   };
   const inputComment = (e: ChangeEvent<HTMLInputElement>) => {
     setaComment(e.target.value);
@@ -70,8 +86,21 @@ const Home = () => {
     if (!user) return;
     const userId = user.id;
     const a = await apiClient.user.post({ body: { roomId, userId } });
+    const b = await apiClient.roomcreate.post({ body: { roomId, userId } });
     console.log(roomId);
     setARoomId(a.body.roomId);
+  };
+  const serchId = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    const userId = user.id;
+    console.log(serchroomId);
+    const a = await apiClient.serchroom.post({ body: { serchroomId, userId } });
+    console.log(a.body.user);
+    // const userasse = a.user
+    console.log(roomId);
+    setRoomId2(a.body.roomid);
+    setuserasse(a.body.user);
   };
 
   const inputcomment = async (e: FormEvent) => {
@@ -89,8 +118,8 @@ const Home = () => {
   };
 
   const LookRoom = async (roomId: string) => {
-    const room = await apiClient.room.post({ body: { roomId } });
     setRoomId(roomId);
+    const room = await apiClient.room.post({ body: { roomId } });
     await LookMessage();
   };
 
@@ -107,7 +136,8 @@ const Home = () => {
 
   useEffect(() => {
     createUserdata();
-  }, [createUserdata]);
+    Roomlist();
+  }, [Roomlist, createUserdata]);
 
   if (!user) return <Loading visible />;
 
@@ -120,6 +150,7 @@ const Home = () => {
           <div className={styles.currentroomId}>
             {/* 他のコンテンツ */}
             <p>現在のRoom ID: {roomId}</p>
+            <p>{userasse}</p>
             {/* 他のコンテンツ */}
           </div>
           <div className={styles.roomIds}>
@@ -167,9 +198,14 @@ const Home = () => {
         <input value={roomId} type="text" onChange={inputRoomId} />
         <input type="submit" value="  create  " />
       </form>
-      <div className="video-container">
+      <form style={{ textAlign: 'left', marginTop: '50px' }} onSubmit={serchId}>
+        <input value={serchroomId} type="text" onChange={serchRoomId} />
+        <input type="submit" value=" serch  " />
+      </form>
+
+      {/* <div className="video-container">
         <video ref={videoRef} style={{ width: '100%', maxWidth: '100%' }} autoPlay playsInline />
-      </div>
+      </div> */}
     </>
   );
 };

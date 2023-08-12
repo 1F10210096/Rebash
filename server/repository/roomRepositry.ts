@@ -7,6 +7,7 @@ const toRoomModel = (prismaRoom: Room): RoomModel => ({
   roomid: roomIdParser.parse(prismaRoom.roomId),
   comment: prismaRoom.comment,
   created: prismaRoom.createdAt.getTime(),
+  user: prismaRoom.userasse,
 });
 export const roomsRepository = {
   save: async (room: RoomModel) => {
@@ -14,11 +15,13 @@ export const roomsRepository = {
       where: { roomId: room.roomid },
       update: {
         comment: room.comment,
+        userasse: room.user,
       },
       create: {
         roomId: room.roomid,
         comment: room.comment,
         createdAt: new Date(room.created),
+        userasse: room.user,
       },
     });
   },
@@ -30,5 +33,10 @@ export const roomsRepository = {
       orderBy: { roomId: 'desc' },
     });
     return roomlist.map(toRoomModel);
+  },
+  serchRoom: async (serchroomId: string | undefined): Promise<RoomModel | undefined> => {
+    const roomlist = await prismaClient.room.findMany();
+    const room = roomlist.find((room) => room.roomId === serchroomId);
+    return room && toRoomModel(room);
   },
 };

@@ -37,19 +37,20 @@
 .myMessage {
   text-align: left;
   margin-left: 50px;
+  margin-top: 10px;
 }
 
 .otherMessage {
   text-align: right;
   margin-right: 100px;
+  margin-top: 10px;
 }
 
 .commentBubble {
 }
-.currentroomId{
+.currentroomId {
   position: relative;
   left: 700px;
-
 }
 .roomContainer {
   /* 必要なスタイルを追加 */
@@ -59,7 +60,8 @@
 }
 
 .username {
-  position: relative;
+  font-size: 24px;
+  font-family: 'Arial', sans-serif; 
 }
 
 .messageContent {
