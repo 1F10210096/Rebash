@@ -28,6 +28,10 @@ const Home = () => {
   const [searchRoomId, setSearchRoomId] = useState('');
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editedMessage, setEditedMessage] = useState('');
+  const [contextMenuVisible, setContextMenuVisible] = useState(false);
+  const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
+  const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+
   //a
   useEffect(() => {
     const initializeVideo = async () => {
@@ -149,6 +153,17 @@ const Home = () => {
     }
   };
 
+  const handleDelete = async (messageId: string) => {
+    // 削除操作を実行するロジックをここに追加
+    // 例: メッセージの削除APIを呼び出すなどの処理
+    try {
+      // await apiClient.deleteMessage.$post({ body: { messageId } });
+      await LookMessage();
+    } catch (error) {
+      console.error('削除エラー:', error);
+    }
+  };
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
   };
@@ -157,13 +172,13 @@ const Home = () => {
     setShowForm(!showForm);
   };
 
-  const handleRightClick =
+  const handleEdit =
     (messageId: string, contentmess: string) =>
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      e.preventDefault();
-      setEditingMessageId(messageId);
-      setEditedMessage(contentmess);
-    };
+      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.preventDefault();
+        setEditingMessageId(messageId);
+        setEditedMessage(contentmess);
+      };
   const handleSaveEdit = async () => {
     console.log(editingMessageId);
     console.log(editedMessage);
@@ -177,6 +192,18 @@ const Home = () => {
       setEditedMessage('');
     }
   };
+  const handleRightClick =
+    (messageId: string, contentmess: string) =>
+      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.preventDefault();
+        // ここでコンテキストメニューを表示する準備をする
+        setContextMenuVisible(true);
+        setSelectedMessageId(messageId);
+        setContextMenuPosition({ x: e.clientX, y: e.clientY });
+        // 編集モードの設定
+        setEditingMessageId(messageId);
+        setEditedMessage(contentmess);
+      };
 
   useEffect(() => {
     createUserdata();
@@ -217,28 +244,43 @@ const Home = () => {
           .map((message) => (
             <div
               key={message.id2}
-              className={`${styles.commentBubble} ${
-                message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-              }`}
+              className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                }`}
               onContextMenu={(e) => handleRightClick(message.id2, message.contentmess)(e)}
             >
+              {/* 編集中の場合はテキストエリアを表示 */}
               {editingMessageId === message.id2 ? (
-                <textarea
-                  value={editedMessage}
-                  onChange={(e) => setEditedMessage(e.target.value)}
-                />
+                <div>
+                  <textarea
+                    value={editedMessage}
+                    onChange={(e) => setEditedMessage(e.target.value)}
+                  />
+                  <button onClick={handleSaveEdit}>Save</button>
+                </div>
               ) : (
                 <>
                   <div className={styles.username}>
+                    {/* 送信者が自分でない場合にのみユーザー名を表示 */}
                     {message.sender_Id === myId ? null : message.username}
                   </div>
                   <div className={styles.username}>
+                    {/* 送信者が自分の場合にのみユーザー名を表示 */}
                     {message.sender_Id === myId ? message.username : null}
                   </div>
                   <div className={styles.messageContent}>{message.contentmess}</div>
                 </>
               )}
-              {editingMessageId === message.id2 && <button onClick={handleSaveEdit}>Save</button>}
+              {/* 編集ボタンの表示 */}
+              {editingMessageId !== message.id2 && (
+                <button onClick={() => handleEdit(message.id2, message.contentmess)}>Edit</button>
+              )}
+              {/* コンテキストメニュー */}
+              {contextMenuVisible && selectedMessageId === message.id2 && (
+                <div className={styles.contextMenu} style={{ top: contextMenuPosition.y, left: contextMenuPosition.x }}>
+                  <div onClick={() => handleEdit(message.id2, message.contentmess)}>Edit</div>
+                  <div onClick={() => handleDelete(message.id2)}>Delete</div>
+                </div>
+              )}
             </div>
           ))}
       </div>
