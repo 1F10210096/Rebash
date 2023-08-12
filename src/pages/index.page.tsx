@@ -8,7 +8,6 @@ import { BasicHeader } from 'src/pages/@components/BasicHeader/BasicHeader';
 import { apiClient } from 'src/utils/apiClient';
 import { userAtom } from '../atoms/user';
 import styles from './index.module.css';
-import type { UserId } from '$/commonTypesWithClient/branded';
 const Home = () => {
   const [user] = useAtom(userAtom);
   const [roomId, setRoomId] = useState('');
@@ -26,7 +25,7 @@ const Home = () => {
   const [roomId1, setRoomId1] = useState(''); // 状態変数 roomId を宣言
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaStreamRef = useRef<MediaStream | undefined>();
-
+  //a
   useEffect(() => {
     const initializeVideo = async () => {
       mediaStreamRef.current = await navigator.mediaDevices.getUserMedia({
@@ -53,18 +52,18 @@ const Home = () => {
 
   const Roomlist = useCallback(async () => {
     const roomlist = await apiClient.roomlist.$post();
-    console.log(roomlist)
-  }, [])
+    console.log(roomlist);
+  }, []);
 
   const createUserdata = useCallback(async () => {
     const user1 = await apiClient.roomlist.$post();
-    console.log(user1)
+    console.log(user1);
     if (user1 === null) {
       console.log('a');
       await apiClient.create.$post();
     } else {
       if (user === null) {
-        console.log(user)
+        console.log(user);
       } else {
         const userId = user.id;
         const userroom = await apiClient.usercheck.$post({ body: { userId } });
@@ -97,11 +96,11 @@ const Home = () => {
     const userId = user.id;
     console.log(serchroomId);
     const a = await apiClient.serchroom.post({ body: { serchroomId, userId } });
-    console.log(a.body.user)
+    console.log(a.body.user);
     // const userasse = a.user
     console.log(roomId);
     setRoomId2(a.body.roomid);
-    setuserasse(a.body.user)
+    setuserasse(a.body.user);
   };
 
   const inputcomment = async (e: FormEvent) => {
@@ -119,11 +118,10 @@ const Home = () => {
   };
 
   const LookRoom = async (roomId: string) => {
-    setRoomId(roomId)
+    setRoomId(roomId);
     const room = await apiClient.room.post({ body: { roomId } });
     await LookMessage();
   };
-
 
   const LookMessage = async () => {
     const messages = await apiClient.message_get.$post({ body: { roomId } });
@@ -175,8 +173,9 @@ const Home = () => {
           .map((message) => (
             <div
               key={message.id2}
-              className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                }`}
+              className={`${styles.commentBubble} ${
+                message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+              }`}
             >
               <div className={styles.username}>
                 {message.sender_Id === myId ? null : message.username}
@@ -203,7 +202,6 @@ const Home = () => {
         <input value={serchroomId} type="text" onChange={serchRoomId} />
         <input type="submit" value=" serch  " />
       </form>
-
 
       {/* <div className="video-container">
         <video ref={videoRef} style={{ width: '100%', maxWidth: '100%' }} autoPlay playsInline />
