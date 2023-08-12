@@ -142,8 +142,9 @@ const Home = () => {
           .map((message) => (
             <div
               key={message.id2}
-              className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                }`}
+              className={`${styles.commentBubble} ${
+                message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+              }`}
             >
               <div className={styles.username}>
                 {message.sender_Id === myId ? null : message.username}
