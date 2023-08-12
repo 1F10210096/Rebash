@@ -8,7 +8,6 @@ import { BasicHeader } from 'src/pages/@components/BasicHeader/BasicHeader';
 import { apiClient } from 'src/utils/apiClient';
 import { userAtom } from '../atoms/user';
 import styles from './index.module.css';
-
 const Home = () => {
   const [user] = useAtom(userAtom);
   const [roomId, setRoomId] = useState('');
@@ -153,9 +152,9 @@ const Home = () => {
           <input type="submit" value="  createcomment  " />
         </form>
       </div>
-      <div className="video-container">
+      {/* <div className="video-container">
         <video ref={videoRef} style={{ width: '100%', maxWidth: '100%' }} autoPlay playsInline />
-      </div>
+      </div> */}
     </>
   );
 };
