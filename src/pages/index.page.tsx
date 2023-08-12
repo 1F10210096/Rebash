@@ -25,6 +25,8 @@ const Home = () => {
   const [roomId1, setRoomId1] = useState(''); // 状態変数 roomId を宣言
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaStreamRef = useRef<MediaStream | undefined>();
+  const [showForm, setShowForm] = useState(false);
+  const [searchRoomId, setSearchRoomId] = useState('');
   //a
   useEffect(() => {
     const initializeVideo = async () => {
@@ -134,6 +136,14 @@ const Home = () => {
     }
   };
 
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+  };
+
+  const handleToggleForm = () => {
+    setShowForm(!showForm);
+  };
+
   useEffect(() => {
     createUserdata();
     Roomlist();
@@ -194,15 +204,35 @@ const Home = () => {
         </form>
       </div>
 
-      <form style={{ textAlign: 'left', marginTop: '300px' }} onSubmit={inputId}>
-        <input value={roomId} type="text" onChange={inputRoomId} />
-        <input type="submit" value="  create  " />
-      </form>
-      <form style={{ textAlign: 'left', marginTop: '50px' }} onSubmit={serchId}>
-        <input value={serchroomId} type="text" onChange={serchRoomId} />
-        <input type="submit" value=" serch  " />
-      </form>
+      <div>
+        <button
+          className={styles.btn_25}
+          onClick={handleToggleForm}
+          style={{ marginLeft: '100px', marginTop: '500px' }}
+        >
+          Toggle Form
+        </button>
+        <div className={styles.crateButton}>
+          {showForm && (
+            <div>
+              <form style={{ textAlign: 'left', marginTop: '50px' }} onSubmit={inputId}>
+                <input value={roomId} type="text" onChange={inputRoomId} placeholder="Room ID" />
+                <input type="submit" value="Create" />
+              </form>
 
+              <form style={{ textAlign: 'left', marginTop: '50px' }} onSubmit={serchId}>
+                <input
+                  value={serchroomId}
+                  type="text"
+                  onChange={serchRoomId}
+                  placeholder="Search Room ID"
+                />
+                <input type="submit" value="Search" />
+              </form>
+            </div>
+          )}
+        </div>
+      </div>
       {/* <div className="video-container">
         <video ref={videoRef} style={{ width: '100%', maxWidth: '100%' }} autoPlay playsInline />
       </div> */}
