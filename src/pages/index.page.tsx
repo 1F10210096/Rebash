@@ -174,11 +174,11 @@ const Home = () => {
 
   const handleEdit =
     (messageId: string, contentmess: string) =>
-      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        e.preventDefault();
-        setEditingMessageId(messageId);
-        setEditedMessage(contentmess);
-      };
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.preventDefault();
+      setEditingMessageId(messageId);
+      setEditedMessage(contentmess);
+    };
   const handleSaveEdit = async () => {
     console.log(editingMessageId);
     console.log(editedMessage);
@@ -194,16 +194,16 @@ const Home = () => {
   };
   const handleRightClick =
     (messageId: string, contentmess: string) =>
-      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        e.preventDefault();
-        // ここでコンテキストメニューを表示する準備をする
-        setContextMenuVisible(true);
-        setSelectedMessageId(messageId);
-        setContextMenuPosition({ x: e.clientX, y: e.clientY });
-        // 編集モードの設定
-        setEditingMessageId(messageId);
-        setEditedMessage(contentmess);
-      };
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.preventDefault();
+      // ここでコンテキストメニューを表示する準備をする
+      setContextMenuVisible(true);
+      setSelectedMessageId(messageId);
+      setContextMenuPosition({ x: e.clientX, y: e.clientY });
+      // 編集モードの設定
+      setEditingMessageId(messageId);
+      setEditedMessage(contentmess);
+    };
 
   useEffect(() => {
     createUserdata();
@@ -244,8 +244,9 @@ const Home = () => {
           .map((message) => (
             <div
               key={message.id2}
-              className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                }`}
+              className={`${styles.commentBubble} ${
+                message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+              }`}
               onContextMenu={(e) => handleRightClick(message.id2, message.contentmess)(e)}
             >
               {/* 編集中の場合はテキストエリアを表示 */}
@@ -276,7 +277,10 @@ const Home = () => {
               )}
               {/* コンテキストメニュー */}
               {contextMenuVisible && selectedMessageId === message.id2 && (
-                <div className={styles.contextMenu} style={{ top: contextMenuPosition.y, left: contextMenuPosition.x }}>
+                <div
+                  className={styles.contextMenu}
+                  style={{ top: contextMenuPosition.y, left: contextMenuPosition.x }}
+                >
                   <div onClick={() => handleEdit(message.id2, message.contentmess)}>Edit</div>
                   <div onClick={() => handleDelete(message.id2)}>Delete</div>
                 </div>
