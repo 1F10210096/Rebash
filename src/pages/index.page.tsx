@@ -54,7 +54,7 @@ const Home = () => {
   const Roomlist = useCallback(async () => {
     const roomlist = await apiClient.roomlist.$post();
     console.log(roomlist);
-    setARoomId(roomlist.roomId)
+    setARoomId(roomlist.roomId);
   }, []);
 
   const createUserdata = useCallback(async () => {
@@ -124,8 +124,8 @@ const Home = () => {
   const LookRoom = async (roomId3: string) => {
     setRoomId(roomId3);
     await apiClient.room.post({ body: { roomId3 } });
-    console.log(roomId3)
-    console.log(roomId)
+    console.log(roomId3);
+    console.log(roomId);
     const messages = await apiClient.message_get2.$post({ body: { roomId3 } });
     console.log(messages);
     if (messages === undefined) {
@@ -194,8 +194,9 @@ const Home = () => {
           .map((message) => (
             <div
               key={message.id2}
-              className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                }`}
+              className={`${styles.commentBubble} ${
+                message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+              }`}
             >
               <div className={styles.username}>
                 {message.sender_Id === myId ? null : message.username}

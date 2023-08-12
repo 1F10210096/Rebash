@@ -28,7 +28,7 @@ export const roomsRepository = {
   findRoom: async (roomId3: string | undefined): Promise<RoomModel[] | undefined> => {
     const roomlist = await prismaClient.room.findMany({
       where: {
-        roomId:roomId3,
+        roomId: roomId3,
       },
       orderBy: { roomId: 'desc' },
     });
