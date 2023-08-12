@@ -1,3 +1,4 @@
+import type { UserId } from '$/commonTypesWithClient/branded';
 import type { User1Model } from '$/commonTypesWithClient/models';
 import { userrepository } from '$/repository/userRepositry';
 import assert from 'assert';
@@ -26,5 +27,15 @@ export const userUsecase = {
     user.roomId.push(aroom);
     await userrepository.save(user);
     return user;
+  },
+  roomlist: async (userId: UserId): Promise<User1Model> => {
+    const user = await userrepository.findUser(userId);
+    if (user === undefined) {
+      const user = await userUsecase.create(userId);
+      return user;
+    } else {
+      await userrepository.save(user);
+      return user;
+    }
   },
 };
