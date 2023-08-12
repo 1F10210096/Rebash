@@ -2,8 +2,9 @@ import { roomUsecase } from '$/usecase/roomusecase';
 import { defineController } from './$relay';
 
 export default defineController(() => ({
+  get: () => ({ status: 200, body: 'Hello' }),
   post: async ({ body, user }) => ({
     status: 201,
-    body: await roomUsecase.create(body.roomId, user.id),
+    body: await roomUsecase.serch(body.serchroomId, user.id),
   }),
 }));

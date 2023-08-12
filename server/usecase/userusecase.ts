@@ -19,4 +19,12 @@ export const userUsecase = {
     await userrepository.save(user);
     return user;
   },
+  serch: async (aroom: string, userId: string): Promise<User1Model> => {
+    console.log(aroom);
+    const user = await userrepository.findUser(userId);
+    assert(user, 'userなし');
+    user.roomId.push(aroom);
+    await userrepository.save(user);
+    return user;
+  },
 };

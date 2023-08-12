@@ -11,6 +11,7 @@ import styles from './index.module.css';
 const Home = () => {
   const [user] = useAtom(userAtom);
   const [roomId, setRoomId] = useState('');
+  const [serchroomId, setserchRoomId] = useState('');
   const [aroom, setARoomId] = useState<string[]>([]);
   const [message, setaComment] = useState('');
   const [myId, setmyId] = useState<string>('');
@@ -61,6 +62,9 @@ const Home = () => {
   const inputRoomId = (e: ChangeEvent<HTMLInputElement>) => {
     setRoomId(e.target.value);
   };
+  const serchRoomId = (e: ChangeEvent<HTMLInputElement>) => {
+    setserchRoomId(e.target.value);
+  };
   const inputComment = (e: ChangeEvent<HTMLInputElement>) => {
     setaComment(e.target.value);
   };
@@ -70,8 +74,17 @@ const Home = () => {
     if (!user) return;
     const userId = user.id;
     const a = await apiClient.user.post({ body: { roomId, userId } });
+    const b = await apiClient.roomcreate.post({ body: { roomId, userId } });
     console.log(roomId);
     setARoomId(a.body.roomId);
+  };
+  const serchId = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    const userId = user.id;
+    console.log(serchroomId);
+    const a = await apiClient.serchroom.post({ body: { serchroomId, userId } });
+    console.log(roomId);
   };
 
   const inputcomment = async (e: FormEvent) => {
@@ -167,9 +180,14 @@ const Home = () => {
         <input value={roomId} type="text" onChange={inputRoomId} />
         <input type="submit" value="  create  " />
       </form>
-      <div className="video-container">
+      <form style={{ textAlign: 'left', marginTop: '50px' }} onSubmit={serchId}>
+        <input value={serchroomId} type="text" onChange={serchRoomId} />
+        <input type="submit" value=" serch  " />
+      </form>
+
+      {/* <div className="video-container">
         <video ref={videoRef} style={{ width: '100%', maxWidth: '100%' }} autoPlay playsInline />
-      </div>
+      </div> */}
     </>
   );
 };

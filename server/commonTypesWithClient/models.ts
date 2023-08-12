@@ -18,6 +18,7 @@ export type RoomModel = {
   roomid: string;
   comment: string[];
   created: number;
+  user: string[];
 };
 
 export type User1Model = {
