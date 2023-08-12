@@ -8,7 +8,6 @@ import { BasicHeader } from 'src/pages/@components/BasicHeader/BasicHeader';
 import { apiClient } from 'src/utils/apiClient';
 import { userAtom } from '../atoms/user';
 import styles from './index.module.css';
-
 const Home = () => {
   const [user] = useAtom(userAtom);
   const [roomId, setRoomId] = useState('');

@@ -29,6 +29,7 @@
   "dependencies": {
     "@aspida/axios": "^1.11.0",
     "@types/socket.io": "^3.0.2",
+    "@types/socket.io-client": "^3.0.0",
     "axios": "^0.27.2",
     "firebase": "^9.15.0",
     "jotai": "^1.13.0",
@@ -37,7 +38,8 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.14.2",
     "simple-peer": "^9.11.1",
-    "socket.io": "^4.7.2"
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2"
   },
   "devDependencies": {
     "@stylelint/postcss-css-in-js": "^0.37.2",
