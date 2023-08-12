@@ -53,10 +53,8 @@
   left: 700px;
 }
 .roomContainer {
-  /* 必要なスタイルを追加 */
 }
 .commentContainer {
-  /* 必要なスタイルを追加 */
 }
 
 .username {
@@ -65,7 +63,6 @@
 }
 
 .messageContent {
-  /* ここにメッセージのコンテンツに関するスタイルを定義 */
   position: relative;
 }
 
@@ -77,4 +74,47 @@
 .crateButton{
   margin-left: 150px;
   margin-top: 10px;
+}
+.btn_25 {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	overflow: hidden;
+	text-decoration: none;
+	height: 4rem;
+	width: 120px;
+	margin: auto;
+	padding: 0 4rem;
+	border-radius: 100vw;
+	background: #6a6e78;
+	background-size: 400%;
+	color: #fff;
+}
+.btn_25:hover::before {
+  transform: scaleX(1);
+}
+.btn_25:hover {
+	color: #fff;
+}
+.btn_25 span {
+  position: relative;
+  z-index: 1;
+}
+.btn_25::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  width: 100%;
+  height: inherit;
+  border-radius: inherit;
+  background: linear-gradient(
+    82.3deg,
+    rgba(39, 172, 217, 1) 10.8%,
+    rgba(18, 83, 229, 1) 94.3%
+  );
+  transition: all 0.475s;
 }

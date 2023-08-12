@@ -144,7 +144,6 @@ const Home = () => {
     setShowForm(!showForm);
   };
 
-
   useEffect(() => {
     createUserdata();
     Roomlist();
@@ -184,8 +183,9 @@ const Home = () => {
           .map((message) => (
             <div
               key={message.id2}
-              className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                }`}
+              className={`${styles.commentBubble} ${
+                message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+              }`}
             >
               <div className={styles.username}>
                 {message.sender_Id === myId ? null : message.username}
@@ -205,7 +205,13 @@ const Home = () => {
       </div>
 
       <div>
-        <button className={styles.toggleButton} onClick={handleToggleForm}>Toggle Form</button>
+        <button
+          className={styles.btn_25}
+          onClick={handleToggleForm}
+          style={{ marginLeft: '100px', marginTop: '500px' }}
+        >
+          Toggle Form
+        </button>
         <div className={styles.crateButton}>
           {showForm && (
             <div>
@@ -215,11 +221,15 @@ const Home = () => {
               </form>
 
               <form style={{ textAlign: 'left', marginTop: '50px' }} onSubmit={serchId}>
-                <input value={serchroomId} type="text" onChange={serchRoomId} placeholder="Search Room ID" />
+                <input
+                  value={serchroomId}
+                  type="text"
+                  onChange={serchRoomId}
+                  placeholder="Search Room ID"
+                />
                 <input type="submit" value="Search" />
               </form>
             </div>
-
           )}
         </div>
       </div>
