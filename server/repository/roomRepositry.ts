@@ -25,10 +25,10 @@ export const roomsRepository = {
       },
     });
   },
-  findRoom: async (roomId: string | undefined): Promise<RoomModel[] | undefined> => {
+  findRoom: async (roomId3: string | undefined): Promise<RoomModel[] | undefined> => {
     const roomlist = await prismaClient.room.findMany({
       where: {
-        roomId,
+        roomId:roomId3,
       },
       orderBy: { roomId: 'desc' },
     });

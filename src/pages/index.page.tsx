@@ -12,7 +12,6 @@ const Home = () => {
   const [user] = useAtom(userAtom);
   const [roomId, setRoomId] = useState('');
   const [roomId2, setRoomId2] = useState('');
-  const [serchroomId, setserchRoomId] = useState('');
   const [aroom, setARoomId] = useState<string[]>([]);
   const [message, setaComment] = useState('');
   const [myId, setmyId] = useState<string>('');
@@ -55,6 +54,7 @@ const Home = () => {
   const Roomlist = useCallback(async () => {
     const roomlist = await apiClient.roomlist.$post();
     console.log(roomlist);
+    setARoomId(roomlist.roomId)
   }, []);
 
   const createUserdata = useCallback(async () => {
@@ -77,7 +77,7 @@ const Home = () => {
     setRoomId(e.target.value);
   };
   const serchRoomId = (e: ChangeEvent<HTMLInputElement>) => {
-    setserchRoomId(e.target.value);
+    setSearchRoomId(e.target.value);
   };
   const inputComment = (e: ChangeEvent<HTMLInputElement>) => {
     setaComment(e.target.value);
@@ -96,13 +96,15 @@ const Home = () => {
     e.preventDefault();
     if (!user) return;
     const userId = user.id;
-    console.log(serchroomId);
-    const a = await apiClient.serchroom.post({ body: { serchroomId, userId } });
+    console.log(searchRoomId);
+    const a = await apiClient.serchroom.post({ body: { searchRoomId, userId } });
+    await apiClient.userroomcreate.post({ body: { searchRoomId, userId } });
     console.log(a.body.user);
     // const userasse = a.user
     console.log(roomId);
     setRoomId2(a.body.roomid);
     setuserasse(a.body.user);
+    await Roomlist();
   };
 
   const inputcomment = async (e: FormEvent) => {
@@ -119,10 +121,19 @@ const Home = () => {
     await LookMessage();
   };
 
-  const LookRoom = async (roomId: string) => {
-    setRoomId(roomId);
-    const room = await apiClient.room.post({ body: { roomId } });
-    await LookMessage();
+  const LookRoom = async (roomId3: string) => {
+    setRoomId(roomId3);
+    await apiClient.room.post({ body: { roomId3 } });
+    console.log(roomId3)
+    console.log(roomId)
+    const messages = await apiClient.message_get2.$post({ body: { roomId3 } });
+    console.log(messages);
+    if (messages === undefined) {
+      console.log('messagesがありません');
+    } else {
+      setMessages(messages);
+      setmyId(user?.id || '');
+    }
   };
 
   const LookMessage = async () => {
@@ -183,17 +194,16 @@ const Home = () => {
           .map((message) => (
             <div
               key={message.id2}
-              className={`${styles.commentBubble} ${
-                message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-              }`}
+              className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                }`}
             >
               <div className={styles.username}>
                 {message.sender_Id === myId ? null : message.username}
               </div>
-              <div className={styles.messageContent}>{message.contentmess}</div>
               <div className={styles.username}>
                 {message.sender_Id === myId ? message.username : null}
               </div>
+              <div className={styles.messageContent}>{message.contentmess}</div>
             </div>
           ))}
       </div>
@@ -222,7 +232,7 @@ const Home = () => {
 
               <form style={{ textAlign: 'left', marginTop: '50px' }} onSubmit={serchId}>
                 <input
-                  value={serchroomId}
+                  value={searchRoomId}
                   type="text"
                   onChange={serchRoomId}
                   placeholder="Search Room ID"

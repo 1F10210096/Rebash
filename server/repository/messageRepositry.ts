@@ -26,6 +26,7 @@ export const messageRepository = {
     });
   },
   findMessage: async (roomId: string | undefined): Promise<MessageModel[] | undefined> => {
+    console.log(roomId);
     const roomlist = await prismaClient.message.findMany({
       where: {
         roomId,
