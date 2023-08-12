@@ -68,3 +68,13 @@
   /* ここにメッセージのコンテンツに関するスタイルを定義 */
   position: relative;
 }
+
+.toggleButton{
+  margin-left: 100px;
+  margin-top: 500px;
+}
+
+.crateButton{
+  margin-left: 150px;
+  margin-top: 10px;
+}
