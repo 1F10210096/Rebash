@@ -27,6 +27,7 @@ const Home = () => {
   const [showForm, setShowForm] = useState(false);
   const [searchRoomId, setSearchRoomId] = useState('');
   const [coment, setComent] = useState('');
+  const [infoname, setInfoName] = useState('');
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editedMessage, setEditedMessage] = useState('');
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
@@ -169,6 +170,7 @@ const Home = () => {
       console.log('ry');
       const infomessage = await apiClient.infomessage.$post({ body: { messageId } });
       console.log(infomessage);
+      setInfoName(infomessage.sender_Id)
       await LookMessage();
     } catch (error) {
       await LookMessage();
