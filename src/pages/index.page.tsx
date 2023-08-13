@@ -26,9 +26,11 @@ const Home = () => {
   const mediaStreamRef = useRef<MediaStream | undefined>();
   const [showForm, setShowForm] = useState(false);
   const [searchRoomId, setSearchRoomId] = useState('');
+  const [coment, setComent] = useState('');
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editedMessage, setEditedMessage] = useState('');
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
+  const [editMenuVisible, setEditMenuVisible] = useState(false);
   const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
 
@@ -130,8 +132,16 @@ const Home = () => {
   const LookRoom = async (roomId3: string) => {
     setRoomId(roomId3);
     await apiClient.room.post({ body: { roomId3 } });
-    console.log(roomId3);
-    console.log(roomId);
+    if (user === null) {
+      console.log('error');
+    } else {
+      const userId = user.id;
+      console.log(userId);
+      const a = await apiClient.roomuser.post({ body: { roomId3 } });
+      console.log(a.body.user);
+      setuserasse(a.body.user);
+    }
+
     const messages = await apiClient.message_get2.$post({ body: { roomId3 } });
     console.log(messages);
     if (messages === undefined) {
@@ -153,35 +163,43 @@ const Home = () => {
     }
   };
 
-  const handleDelete = async (messageId: string) => {
-    // 削除操作を実行するロジックをここに追加
-    // 例: メッセージの削除APIを呼び出すなどの処理
+  const handleInfo = async (messageId: string) => {
+    console.log(messageId);
     try {
-      // await apiClient.deleteMessage.$post({ body: { messageId } });
+      console.log('ry');
+      const infomessage = await apiClient.infomessage.$post({ body: { messageId } });
+      console.log(infomessage);
       await LookMessage();
     } catch (error) {
-      console.error('削除エラー:', error);
+      await LookMessage();
     }
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleDelete = async (messageId: string) => {
+    console.log(messageId);
+    try {
+      await apiClient.deleteMessage.$post({ body: { messageId } });
+      await LookMessage();
+    } catch (error) {
+      await LookMessage();
+    }
   };
 
   const handleToggleForm = () => {
     setShowForm(!showForm);
   };
 
-  const handleEdit =
-    (messageId: string, contentmess: string) =>
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      e.preventDefault();
-      setEditingMessageId(messageId);
-      setEditedMessage(contentmess);
-    };
+  const handleEdit = (messageId: string, contentmess: string) => {
+    setEditingMessageId(messageId);
+    setEditedMessage(contentmess);
+    setContextMenuVisible(false);
+    setEditMenuVisible(true);
+    setComent(contentmess);
+  };
   const handleSaveEdit = async () => {
     console.log(editingMessageId);
     console.log(editedMessage);
+    setEditMenuVisible(false);
     if (editingMessageId === null) {
       console.log('id2なし');
     }
@@ -196,13 +214,12 @@ const Home = () => {
     (messageId: string, contentmess: string) =>
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       e.preventDefault();
-      // ここでコンテキストメニューを表示する準備をする
       setContextMenuVisible(true);
       setSelectedMessageId(messageId);
       setContextMenuPosition({ x: e.clientX, y: e.clientY });
-      // 編集モードの設定
       setEditingMessageId(messageId);
       setEditedMessage(contentmess);
+      setComent(contentmess);
     };
 
   useEffect(() => {
@@ -247,43 +264,46 @@ const Home = () => {
               className={`${styles.commentBubble} ${
                 message.sender_Id === myId ? styles.myMessage : styles.otherMessage
               }`}
-              onContextMenu={(e) => handleRightClick(message.id2, message.contentmess)(e)}
+              onContextMenu={handleRightClick(message.id2, message.contentmess)}
             >
-              {/* 編集中の場合はテキストエリアを表示 */}
-              {editingMessageId === message.id2 ? (
-                <div>
-                  <textarea
-                    value={editedMessage}
-                    onChange={(e) => setEditedMessage(e.target.value)}
-                  />
-                  <button onClick={handleSaveEdit}>Save</button>
+              <>
+                <div className={styles.username}>
+                  {/* 送信者が自分でない場合にのみユーザー名を表示 */}
+                  {message.sender_Id === myId ? null : message.username}
                 </div>
-              ) : (
-                <>
-                  <div className={styles.username}>
-                    {/* 送信者が自分でない場合にのみユーザー名を表示 */}
-                    {message.sender_Id === myId ? null : message.username}
-                  </div>
-                  <div className={styles.username}>
-                    {/* 送信者が自分の場合にのみユーザー名を表示 */}
-                    {message.sender_Id === myId ? message.username : null}
-                  </div>
-                  <div className={styles.messageContent}>{message.contentmess}</div>
-                </>
-              )}
-              {/* 編集ボタンの表示 */}
-              {editingMessageId !== message.id2 && (
-                <button onClick={() => handleEdit(message.id2, message.contentmess)}>Edit</button>
-              )}
+                <div className={styles.username}>
+                  {/* 送信者が自分の場合にのみユーザー名を表示 */}
+                  {message.sender_Id === myId ? message.username : null}
+                </div>
+              </>
+
               {/* コンテキストメニュー */}
               {contextMenuVisible && selectedMessageId === message.id2 && (
                 <div
                   className={styles.contextMenu}
                   style={{ top: contextMenuPosition.y, left: contextMenuPosition.x }}
                 >
+                  {/* Edit ボタン */}
                   <div onClick={() => handleEdit(message.id2, message.contentmess)}>Edit</div>
+
                   <div onClick={() => handleDelete(message.id2)}>Delete</div>
+
+                  <div onClick={() => handleInfo(message.id2)}>info</div>
                 </div>
+              )}
+              {/* 編集フォーム */}
+              {editMenuVisible === true && editingMessageId === message.id2 ? (
+                <div className={styles.editForm}>
+                  <input
+                    type="text"
+                    value={coment}
+                    onChange={(e) => handleEdit(message.id2, e.target.value)}
+                  />
+                  <button onClick={() => handleSaveEdit()}>Save</button>
+                  <button onClick={() => setEditingMessageId(null)}>Cancel</button>
+                </div>
+              ) : (
+                <div>{message.contentmess}</div>
               )}
             </div>
           ))}
@@ -299,7 +319,7 @@ const Home = () => {
         <button
           className={styles.btn_25}
           onClick={handleToggleForm}
-          style={{ marginLeft: '100px', marginTop: '500px' }}
+          style={{ marginLeft: '100px' }}
         >
           Toggle Form
         </button>

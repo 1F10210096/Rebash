@@ -35,3 +35,12 @@ export type MessageModel = {
   sent_at: number;
   username: string;
 };
+
+export type InfoMessageModel = {
+  id2: string;
+  room: string;
+  sender_Id: string;
+  contentmess: string;
+  sent_at: number;
+  username: string;
+};

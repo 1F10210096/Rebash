@@ -35,3 +35,12 @@ model message {
   sent_at   DateTime
   username  String
 }
+
+model infomessage {
+  id2       String @id
+  roomId    String
+  sender_id String
+  content   String
+  sent_at   Int
+  username  String
+}

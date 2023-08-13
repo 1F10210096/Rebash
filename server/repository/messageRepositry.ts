@@ -1,4 +1,4 @@
-import type { MessageModel } from '$/commonTypesWithClient/models';
+import type { InfoMessageModel, MessageModel } from '$/commonTypesWithClient/models';
 import { prismaClient } from '$/service/prismaClient';
 import type { message } from '@prisma/client';
 
@@ -25,6 +25,27 @@ export const messageRepository = {
       },
     });
   },
+  infosave: async (infomessage: InfoMessageModel) => {
+    await prismaClient.infomessage.upsert({
+      where: { id2: infomessage.id2 },
+      update: {
+        id2: infomessage.id2,
+        roomId: infomessage.room,
+        sender_id: infomessage.sender_Id,
+        content: infomessage.contentmess,
+        sent_at: infomessage.sent_at,
+        username: infomessage.username,
+      },
+      create: {
+        id2: infomessage.id2,
+        roomId: infomessage.room,
+        sender_id: infomessage.sender_Id,
+        content: infomessage.contentmess,
+        sent_at: infomessage.sent_at,
+        username: infomessage.username,
+      },
+    });
+  },
   findMessage: async (roomId: string | undefined): Promise<MessageModel[] | undefined> => {
     console.log(roomId);
     const roomlist = await prismaClient.message.findMany({
@@ -37,7 +58,17 @@ export const messageRepository = {
   },
   editMessage: async (editingMessageId: string | null): Promise<MessageModel | undefined> => {
     const messagelist = await prismaClient.message.findMany();
-    const room = messagelist.find((message) => message.id2 === editingMessageId);
-    return room && toMessageModel(room);
+    const message = messagelist.find((message) => message.id2 === editingMessageId);
+    return message && toMessageModel(message);
+  },
+  delete: async (messageId: string | undefined): Promise<MessageModel | undefined> => {
+    try {
+      const deletedMessage = await prismaClient.message.delete({ where: { id2: messageId } });
+      console.log('メッセージが削除されました:', deletedMessage);
+      return undefined;
+    } catch (error) {
+      console.error('Error deleting message:', error);
+      return undefined;
+    }
   },
 };

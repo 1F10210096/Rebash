@@ -27,4 +27,12 @@ export const roomUsecase = {
     console.log(room);
     return room;
   },
+  serchuser: async (roomId3: string): Promise<RoomModel> => {
+    const room = await roomsRepository.serchRoom(roomId3);
+    console.log(room);
+    assert(room, 'userなし');
+    await roomsRepository.save(room);
+    console.log(room);
+    return room;
+  },
 };
