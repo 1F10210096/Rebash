@@ -37,7 +37,17 @@ export const messageRepository = {
   },
   editMessage: async (editingMessageId: string | null): Promise<MessageModel | undefined> => {
     const messagelist = await prismaClient.message.findMany();
-    const room = messagelist.find((message) => message.id2 === editingMessageId);
-    return room && toMessageModel(room);
+    const message = messagelist.find((message) => message.id2 === editingMessageId);
+    return message && toMessageModel(message);
+  },
+  delete: async (messageId: string | undefined): Promise<MessageModel | undefined> => {
+    try {
+      const deletedMessage = await prismaClient.message.delete({ where: { id2: messageId } });
+      console.log('メッセージが削除されました:', deletedMessage);
+      return undefined;
+    } catch (error) {
+      console.error('Error deleting message:', error);
+      return undefined;
+    }
   },
 };

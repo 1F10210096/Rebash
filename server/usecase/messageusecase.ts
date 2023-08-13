@@ -34,4 +34,9 @@ export const messageUsecase = {
     console.log(message);
     return message;
   },
+  delete: async (messageId: string): Promise<MessageModel> => {
+    const message = await messageRepository.delete(messageId);
+    assert(message, 'コメントが見つかりません');
+    return message;
+  },
 };

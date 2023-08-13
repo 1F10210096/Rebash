@@ -156,14 +156,12 @@ const Home = () => {
   };
 
   const handleDelete = async (messageId: string) => {
-    // 削除操作を実行するロジックをここに追加
-    // 例: メッセージの削除APIを呼び出すなどの処理
-    console.log("b")
+    console.log(messageId)
     try {
-      // await apiClient.deleteMessage.$post({ body: { messageId } });
+      await apiClient.deleteMessage.$post({ body: { messageId } });
       await LookMessage();
     } catch (error) {
-      console.error('削除エラー:', error);
+      await LookMessage();
     }
   };
 
