@@ -132,8 +132,16 @@ const Home = () => {
   const LookRoom = async (roomId3: string) => {
     setRoomId(roomId3);
     await apiClient.room.post({ body: { roomId3 } });
-    console.log(roomId3);
-    console.log(roomId);
+    if (user === null) {
+      console.log("error")
+    } else {
+      const userId = user.id;
+      console.log(userId)
+      const a = await apiClient.roomuser.post({ body: { roomId3 } });
+      console.log(a.body.user);
+      setuserasse(a.body.user);
+    }
+
     const messages = await apiClient.message_get2.$post({ body: { roomId3 } });
     console.log(messages);
     if (messages === undefined) {
@@ -198,11 +206,9 @@ const Home = () => {
     (messageId: string, contentmess: string) =>
       (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         e.preventDefault();
-        // ここでコンテキストメニューを表示する準備をする
         setContextMenuVisible(true);
         setSelectedMessageId(messageId);
         setContextMenuPosition({ x: e.clientX, y: e.clientY });
-        // 編集モードの設定
         setEditingMessageId(messageId);
         setEditedMessage(contentmess);
         setComent(contentmess)
@@ -304,7 +310,7 @@ const Home = () => {
         <button
           className={styles.btn_25}
           onClick={handleToggleForm}
-          style={{ marginLeft: '100px', marginTop: '500px' }}
+          style={{ marginLeft: '100px' }}
         >
           Toggle Form
         </button>
