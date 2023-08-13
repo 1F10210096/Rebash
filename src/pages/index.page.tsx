@@ -170,7 +170,7 @@ const Home = () => {
       console.log('ry');
       const infomessage = await apiClient.infomessage.$post({ body: { messageId } });
       console.log(infomessage);
-      setInfoName(infomessage.sender_Id)
+      setInfoName(infomessage.sender_Id);
       await LookMessage();
     } catch (error) {
       await LookMessage();
