@@ -1,5 +1,5 @@
 import type { UserId } from '$/commonTypesWithClient/branded';
-import type { RoomModel } from '$/commonTypesWithClient/models';
+import type { User1Model } from '$/commonTypesWithClient/models';
 
 export type Methods = {
   get: {
@@ -7,6 +7,6 @@ export type Methods = {
   };
   post: {
     reqBody: { searchRoomId: string; userId: UserId };
-    resBody: RoomModel;
+    resBody: User1Model;
   };
 };

@@ -1,9 +1,9 @@
-import { roomUsecase } from '$/usecase/roomusecase';
+import { messageUsecase } from '$/usecase/messageusecase';
 import { defineController } from './$relay';
 
 export default defineController(() => ({
   post: async ({ body }) => ({
     status: 201,
-    body: await roomUsecase.room(body.roomId3),
+    body: await messageUsecase.edit(body.editingMessageId, body.editedMessage),
   }),
 }));

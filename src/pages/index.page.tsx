@@ -12,7 +12,6 @@ const Home = () => {
   const [user] = useAtom(userAtom);
   const [roomId, setRoomId] = useState('');
   const [roomId2, setRoomId2] = useState('');
-  const [serchroomId, setserchRoomId] = useState('');
   const [aroom, setARoomId] = useState<string[]>([]);
   const [message, setaComment] = useState('');
   const [myId, setmyId] = useState<string>('');
@@ -27,6 +26,12 @@ const Home = () => {
   const mediaStreamRef = useRef<MediaStream | undefined>();
   const [showForm, setShowForm] = useState(false);
   const [searchRoomId, setSearchRoomId] = useState('');
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [editedMessage, setEditedMessage] = useState('');
+  const [contextMenuVisible, setContextMenuVisible] = useState(false);
+  const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
+  const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+
   //a
   useEffect(() => {
     const initializeVideo = async () => {
@@ -55,6 +60,7 @@ const Home = () => {
   const Roomlist = useCallback(async () => {
     const roomlist = await apiClient.roomlist.$post();
     console.log(roomlist);
+    setARoomId(roomlist.roomId);
   }, []);
 
   const createUserdata = useCallback(async () => {
@@ -77,7 +83,7 @@ const Home = () => {
     setRoomId(e.target.value);
   };
   const serchRoomId = (e: ChangeEvent<HTMLInputElement>) => {
-    setserchRoomId(e.target.value);
+    setSearchRoomId(e.target.value);
   };
   const inputComment = (e: ChangeEvent<HTMLInputElement>) => {
     setaComment(e.target.value);
@@ -96,13 +102,15 @@ const Home = () => {
     e.preventDefault();
     if (!user) return;
     const userId = user.id;
-    console.log(serchroomId);
-    const a = await apiClient.serchroom.post({ body: { serchroomId, userId } });
+    console.log(searchRoomId);
+    const a = await apiClient.serchroom.post({ body: { searchRoomId, userId } });
+    await apiClient.userroomcreate.post({ body: { searchRoomId, userId } });
     console.log(a.body.user);
     // const userasse = a.user
     console.log(roomId);
     setRoomId2(a.body.roomid);
     setuserasse(a.body.user);
+    await Roomlist();
   };
 
   const inputcomment = async (e: FormEvent) => {
@@ -119,10 +127,19 @@ const Home = () => {
     await LookMessage();
   };
 
-  const LookRoom = async (roomId: string) => {
-    setRoomId(roomId);
-    const room = await apiClient.room.post({ body: { roomId } });
-    await LookMessage();
+  const LookRoom = async (roomId3: string) => {
+    setRoomId(roomId3);
+    await apiClient.room.post({ body: { roomId3 } });
+    console.log(roomId3);
+    console.log(roomId);
+    const messages = await apiClient.message_get2.$post({ body: { roomId3 } });
+    console.log(messages);
+    if (messages === undefined) {
+      console.log('messagesがありません');
+    } else {
+      setMessages(messages);
+      setmyId(user?.id || '');
+    }
   };
 
   const LookMessage = async () => {
@@ -136,6 +153,17 @@ const Home = () => {
     }
   };
 
+  const handleDelete = async (messageId: string) => {
+    // 削除操作を実行するロジックをここに追加
+    // 例: メッセージの削除APIを呼び出すなどの処理
+    try {
+      // await apiClient.deleteMessage.$post({ body: { messageId } });
+      await LookMessage();
+    } catch (error) {
+      console.error('削除エラー:', error);
+    }
+  };
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
   };
@@ -143,6 +171,39 @@ const Home = () => {
   const handleToggleForm = () => {
     setShowForm(!showForm);
   };
+
+  const handleEdit =
+    (messageId: string, contentmess: string) =>
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.preventDefault();
+      setEditingMessageId(messageId);
+      setEditedMessage(contentmess);
+    };
+  const handleSaveEdit = async () => {
+    console.log(editingMessageId);
+    console.log(editedMessage);
+    if (editingMessageId === null) {
+      console.log('id2なし');
+    }
+    {
+      await apiClient.edit.$post({ body: { editingMessageId, editedMessage } });
+      await LookMessage();
+      setEditingMessageId(null);
+      setEditedMessage('');
+    }
+  };
+  const handleRightClick =
+    (messageId: string, contentmess: string) =>
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.preventDefault();
+      // ここでコンテキストメニューを表示する準備をする
+      setContextMenuVisible(true);
+      setSelectedMessageId(messageId);
+      setContextMenuPosition({ x: e.clientX, y: e.clientY });
+      // 編集モードの設定
+      setEditingMessageId(messageId);
+      setEditedMessage(contentmess);
+    };
 
   useEffect(() => {
     createUserdata();
@@ -177,23 +238,53 @@ const Home = () => {
         </div>
       </div>
       <div className={styles.comment}>
-        {/* メッセージを時間順にソート */}
         {messages
           .sort((a, b) => a.sent_at - b.sent_at)
+          // eslint-disable-next-line complexity
           .map((message) => (
             <div
               key={message.id2}
               className={`${styles.commentBubble} ${
                 message.sender_Id === myId ? styles.myMessage : styles.otherMessage
               }`}
+              onContextMenu={(e) => handleRightClick(message.id2, message.contentmess)(e)}
             >
-              <div className={styles.username}>
-                {message.sender_Id === myId ? null : message.username}
-              </div>
-              <div className={styles.messageContent}>{message.contentmess}</div>
-              <div className={styles.username}>
-                {message.sender_Id === myId ? message.username : null}
-              </div>
+              {/* 編集中の場合はテキストエリアを表示 */}
+              {editingMessageId === message.id2 ? (
+                <div>
+                  <textarea
+                    value={editedMessage}
+                    onChange={(e) => setEditedMessage(e.target.value)}
+                  />
+                  <button onClick={handleSaveEdit}>Save</button>
+                </div>
+              ) : (
+                <>
+                  <div className={styles.username}>
+                    {/* 送信者が自分でない場合にのみユーザー名を表示 */}
+                    {message.sender_Id === myId ? null : message.username}
+                  </div>
+                  <div className={styles.username}>
+                    {/* 送信者が自分の場合にのみユーザー名を表示 */}
+                    {message.sender_Id === myId ? message.username : null}
+                  </div>
+                  <div className={styles.messageContent}>{message.contentmess}</div>
+                </>
+              )}
+              {/* 編集ボタンの表示 */}
+              {editingMessageId !== message.id2 && (
+                <button onClick={() => handleEdit(message.id2, message.contentmess)}>Edit</button>
+              )}
+              {/* コンテキストメニュー */}
+              {contextMenuVisible && selectedMessageId === message.id2 && (
+                <div
+                  className={styles.contextMenu}
+                  style={{ top: contextMenuPosition.y, left: contextMenuPosition.x }}
+                >
+                  <div onClick={() => handleEdit(message.id2, message.contentmess)}>Edit</div>
+                  <div onClick={() => handleDelete(message.id2)}>Delete</div>
+                </div>
+              )}
             </div>
           ))}
       </div>
@@ -222,7 +313,7 @@ const Home = () => {
 
               <form style={{ textAlign: 'left', marginTop: '50px' }} onSubmit={serchId}>
                 <input
-                  value={serchroomId}
+                  value={searchRoomId}
                   type="text"
                   onChange={serchRoomId}
                   placeholder="Search Room ID"

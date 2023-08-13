@@ -27,7 +27,7 @@
 }
 .comment {
   margin-left: 600px;
-  margin-top: -450px;
+  margin-top:-10px;
 }
 
 .form {
@@ -117,4 +117,10 @@
     rgba(18, 83, 229, 1) 94.3%
   );
   transition: all 0.475s;
+}
+
+.contextMenu {
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 8px;
 }

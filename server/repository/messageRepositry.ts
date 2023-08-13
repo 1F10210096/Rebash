@@ -14,7 +14,7 @@ export const messageRepository = {
   save: async (message: MessageModel) => {
     await prismaClient.message.upsert({
       where: { id2: message.id2 },
-      update: {},
+      update: { content: message.contentmess },
       create: {
         id2: message.id2,
         roomId: message.room,
@@ -26,6 +26,7 @@ export const messageRepository = {
     });
   },
   findMessage: async (roomId: string | undefined): Promise<MessageModel[] | undefined> => {
+    console.log(roomId);
     const roomlist = await prismaClient.message.findMany({
       where: {
         roomId,
@@ -33,5 +34,10 @@ export const messageRepository = {
       orderBy: { sent_at: 'desc' },
     });
     return roomlist.map(toMessageModel);
+  },
+  editMessage: async (editingMessageId: string | null): Promise<MessageModel | undefined> => {
+    const messagelist = await prismaClient.message.findMany();
+    const room = messagelist.find((message) => message.id2 === editingMessageId);
+    return room && toMessageModel(room);
   },
 };

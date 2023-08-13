@@ -13,14 +13,14 @@ export const roomUsecase = {
     await roomsRepository.save(newRoom);
     return newRoom;
   },
-  room: async (roomId: string): Promise<RoomModel[]> => {
-    const room = await roomsRepository.findRoom(roomId);
+  room: async (roomId3: string): Promise<RoomModel[]> => {
+    const room = await roomsRepository.findRoom(roomId3);
     assert(room, 'userなし');
     await Promise.all(room.map(roomsRepository.save)); // すべてのコメントを保存
     return room;
   },
-  serch: async (serchroomId: string, userId: UserId): Promise<RoomModel> => {
-    const room = await roomsRepository.serchRoom(serchroomId);
+  serch: async (searchRoomId: string, userId: UserId): Promise<RoomModel> => {
+    const room = await roomsRepository.serchRoom(searchRoomId);
     assert(room, 'userなし');
     room.user.push(userId);
     await roomsRepository.save(room);
