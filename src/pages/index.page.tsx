@@ -133,10 +133,10 @@ const Home = () => {
     setRoomId(roomId3);
     await apiClient.room.post({ body: { roomId3 } });
     if (user === null) {
-      console.log("error")
+      console.log('error');
     } else {
       const userId = user.id;
-      console.log(userId)
+      console.log(userId);
       const a = await apiClient.roomuser.post({ body: { roomId3 } });
       console.log(a.body.user);
       setuserasse(a.body.user);
@@ -163,18 +163,26 @@ const Home = () => {
     }
   };
 
-  const handleDelete = async (messageId: string) => {
-    console.log(messageId)
+  const handleInfo = async (messageId: string) => {
+    console.log(messageId);
     try {
-      await apiClient.deleteMessage.$post({ body: { messageId } });
+      console.log('ry');
+      const infomessage = await apiClient.infomessage.$post({ body: { messageId } });
+      console.log(infomessage);
       await LookMessage();
     } catch (error) {
       await LookMessage();
     }
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleDelete = async (messageId: string) => {
+    console.log(messageId);
+    try {
+      await apiClient.deleteMessage.$post({ body: { messageId } });
+      await LookMessage();
+    } catch (error) {
+      await LookMessage();
+    }
   };
 
   const handleToggleForm = () => {
@@ -185,13 +193,13 @@ const Home = () => {
     setEditingMessageId(messageId);
     setEditedMessage(contentmess);
     setContextMenuVisible(false);
-    setEditMenuVisible(true)
-    setComent(contentmess)
+    setEditMenuVisible(true);
+    setComent(contentmess);
   };
   const handleSaveEdit = async () => {
     console.log(editingMessageId);
     console.log(editedMessage);
-    setEditMenuVisible(false)
+    setEditMenuVisible(false);
     if (editingMessageId === null) {
       console.log('id2なし');
     }
@@ -204,16 +212,15 @@ const Home = () => {
   };
   const handleRightClick =
     (messageId: string, contentmess: string) =>
-      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        e.preventDefault();
-        setContextMenuVisible(true);
-        setSelectedMessageId(messageId);
-        setContextMenuPosition({ x: e.clientX, y: e.clientY });
-        setEditingMessageId(messageId);
-        setEditedMessage(contentmess);
-        setComent(contentmess)
-      };
-
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.preventDefault();
+      setContextMenuVisible(true);
+      setSelectedMessageId(messageId);
+      setContextMenuPosition({ x: e.clientX, y: e.clientY });
+      setEditingMessageId(messageId);
+      setEditedMessage(contentmess);
+      setComent(contentmess);
+    };
 
   useEffect(() => {
     createUserdata();
@@ -254,8 +261,9 @@ const Home = () => {
           .map((message) => (
             <div
               key={message.id2}
-              className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                }`}
+              className={`${styles.commentBubble} ${
+                message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+              }`}
               onContextMenu={handleRightClick(message.id2, message.contentmess)}
             >
               <>
@@ -267,7 +275,6 @@ const Home = () => {
                   {/* 送信者が自分の場合にのみユーザー名を表示 */}
                   {message.sender_Id === myId ? message.username : null}
                 </div>
-
               </>
 
               {/* コンテキストメニュー */}
@@ -280,6 +287,8 @@ const Home = () => {
                   <div onClick={() => handleEdit(message.id2, message.contentmess)}>Edit</div>
 
                   <div onClick={() => handleDelete(message.id2)}>Delete</div>
+
+                  <div onClick={() => handleInfo(message.id2)}>info</div>
                 </div>
               )}
               {/* 編集フォーム */}

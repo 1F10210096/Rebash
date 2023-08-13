@@ -1,4 +1,4 @@
-import type { MessageModel } from '$/commonTypesWithClient/models';
+import type { InfoMessageModel, MessageModel } from '$/commonTypesWithClient/models';
 import { prismaClient } from '$/service/prismaClient';
 import type { message } from '@prisma/client';
 
@@ -22,6 +22,27 @@ export const messageRepository = {
         content: message.contentmess,
         sent_at: new Date(message.sent_at),
         username: message.username,
+      },
+    });
+  },
+  infosave: async (infomessage: InfoMessageModel) => {
+    await prismaClient.infomessage.upsert({
+      where: { id2: infomessage.id2 },
+      update: {
+        id2: infomessage.id2,
+        roomId: infomessage.room,
+        sender_id: infomessage.sender_Id,
+        content: infomessage.contentmess,
+        sent_at: infomessage.sent_at,
+        username: infomessage.username,
+      },
+      create: {
+        id2: infomessage.id2,
+        roomId: infomessage.room,
+        sender_id: infomessage.sender_Id,
+        content: infomessage.contentmess,
+        sent_at: infomessage.sent_at,
+        username: infomessage.username,
       },
     });
   },
