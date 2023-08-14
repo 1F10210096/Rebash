@@ -1,23 +1,82 @@
-import React from "react";
-import { Icon, IconSize } from "@blueprintjs/core";
+/*
+ * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-const MyComponent = () => {
-  const handleAdd = () => {
-    // handleAdd の処理を実装
+import * as React from 'react';
+
+import { H5, Icon, Intent, Label, Slider } from '@blueprintjs/core';
+import type { ExampleProps } from '@blueprintjs/docs-theme';
+import { Example } from '@blueprintjs/docs-theme';
+import type { IconName } from '@blueprintjs/icons';
+import { IconSize } from '@blueprintjs/icons';
+
+import { IconSelect } from 'src/pages/common/iconSelect';
+import { IntentSelect } from './common/intentSelect';
+
+export interface IconExampleState {
+  icon: IconName;
+  iconSize: number;
+  intent: Intent;
+}
+
+export class IconExample extends React.PureComponent<ExampleProps, IconExampleState> {
+  public state: IconExampleState = {
+    icon: 'calendar',
+    iconSize: IconSize.STANDARD,
+    intent: Intent.NONE,
   };
 
-  const handleAddKeys = () => {
-    // handleAddKeys の処理を実装
+  private handleIntentChange = (intent: Intent) => this.setState({ intent });
+
+  private handleIconSizeChange = (iconSize: number) => this.setState({ iconSize });
+
+  private handleIconNameChange = (icon: IconName | undefined) => {
+    if (icon !== undefined) {
+      this.setState({ icon });
+    }
   };
 
-  return (
-    <div>
-      <Icon icon="lock" size={500}/>
-      <Icon icon="git-pull" size={500} />
-      <Icon icon="graph" size={IconSize.LARGE} intent="primary" />
-      <Icon icon="add" onClick={handleAdd} onKeyDown={handleAddKeys} />
-    </div>
-  );
-};
+  private iconSizeLabelId = 'icon-size-label';
 
-export default MyComponent;
+  public render() {
+    const { icon, iconSize, intent } = this.state;
+
+    const options = (
+      <>
+        <H5>Props</H5>
+        <IconSelect iconName={icon} onChange={this.handleIconNameChange} />
+        <IntentSelect intent={this.state.intent} onChange={this.handleIntentChange} />
+        <Label id={this.iconSizeLabelId}>Icon size</Label>
+        <Slider
+          labelStepSize={MAX_ICON_SIZE / 5}
+          min={0}
+          max={MAX_ICON_SIZE}
+          showTrackFill={false}
+          value={iconSize}
+          onChange={this.handleIconSizeChange}
+          handleHtmlProps={{ 'aria-labelledby': this.iconSizeLabelId }}
+        />
+      </>
+    );
+
+    return (
+      <Example options={options} {...this.props}>
+        <Icon icon={icon} size={iconSize} intent={intent} />
+      </Example>
+    );
+  }
+}
+export default IconExample;
+const MAX_ICON_SIZE = 100;
