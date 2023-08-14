@@ -1,5 +1,7 @@
 import type { MessageModel } from '$/commonTypesWithClient/models';
-import { Colors, Icon, Intent } from '@blueprintjs/core';
+import { AliwangwangOutlined, CommentOutlined, CustomerServiceOutlined } from '@ant-design/icons';
+import type { MenuProps } from 'antd';
+import { FloatButton, Layout } from 'antd';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import type { ChangeEvent, FormEvent } from 'react';
@@ -9,13 +11,6 @@ import { BasicHeader } from 'src/pages/@components/BasicHeader/BasicHeader';
 import { apiClient } from 'src/utils/apiClient';
 import { userAtom } from '../../atoms/user';
 import styles from './index.module.css';
-import { CommentOutlined, CustomerServiceOutlined } from '@ant-design/icons';
-import { FloatButton } from 'antd';
-import {
-  AliwangwangOutlined
-} from '@ant-design/icons';
-import type { MenuProps } from 'antd';
-import { Layout, Menu, theme } from 'antd';
 const { Header, Content, Footer, Sider } = Layout;
 const Home = () => {
   const [user] = useAtom(userAtom);
@@ -44,16 +39,12 @@ const Home = () => {
   const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
 
-  const items: MenuProps['items'] = [
-AliwangwangOutlined
-  ].map((icon, index) => ({
+  const items: MenuProps['items'] = [AliwangwangOutlined].map((icon, index) => ({
     key: String(index + 1),
     icon: React.createElement(icon),
     label: ` ${index + 1}`,
   }));
 
-
-  
   useEffect(() => {
     const initializeVideo = async () => {
       mediaStreamRef.current = await navigator.mediaDevices.getUserMedia({
@@ -226,21 +217,20 @@ AliwangwangOutlined
   };
   const handleRightClick =
     (messageId: string, contentmess: string) =>
-      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        e.preventDefault();
-        setContextMenuVisible(true);
-        setSelectedMessageId(messageId);
-        setContextMenuPosition({ x: e.clientX, y: e.clientY });
-        setEditingMessageId(messageId);
-        setEditedMessage(contentmess);
-        setComent(contentmess);
-      };
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.preventDefault();
+      setContextMenuVisible(true);
+      setSelectedMessageId(messageId);
+      setContextMenuPosition({ x: e.clientX, y: e.clientY });
+      setEditingMessageId(messageId);
+      setEditedMessage(contentmess);
+      setComent(contentmess);
+    };
 
   useEffect(() => {
     createUserdata();
     Roomlist();
   }, [Roomlist, createUserdata]);
-
 
   if (!user) return <Loading visible />;
 
@@ -276,8 +266,9 @@ AliwangwangOutlined
           .map((message) => (
             <div
               key={message.id2}
-              className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                }`}
+              className={`${styles.commentBubble} ${
+                message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+              }`}
               onContextMenu={handleRightClick(message.id2, message.contentmess)}
             >
               <>
