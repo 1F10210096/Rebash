@@ -35,7 +35,6 @@ const Home = () => {
   const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
 
-  //a
   useEffect(() => {
     const initializeVideo = async () => {
       mediaStreamRef.current = await navigator.mediaDevices.getUserMedia({
@@ -155,7 +154,6 @@ const Home = () => {
 
   const LookMessage = async () => {
     const messages = await apiClient.message_get.$post({ body: { roomId } });
-    console.log(messages);
     if (messages === undefined) {
       console.log('messagesがありません');
     } else {
@@ -165,12 +163,10 @@ const Home = () => {
   };
 
   const handleInfo = async (messageId: string) => {
-    console.log(messageId);
     try {
-      console.log('ry');
       const infomessage = await apiClient.infomessage.$post({ body: { messageId } });
-      console.log(infomessage);
       setInfoName(infomessage.sender_Id);
+      // console.log(infoname)
       await LookMessage();
     } catch (error) {
       await LookMessage();
@@ -178,7 +174,6 @@ const Home = () => {
   };
 
   const handleDelete = async (messageId: string) => {
-    console.log(messageId);
     try {
       await apiClient.deleteMessage.$post({ body: { messageId } });
       await LookMessage();
@@ -199,8 +194,6 @@ const Home = () => {
     setComent(contentmess);
   };
   const handleSaveEdit = async () => {
-    console.log(editingMessageId);
-    console.log(editedMessage);
     setEditMenuVisible(false);
     if (editingMessageId === null) {
       console.log('id2なし');

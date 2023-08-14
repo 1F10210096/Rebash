@@ -26,6 +26,7 @@ export const messageRepository = {
     });
   },
   infosave: async (infomessage: InfoMessageModel) => {
+    console.log('2w');
     await prismaClient.infomessage.upsert({
       where: { id2: infomessage.id2 },
       update: {
@@ -47,7 +48,7 @@ export const messageRepository = {
     });
   },
   findMessage: async (roomId: string | undefined): Promise<MessageModel[] | undefined> => {
-    console.log(roomId);
+    // console.log(roomId);
     const roomlist = await prismaClient.message.findMany({
       where: {
         roomId,
