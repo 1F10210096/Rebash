@@ -34,7 +34,7 @@ export const messageUsecase = {
       sent_at: sent_at_time,
       username: name,
     };
-    await messageRepository.save(newinfoMessage);
+    await messageRepository.infosave(newinfoMessage);
     return newinfoMessage;
   },
   room: async (roomId: string): Promise<MessageModel[]> => {
@@ -57,6 +57,7 @@ export const messageUsecase = {
   },
   infoMessage: async (messageId: string): Promise<InfoMessageModel> => {
     const message = await messageRepository.editMessage(messageId);
+    // console.log(message)
     assert(message, 'コメントが見つかりません');
     const infoMessage = await messageUsecase.createinfo(
       message.id2,
@@ -64,10 +65,11 @@ export const messageUsecase = {
       message.sender_Id,
       message.contentmess,
       message.sent_at,
-      message.username
+      message.username,
     );
     console.log(infoMessage);
     await messageRepository.infosave(infoMessage);
+    console.log("daaw")
     return infoMessage;
   },
 };
