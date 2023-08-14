@@ -1,5 +1,5 @@
 import type { MessageModel } from '$/commonTypesWithClient/models';
-import { Colors, Icon } from '@blueprintjs/core';
+import { Colors, Icon, Intent } from '@blueprintjs/core';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import type { ChangeEvent, FormEvent } from 'react';
@@ -9,7 +9,14 @@ import { BasicHeader } from 'src/pages/@components/BasicHeader/BasicHeader';
 import { apiClient } from 'src/utils/apiClient';
 import { userAtom } from '../../atoms/user';
 import styles from './index.module.css';
-
+import { CommentOutlined, CustomerServiceOutlined } from '@ant-design/icons';
+import { FloatButton } from 'antd';
+import {
+  AliwangwangOutlined
+} from '@ant-design/icons';
+import type { MenuProps } from 'antd';
+import { Layout, Menu, theme } from 'antd';
+const { Header, Content, Footer, Sider } = Layout;
 const Home = () => {
   const [user] = useAtom(userAtom);
   const [roomId, setRoomId] = useState('');
@@ -37,6 +44,16 @@ const Home = () => {
   const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
 
+  const items: MenuProps['items'] = [
+AliwangwangOutlined
+  ].map((icon, index) => ({
+    key: String(index + 1),
+    icon: React.createElement(icon),
+    label: ` ${index + 1}`,
+  }));
+
+
+  
   useEffect(() => {
     const initializeVideo = async () => {
       mediaStreamRef.current = await navigator.mediaDevices.getUserMedia({
@@ -209,20 +226,21 @@ const Home = () => {
   };
   const handleRightClick =
     (messageId: string, contentmess: string) =>
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      e.preventDefault();
-      setContextMenuVisible(true);
-      setSelectedMessageId(messageId);
-      setContextMenuPosition({ x: e.clientX, y: e.clientY });
-      setEditingMessageId(messageId);
-      setEditedMessage(contentmess);
-      setComent(contentmess);
-    };
+      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.preventDefault();
+        setContextMenuVisible(true);
+        setSelectedMessageId(messageId);
+        setContextMenuPosition({ x: e.clientX, y: e.clientY });
+        setEditingMessageId(messageId);
+        setEditedMessage(contentmess);
+        setComent(contentmess);
+      };
 
   useEffect(() => {
     createUserdata();
     Roomlist();
   }, [Roomlist, createUserdata]);
+
 
   if (!user) return <Loading visible />;
 
@@ -258,9 +276,8 @@ const Home = () => {
           .map((message) => (
             <div
               key={message.id2}
-              className={`${styles.commentBubble} ${
-                message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-              }`}
+              className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                }`}
               onContextMenu={handleRightClick(message.id2, message.contentmess)}
             >
               <>
@@ -341,15 +358,29 @@ const Home = () => {
           )}
         </div>
       </div>
-      {/* <div className="video-container">
+      <div className="video-container">
         <video ref={videoRef} style={{ width: '100%', maxWidth: '100%' }} autoPlay playsInline />
-      </div> */}
-      <Icon
-        icon="paragraph"
-        size={500}
-        style={{ color: Colors.GREEN1, background: Colors.WHITE }}
-      />
-      <Icon icon="lock" size={500} />
+      </div>
+      <>
+        <FloatButton.Group
+          trigger="click"
+          type="primary"
+          style={{ right: 24 }}
+          icon={<CustomerServiceOutlined />}
+        >
+          <FloatButton />
+          <FloatButton icon={<CommentOutlined />} />
+        </FloatButton.Group>
+        <FloatButton.Group
+          trigger="hover"
+          type="primary"
+          style={{ right: 94 }}
+          icon={<CustomerServiceOutlined />}
+        >
+          <FloatButton />
+          <FloatButton icon={<CommentOutlined />} />
+        </FloatButton.Group>
+      </>
     </>
   );
 };
