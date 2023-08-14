@@ -14,41 +14,41 @@
  * limitations under the License.
  */
 
-import * as React from "react";
+import * as React from 'react';
 
-import { Alignment, Button, ButtonGroup } from "@blueprintjs/core";
+import { Alignment, Button, ButtonGroup } from '@blueprintjs/core';
 
 interface AlignmentSelectProps {
-    align: Alignment | undefined;
-    allowCenter?: boolean;
-    label?: string;
-    onChange: (align: Alignment) => void;
+  align: Alignment | undefined;
+  allowCenter?: boolean;
+  label?: string;
+  onChange: (align: Alignment) => void;
 }
 
 export class AlignmentSelect extends React.PureComponent<AlignmentSelectProps> {
-    public render() {
-        const { align, allowCenter = true, label = "Align text" } = this.props;
-        return (
-            <div>
-                {label}
-                <ButtonGroup fill={true} style={{ marginTop: 5 }}>
-                    <Button active={align === Alignment.LEFT} text="Left" onClick={this.handleAlignLeft} />
-                    {allowCenter && (
-                        <Button
-                            active={align === null || align === Alignment.CENTER}
-                            text="Center"
-                            onClick={this.handleAlignCenter}
-                        />
-                    )}
-                    <Button active={align === Alignment.RIGHT} text="Right" onClick={this.handleAlignRight} />
-                </ButtonGroup>
-            </div>
-        );
-    }
+  public render() {
+    const { align, allowCenter = true, label = 'Align text' } = this.props;
+    return (
+      <div>
+        {label}
+        <ButtonGroup fill={true} style={{ marginTop: 5 }}>
+          <Button active={align === Alignment.LEFT} text="Left" onClick={this.handleAlignLeft} />
+          {allowCenter && (
+            <Button
+              active={align === null || align === Alignment.CENTER}
+              text="Center"
+              onClick={this.handleAlignCenter}
+            />
+          )}
+          <Button active={align === Alignment.RIGHT} text="Right" onClick={this.handleAlignRight} />
+        </ButtonGroup>
+      </div>
+    );
+  }
 
-    private handleAlignLeft = () => this.props.onChange(Alignment.LEFT);
+  private handleAlignLeft = () => this.props.onChange(Alignment.LEFT);
 
-    private handleAlignCenter = () => this.props.onChange(Alignment.CENTER);
+  private handleAlignCenter = () => this.props.onChange(Alignment.CENTER);
 
-    private handleAlignRight = () => this.props.onChange(Alignment.RIGHT);
+  private handleAlignRight = () => this.props.onChange(Alignment.RIGHT);
 }

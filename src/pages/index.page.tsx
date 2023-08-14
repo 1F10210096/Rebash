@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import classNames from "classnames";
-import type { Alignment } from "@blueprintjs/core";
-import { Button, AnchorButton, H5, Code, Intent, Switch } from "@blueprintjs/core";
-import { Example, handleBooleanChange } from "@blueprintjs/docs-theme";
-import { Refresh, Duplicate } from "@blueprintjs/icons";
-import { AlignmentSelect } from "src/pages/common/alignmentSelect";
-import { IntentSelect } from "src/pages/common/intentSelect";
-import type { Size } from "src/pages/common/sizeSelect";
-import { SizeSelect } from "src/pages/common/sizeSelect";
+import type { Alignment } from '@blueprintjs/core';
+import { AnchorButton, Button, Code, H5, Intent, Switch } from '@blueprintjs/core';
+import { Example, handleBooleanChange } from '@blueprintjs/docs-theme';
+import { Duplicate, Refresh } from '@blueprintjs/icons';
+import classNames from 'classnames';
+import { useEffect, useState } from 'react';
+import { AlignmentSelect } from 'src/pages/common/alignmentSelect';
+import type { Size } from 'src/pages/common/sizeSelect';
 
 const HomePage = () => {
   const [active, setActive] = useState(false);
@@ -19,7 +17,7 @@ const HomePage = () => {
   const [loading, setLoading] = useState(false);
   const [minimal, setMinimal] = useState(false);
   const [outlined, setOutlined] = useState(false);
-  const [size, setSize] = useState("regular");
+  const [size, setSize] = useState('regular');
   const [wiggling, setWiggling] = useState(false);
   const [wiggleTimeoutId, setWiggleTimeoutId] = useState(0);
 
@@ -66,16 +64,16 @@ const HomePage = () => {
 
   return (
     <Example options={options}>
-      <div className={classNames({ "docs-flex-column": fill })}>
+      <div className={classNames({ 'docs-flex-column': fill })}>
         <p>
           <Code>Button</Code>
         </p>
         <Button
-          className={wiggling ? "docs-wiggle" : ""}
+          className={wiggling ? 'docs-wiggle' : ''}
           icon={<Refresh />}
           onClick={beginWiggling}
-          small={size === "small"}
-          large={size === "large"}
+          small={size === 'small'}
+          large={size === 'large'}
           active={active}
           alignText={alignText}
           disabled={disabled}
@@ -85,10 +83,10 @@ const HomePage = () => {
           minimal={minimal}
           outlined={outlined}
         >
-          {!iconOnly && "Click to wiggle"}
+          {!iconOnly && 'Click to wiggle'}
         </Button>
       </div>
-      <div className={classNames({ "docs-flex-column": fill })}>
+      <div className={classNames({ 'docs-flex-column': fill })}>
         <p>
           <Code>AnchorButton</Code>
         </p>
@@ -97,9 +95,9 @@ const HomePage = () => {
           icon={<Duplicate />}
           rightIcon="share"
           target="_blank"
-          text={iconOnly ? undefined : "Duplicate this page"}
-          small={size === "small"}
-          large={size === "large"}
+          text={iconOnly ? undefined : 'Duplicate this page'}
+          small={size === 'small'}
+          large={size === 'large'}
           active={active}
           alignText={alignText}
           disabled={disabled}

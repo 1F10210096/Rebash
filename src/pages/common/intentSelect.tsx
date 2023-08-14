@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-import * as React from "react";
+import * as React from 'react';
 
-import { Button, ControlGroup, HTMLSelect, Intent, Label } from "@blueprintjs/core";
-import { handleValueChange } from "@blueprintjs/docs-theme";
+import { Button, ControlGroup, HTMLSelect, Intent, Label } from '@blueprintjs/core';
+import { handleValueChange } from '@blueprintjs/docs-theme';
 
 const INTENTS = [
-  { label: "None", value: Intent.NONE },
-  { label: "Primary", value: Intent.PRIMARY },
-  { label: "Success", value: Intent.SUCCESS },
-  { label: "Warning", value: Intent.WARNING },
-  { label: "Danger", value: Intent.DANGER },
+  { label: 'None', value: Intent.NONE },
+  { label: 'Primary', value: Intent.PRIMARY },
+  { label: 'Success', value: Intent.SUCCESS },
+  { label: 'Warning', value: Intent.WARNING },
+  { label: 'Danger', value: Intent.DANGER },
 ];
 
 export interface IntentSelectProps {
@@ -35,21 +35,26 @@ export interface IntentSelectProps {
   showClearButton?: boolean;
 }
 
-export const IntentSelect: React.FC<IntentSelectProps> = props => {
+export const IntentSelect: React.FC<IntentSelectProps> = (props) => {
   const handleChange = handleValueChange(props.onChange);
-  const handleClear = React.useCallback(() => props.onChange("none"), [props]);
+  const handleClear = React.useCallback(() => props.onChange('none'), [props]);
   return (
     <Label>
       {props.label}
       <ControlGroup>
         <HTMLSelect value={props.intent} onChange={handleChange} options={INTENTS} fill={true} />
         {(props.showClearButton ?? false) && (
-          <Button aria-label="Clear" disabled={props.intent === "none"} icon="cross" onClick={handleClear} />
+          <Button
+            aria-label="Clear"
+            disabled={props.intent === 'none'}
+            icon="cross"
+            onClick={handleClear}
+          />
         )}
       </ControlGroup>
     </Label>
   );
 };
 IntentSelect.defaultProps = {
-  label: "Intent",
+  label: 'Intent',
 };
