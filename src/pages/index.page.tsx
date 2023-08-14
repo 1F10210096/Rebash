@@ -27,6 +27,7 @@ const Home = () => {
   const [showForm, setShowForm] = useState(false);
   const [searchRoomId, setSearchRoomId] = useState('');
   const [coment, setComent] = useState('');
+  const [infoname, setInfoName] = useState('');
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editedMessage, setEditedMessage] = useState('');
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
@@ -34,7 +35,6 @@ const Home = () => {
   const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
 
-  //a
   useEffect(() => {
     const initializeVideo = async () => {
       mediaStreamRef.current = await navigator.mediaDevices.getUserMedia({
@@ -154,7 +154,6 @@ const Home = () => {
 
   const LookMessage = async () => {
     const messages = await apiClient.message_get.$post({ body: { roomId } });
-    console.log(messages);
     if (messages === undefined) {
       console.log('messagesがありません');
     } else {
@@ -164,11 +163,10 @@ const Home = () => {
   };
 
   const handleInfo = async (messageId: string) => {
-    console.log(messageId);
     try {
-      console.log('ry');
       const infomessage = await apiClient.infomessage.$post({ body: { messageId } });
-      console.log(infomessage);
+      setInfoName(infomessage.sender_Id);
+      // console.log(infoname)
       await LookMessage();
     } catch (error) {
       await LookMessage();
@@ -176,7 +174,6 @@ const Home = () => {
   };
 
   const handleDelete = async (messageId: string) => {
-    console.log(messageId);
     try {
       await apiClient.deleteMessage.$post({ body: { messageId } });
       await LookMessage();
@@ -197,8 +194,6 @@ const Home = () => {
     setComent(contentmess);
   };
   const handleSaveEdit = async () => {
-    console.log(editingMessageId);
-    console.log(editedMessage);
     setEditMenuVisible(false);
     if (editingMessageId === null) {
       console.log('id2なし');
