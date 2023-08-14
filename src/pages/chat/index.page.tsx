@@ -8,6 +8,9 @@ import { BasicHeader } from 'src/pages/@components/BasicHeader/BasicHeader';
 import { apiClient } from 'src/utils/apiClient';
 import { userAtom } from '../../atoms/user';
 import styles from './index.module.css';
+import React from "react";
+import { Icon, IconSize } from "@blueprintjs/core";
+
 const Home = () => {
   const [user] = useAtom(userAtom);
   const [roomId, setRoomId] = useState('');
@@ -207,15 +210,15 @@ const Home = () => {
   };
   const handleRightClick =
     (messageId: string, contentmess: string) =>
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      e.preventDefault();
-      setContextMenuVisible(true);
-      setSelectedMessageId(messageId);
-      setContextMenuPosition({ x: e.clientX, y: e.clientY });
-      setEditingMessageId(messageId);
-      setEditedMessage(contentmess);
-      setComent(contentmess);
-    };
+      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.preventDefault();
+        setContextMenuVisible(true);
+        setSelectedMessageId(messageId);
+        setContextMenuPosition({ x: e.clientX, y: e.clientY });
+        setEditingMessageId(messageId);
+        setEditedMessage(contentmess);
+        setComent(contentmess);
+      };
 
   useEffect(() => {
     createUserdata();
@@ -256,9 +259,8 @@ const Home = () => {
           .map((message) => (
             <div
               key={message.id2}
-              className={`${styles.commentBubble} ${
-                message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-              }`}
+              className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                }`}
               onContextMenu={handleRightClick(message.id2, message.contentmess)}
             >
               <>
@@ -342,6 +344,8 @@ const Home = () => {
       {/* <div className="video-container">
         <video ref={videoRef} style={{ width: '100%', maxWidth: '100%' }} autoPlay playsInline />
       </div> */}
+      <Icon icon="paragraph" size={500} />
+      <Icon icon="lock" size={500} />
     </>
   );
 };
