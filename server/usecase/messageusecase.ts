@@ -65,11 +65,11 @@ export const messageUsecase = {
       message.sender_Id,
       message.contentmess,
       message.sent_at,
-      message.username,
+      message.username
     );
     console.log(infoMessage);
     await messageRepository.infosave(infoMessage);
-    console.log("daaw")
+    console.log('daaw');
     return infoMessage;
   },
 };

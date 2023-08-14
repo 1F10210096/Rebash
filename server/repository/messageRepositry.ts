@@ -26,7 +26,7 @@ export const messageRepository = {
     });
   },
   infosave: async (infomessage: InfoMessageModel) => {
-    console.log("2w")
+    console.log('2w');
     await prismaClient.infomessage.upsert({
       where: { id2: infomessage.id2 },
       update: {

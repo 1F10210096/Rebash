@@ -208,15 +208,15 @@ const Home = () => {
   };
   const handleRightClick =
     (messageId: string, contentmess: string) =>
-      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        e.preventDefault();
-        setContextMenuVisible(true);
-        setSelectedMessageId(messageId);
-        setContextMenuPosition({ x: e.clientX, y: e.clientY });
-        setEditingMessageId(messageId);
-        setEditedMessage(contentmess);
-        setComent(contentmess);
-      };
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.preventDefault();
+      setContextMenuVisible(true);
+      setSelectedMessageId(messageId);
+      setContextMenuPosition({ x: e.clientX, y: e.clientY });
+      setEditingMessageId(messageId);
+      setEditedMessage(contentmess);
+      setComent(contentmess);
+    };
 
   useEffect(() => {
     createUserdata();
@@ -257,8 +257,9 @@ const Home = () => {
           .map((message) => (
             <div
               key={message.id2}
-              className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                }`}
+              className={`${styles.commentBubble} ${
+                message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+              }`}
               onContextMenu={handleRightClick(message.id2, message.contentmess)}
             >
               <>
