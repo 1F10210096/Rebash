@@ -1,13 +1,15 @@
 import type { MessageModel } from '$/commonTypesWithClient/models';
+import { Colors, Icon } from '@blueprintjs/core';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import type { ChangeEvent, FormEvent } from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Loading } from 'src/components/Loading/Loading';
 import { BasicHeader } from 'src/pages/@components/BasicHeader/BasicHeader';
 import { apiClient } from 'src/utils/apiClient';
 import { userAtom } from '../../atoms/user';
 import styles from './index.module.css';
+
 const Home = () => {
   const [user] = useAtom(userAtom);
   const [roomId, setRoomId] = useState('');
@@ -342,6 +344,12 @@ const Home = () => {
       {/* <div className="video-container">
         <video ref={videoRef} style={{ width: '100%', maxWidth: '100%' }} autoPlay playsInline />
       </div> */}
+      <Icon
+        icon="paragraph"
+        size={500}
+        style={{ color: Colors.GREEN1, background: Colors.WHITE }}
+      />
+      <Icon icon="lock" size={500} />
     </>
   );
 };

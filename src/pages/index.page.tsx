@@ -1,115 +1,82 @@
-import type { Alignment } from '@blueprintjs/core';
-import { AnchorButton, Button, Code, H5, Intent, Switch } from '@blueprintjs/core';
-import { Example, handleBooleanChange } from '@blueprintjs/docs-theme';
-import { Duplicate, Refresh } from '@blueprintjs/icons';
-import classNames from 'classnames';
-import { useEffect, useState } from 'react';
-import { AlignmentSelect } from 'src/pages/common/alignmentSelect';
-import type { Size } from 'src/pages/common/sizeSelect';
+/*
+ * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-const HomePage = () => {
-  const [active, setActive] = useState(false);
-  const [alignText, setAlignText] = useState<Alignment | undefined>(undefined);
-  const [disabled, setDisabled] = useState(false);
-  const [fill, setFill] = useState(false);
-  const [iconOnly, setIconOnly] = useState(false);
-  const [intent, setIntent] = useState(Intent.NONE);
-  const [loading, setLoading] = useState(false);
-  const [minimal, setMinimal] = useState(false);
-  const [outlined, setOutlined] = useState(false);
-  const [size, setSize] = useState('regular');
-  const [wiggling, setWiggling] = useState(false);
-  const [wiggleTimeoutId, setWiggleTimeoutId] = useState(0);
+import * as React from 'react';
 
-  const handleActiveChange = handleBooleanChange(setActive);
-  const handleAlignTextChange = (alignText: Alignment) => setAlignText(alignText);
-  const handleDisabledChange = handleBooleanChange(setDisabled);
-  const handleFillChange = handleBooleanChange(setFill);
-  const handleIconOnlyChange = handleBooleanChange(setIconOnly);
-  const handleLoadingChange = handleBooleanChange(setLoading);
-  const handleMinimalChange = handleBooleanChange(setMinimal);
-  const handleOutlinedChange = handleBooleanChange(setOutlined);
-  const handleSizeChange = (size: Size) => setSize(size);
-  // const handleIntentChange = (intent: Intent) => setIntent(intent);
+import { H5, Icon, Intent, Label, Slider } from '@blueprintjs/core';
+import type { ExampleProps } from '@blueprintjs/docs-theme';
+import { Example } from '@blueprintjs/docs-theme';
+import type { IconName } from '@blueprintjs/icons';
+import { IconSize } from '@blueprintjs/icons';
 
-  useEffect(() => {
-    return () => {
-      clearTimeout(wiggleTimeoutId);
-    };
-  }, [wiggleTimeoutId]);
+import { IconSelect } from 'src/pages/common/iconSelect';
+import { IntentSelect } from './common/intentSelect';
 
-  const beginWiggling = () => {
-    clearTimeout(wiggleTimeoutId);
-    setWiggling(true);
-    const newTimeoutId = window.setTimeout(() => setWiggling(false), 300);
-    setWiggleTimeoutId(newTimeoutId);
+export interface IconExampleState {
+  icon: IconName;
+  iconSize: number;
+  intent: Intent;
+}
+
+export class IconExample extends React.PureComponent<ExampleProps, IconExampleState> {
+  public state: IconExampleState = {
+    icon: 'calendar',
+    iconSize: IconSize.STANDARD,
+    intent: Intent.NONE,
   };
 
-  const options = (
-    <>
-      <H5>Props</H5>
-      <Switch label="Active" checked={active} onChange={handleActiveChange} />
-      <Switch label="Disabled" checked={disabled} onChange={handleDisabledChange} />
-      <Switch label="Loading" checked={loading} onChange={handleLoadingChange} />
-      <Switch label="Minimal" checked={minimal} onChange={handleMinimalChange} />
-      <Switch label="Outlined" checked={outlined} onChange={handleOutlinedChange} />
-      <Switch label="Fill" checked={fill} onChange={handleFillChange} />
-      <AlignmentSelect align={alignText} onChange={handleAlignTextChange} />
-      {/* <SizeSelect size={size} onChange={handleSizeChange} /> */}
-      {/* <IntentSelect intent={intent} onChange={handleIntentChange} /> */}
-      <H5>Example</H5>
-      <Switch label="Icons only" checked={iconOnly} onChange={handleIconOnlyChange} />
-    </>
-  );
+  private handleIntentChange = (intent: Intent) => this.setState({ intent });
 
-  return (
-    <Example options={options}>
-      <div className={classNames({ 'docs-flex-column': fill })}>
-        <p>
-          <Code>Button</Code>
-        </p>
-        <Button
-          className={wiggling ? 'docs-wiggle' : ''}
-          icon={<Refresh />}
-          onClick={beginWiggling}
-          small={size === 'small'}
-          large={size === 'large'}
-          active={active}
-          alignText={alignText}
-          disabled={disabled}
-          fill={fill}
-          intent={intent}
-          loading={loading}
-          minimal={minimal}
-          outlined={outlined}
-        >
-          {!iconOnly && 'Click to wiggle'}
-        </Button>
-      </div>
-      <div className={classNames({ 'docs-flex-column': fill })}>
-        <p>
-          <Code>AnchorButton</Code>
-        </p>
-        <AnchorButton
-          href="#core/components/buttons"
-          icon={<Duplicate />}
-          rightIcon="share"
-          target="_blank"
-          text={iconOnly ? undefined : 'Duplicate this page'}
-          small={size === 'small'}
-          large={size === 'large'}
-          active={active}
-          alignText={alignText}
-          disabled={disabled}
-          fill={fill}
-          intent={intent}
-          loading={loading}
-          minimal={minimal}
-          outlined={outlined}
+  private handleIconSizeChange = (iconSize: number) => this.setState({ iconSize });
+
+  private handleIconNameChange = (icon: IconName | undefined) => {
+    if (icon !== undefined) {
+      this.setState({ icon });
+    }
+  };
+
+  private iconSizeLabelId = 'icon-size-label';
+
+  public render() {
+    const { icon, iconSize, intent } = this.state;
+
+    const options = (
+      <>
+        <H5>Props</H5>
+        <IconSelect iconName={icon} onChange={this.handleIconNameChange} />
+        <IntentSelect intent={this.state.intent} onChange={this.handleIntentChange} />
+        <Label id={this.iconSizeLabelId}>Icon size</Label>
+        <Slider
+          labelStepSize={MAX_ICON_SIZE / 5}
+          min={0}
+          max={MAX_ICON_SIZE}
+          showTrackFill={false}
+          value={iconSize}
+          onChange={this.handleIconSizeChange}
+          handleHtmlProps={{ 'aria-labelledby': this.iconSizeLabelId }}
         />
-      </div>
-    </Example>
-  );
-};
+      </>
+    );
 
-export default HomePage;
+    return (
+      <Example options={options} {...this.props}>
+        <Icon icon={icon} size={iconSize} intent={intent} />
+      </Example>
+    );
+  }
+}
+export default IconExample;
+const MAX_ICON_SIZE = 100;
