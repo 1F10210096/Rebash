@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from 'src/utils/apiClient';
+import styles from './index.module.css';
 
 const App: React.FC = () => {
   const [user] = useAtom(userAtom);
@@ -279,13 +280,18 @@ const App: React.FC = () => {
           <div style={{ padding: 24, textAlign: 'center', background: colorBgContainer }}>
             <p>long content</p>
             {
-              // indicates very long content
-              Array.from({ length: 100 }, (_, index) => (
-                <React.Fragment key={index}>
-                  {index % 20 === 0 && index ? 'more' : '...'}
-                  <br />
-                </React.Fragment>
-              ))
+              messages
+                .sort((a, b) => a.sent_at - b.sent_at)
+                .map((message) => (
+                  <div
+                    key={message.id2}
+                    className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                      }`}
+                  >
+                    <div className={styles.username}>{message.username}</div>
+                    <div className={styles.content}>{message.contentmess}</div>
+                  </div>
+                ))
             }
           </div>
         </Content>
