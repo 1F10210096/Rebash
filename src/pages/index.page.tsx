@@ -1,17 +1,11 @@
 import type { MessageModel } from '$/commonTypesWithClient/models';
-import { AliwangwangOutlined } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
-import { Layout, Menu, theme } from 'antd';
+import { AliwangwangOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { AutoComplete, FloatButton, Input, Layout, Menu, Popconfirm, theme } from 'antd';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
-import { userAtom } from 'src/atoms/user';
-import type { ChangeEvent, FormEvent } from 'react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { userAtom } from 'src/atoms/user';
 import { apiClient } from 'src/utils/apiClient';
-import { AutoComplete } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-import { FloatButton } from 'antd';
-import { QuestionCircleOutlined, SearchOutlined } from '@ant-design/icons';
 
 const App: React.FC = () => {
   const [user] = useAtom(userAtom);
@@ -42,6 +36,10 @@ const App: React.FC = () => {
   const [value, setValue] = useState('');
   const [options, setOptions] = useState('');
   const [anotherOptions, setAnotherOptions] = useState<{ value: string }[]>([]);
+  const [inputValue, setInputValue] = useState('');
+  const [popconfirmVisible, setPopconfirmVisible] = useState(false);
+  const [popsearchVisible, setsearchVisible] = useState(false);
+
   const { Header, Content, Footer, Sider } = Layout;
   const roomNames = aroom;
   const items = roomNames.map((roomName, index) => ({
@@ -127,34 +125,33 @@ const App: React.FC = () => {
   // const inputComment = (e: ChangeEvent<HTMLInputElement>) => {
   //   setaComment(e.target.value);
   // };
-  // const inputId = async (e: FormEvent) => {
-  //   e.preventDefault();
-  //   console.log('a');
-  //   if (!user) return;
-  //   const userId = user.id;
-  //   const a = await apiClient.user.post({ body: { roomId, userId } });
-  //   const b = await apiClient.roomcreate.post({ body: { roomId, userId } });
-  //   console.log(roomId);
-  //   setARoomId(a.body.roomId);
-  // };
-  // const serchId = async (e: FormEvent) => {
-  //   e.preventDefault();
-  //   if (!user) return;
-  //   const userId = user.id;
-  //   console.log(searchRoomId);
-  //   const a = await apiClient.serchroom.post({ body: { searchRoomId, userId } });
-  //   await apiClient.userroomcreate.post({ body: { searchRoomId, userId } });
-  //   console.log(a.body.user);
-  //   // const userasse = a.user
-  //   console.log(roomId);
-  //   setRoomId2(a.body.roomid);
-  //   setuserasse(a.body.user);
-  //   await Roomlist();
-  // };
+  const handleConfirm = async () => {
+    setRoomId(inputValue);
+    console.log('User input:', inputValue);
+    if (!user) return;
+    const userId = user.id;
+    const a = await apiClient.user.post({ body: { roomId, userId } });
+    const b = await apiClient.roomcreate.post({ body: { roomId, userId } });
+    console.log(roomId);
+    setARoomId(a.body.roomId);
+  };
+  const serchId = async () => {
+    if (!user) return;
+    const userId = user.id;
+    console.log(searchRoomId);
+    const a = await apiClient.serchroom.post({ body: { searchRoomId, userId } });
+    await apiClient.userroomcreate.post({ body: { searchRoomId, userId } });
+    console.log(a.body.user);
+    // const userasse = a.user
+    console.log(roomId);
+    setRoomId2(a.body.roomid);
+    setuserasse(a.body.user);
+    await Roomlist();
+  };
 
   const inputcomment = async () => {
     if (!user) return;
-    console.log(value)
+    console.log(value);
     const sender_id = user.id;
     const content = message;
     const name = user.displayName;
@@ -167,7 +164,7 @@ const App: React.FC = () => {
   };
 
   const LookRoom = async (roomId3: string) => {
-    console.log(roomId3)
+    console.log(roomId3);
     setRoomId(roomId3);
     await apiClient.room.post({ body: { roomId3 } });
     if (user === null) {
@@ -295,26 +292,60 @@ const App: React.FC = () => {
         <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
       </Layout>
       <div style={{ position: 'relative' }}>
-        <div style={{ position: 'fixed', width: 100, top: 20, left: 20 }}>
-          <AutoComplete
-            style={{ width: 400, top: 750, left: 600 }}
-            // value={inputValue}
-            // options={autoCompleteOptions}
-            onSelect={onSelect}
-            onSearch={onChange}
-            placeholder="input here"
-          />
-          <br />
-          <br />
-          <button style={{ marginTop: '700px', marginLeft: '1000px' }} onClick={() => inputcomment()}>Save</button>
-        </div>
-
-        {/* ここに他のコンテンツが入ると仮定 */}
+        <AutoComplete
+          style={{ width: 400, top: 750, left: 600 }}
+          // value={inputValue}
+          // options={autoCompleteOptions}
+          onSelect={onSelect}
+          onSearch={onChange}
+          placeholder="input here"
+        />
+        <br />
+        <br />
+        <button style={{ marginTop: '700px', marginLeft: '1000px' }} onClick={() => inputcomment()}>
+          Save
+        </button>
       </div>
-      <FloatButton icon={<PlusOutlined />} type="primary" style={{ left: 32 }} />
-      <FloatButton icon={<SearchOutlined />} type="primary" style={{ left: 109 }} />
+      <FloatButton icon={<SearchOutlined />} type="primary" style={{ top: 800, left: 75 }} />
+      <Popconfirm
+        title={
+          <Input
+            value={roomId}
+            onChange={(e) => setRoomId(e.target.value)}
+            onPressEnter={handleConfirm}
+            placeholder="RoomIdを入力してください"
+          />
+        }
+        visible={popconfirmVisible}
+        onVisibleChange={(visible) => setPopconfirmVisible(visible)}
+        onConfirm={handleConfirm}
+        onCancel={() => setPopconfirmVisible(false)}
+        okText="Add"
+        cancelText="Cancel"
+        placement="left"
+      >
+        <FloatButton icon={<PlusOutlined />} type="primary" style={{ top: 730, left: 75 }} />
+      </Popconfirm>
+      <Popconfirm
+        title={
+          <Input
+            value={searchRoomId}
+            onChange={(e) => setSearchRoomId(e.target.value)}
+            onPressEnter={serchId}
+            placeholder="RoomIdを入力してください"
+          />
+        }
+        visible={popconfirmVisible}
+        onVisibleChange={(visible) => setsearchVisible(visible)}
+        onConfirm={serchId}
+        onCancel={() => setsearchVisible(false)}
+        okText="Search"
+        cancelText="Cancel"
+        placement="left"
+      >
+        <FloatButton icon={<SearchOutlined />} type="primary" style={{ top: 800, left: 75 }} />
+      </Popconfirm>
     </Layout>
-
   );
 };
 
