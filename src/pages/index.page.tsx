@@ -1,17 +1,32 @@
 import type { MessageModel } from '$/commonTypesWithClient/models';
 
-import { AliwangwangOutlined, PlusOutlined, SearchOutlined, SendOutlined } from '@ant-design/icons';
+import {
+  AppstoreOutlined,
+  MailOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  SendOutlined,
+  SettingOutlined,
+} from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { AutoComplete, FloatButton, Input, Layout, Menu, Popconfirm, theme, Button, Divider } from 'antd';
+import {
+  AutoComplete,
+  Button,
+  Divider,
+  FloatButton,
+  Input,
+  Layout,
+  Menu,
+  Popconfirm,
+  theme,
+} from 'antd';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from 'src/utils/apiClient';
 import styles from './index.module.css';
-import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
 const App: React.FC = () => {
-
   const [user] = useAtom(userAtom);
   const [roomId, setRoomId] = useState('');
   const [roomId2, setRoomId2] = useState('');
@@ -92,7 +107,6 @@ const App: React.FC = () => {
       'group'
     ),
   ];
-
 
   const getPanelValue = (searchText: string) =>
     !searchText ? [] : [mockVal(searchText), mockVal(searchText, 2), mockVal(searchText, 3)];
@@ -327,8 +341,9 @@ const App: React.FC = () => {
                 <React.Fragment key={message.id2}>
                   {index !== 0 && <Divider orientation="left" plain />}
                   <div
-                    className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                      }`}
+                    className={`${styles.commentBubble} ${
+                      message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                    }`}
                   >
                     <div className={styles.username}>{message.username}</div>
                     <div className={styles.content}>{message.contentmess}</div>
