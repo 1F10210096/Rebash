@@ -153,7 +153,7 @@ const App: React.FC = () => {
     if (!user) return;
     console.log(value);
     const sender_id = user.id;
-    const content = message;
+    const content = value;
     const name = user.displayName;
     if (name === undefined) {
       console.log('usernameなし');
@@ -293,7 +293,7 @@ const App: React.FC = () => {
       </Layout>
       <div style={{ position: 'relative' }}>
         <AutoComplete
-          style={{ width: 400, top: 750, left: 600 }}
+          style={{ width: 400, top: 750, right: 400 }}
           // value={inputValue}
           // options={autoCompleteOptions}
           onSelect={onSelect}
@@ -302,7 +302,7 @@ const App: React.FC = () => {
         />
         <br />
         <br />
-        <button style={{ marginTop: '700px', marginLeft: '1000px' }} onClick={() => inputcomment()}>
+        <button style={{ top: 800, right: 75 }} onClick={() => inputcomment()}>
           Save
         </button>
       </div>
