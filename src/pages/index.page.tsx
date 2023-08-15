@@ -12,12 +12,19 @@ import type { MenuProps } from 'antd';
 import {
   AutoComplete,
   Button,
+  Col,
+  DatePicker,
   Divider,
+  Drawer,
   FloatButton,
+  Form,
   Input,
   Layout,
   Menu,
   Popconfirm,
+  Row,
+  Select,
+  Space,
   theme,
 } from 'antd';
 import { useAtom } from 'jotai';
@@ -58,7 +65,8 @@ const App: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [popconfirmVisible, setPopconfirmVisible] = useState(false);
   const [popsearchVisible, setsearchVisible] = useState(false);
-
+  const [open, setOpen] = useState(false);
+  const backgroundColor = '#02021e';
   const { Header, Content, Footer, Sider } = Layout;
   const roomNames = aroom;
 
@@ -126,7 +134,13 @@ const App: React.FC = () => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+  const showDrawer = () => {
+    setOpen(true);
+  };
 
+  const onClose = () => {
+    setOpen(false);
+  };
   useEffect(() => {
     const initializeVideo = async () => {
       mediaStreamRef.current = await navigator.mediaDevices.getUserMedia({
@@ -317,24 +331,132 @@ const App: React.FC = () => {
 
   return (
     <Layout hasSider>
-      <p>User: {user?.id}</p>
+      <div
+        style={{
+          width: 200,
+          height: 80,
+          background: backgroundColor,
+        }}
+      />
+      <div className={styles.box1} onClick={showDrawer} />
+      <Drawer
+        title="Create a new account"
+        width={720}
+        onClose={onClose}
+        open={open}
+        bodyStyle={{ paddingBottom: 80 }}
+        extra={
+          <Space>
+            <Button onClick={onClose}>Cancel</Button>
+            <Button onClick={onClose} type="primary">
+              Submit
+            </Button>
+          </Space>
+        }
+      >
+        <Form layout="vertical" hideRequiredMark>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="name"
+                label="Name"
+                rules={[{ required: true, message: 'Please enter user name' }]}
+              >
+                <Input placeholder="Please enter user name" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="url"
+                label="Url"
+                rules={[{ required: true, message: 'Please enter url' }]}
+              >
+                <Input
+                  style={{ width: '100%' }}
+                  addonBefore="http://"
+                  addonAfter=".com"
+                  placeholder="Please enter url"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="owner"
+                label="Owner"
+                rules={[{ required: true, message: 'Please select an owner' }]}
+              >
+                <Select placeholder="Please select an owner" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="type"
+                label="Type"
+                rules={[{ required: true, message: 'Please choose the type' }]}
+              >
+                <Select placeholder="Please choose the type" />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="approver"
+                label="Approver"
+                rules={[{ required: true, message: 'Please choose the approver' }]}
+              >
+                <Select placeholder="Please choose the approver" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="dateTime"
+                label="DateTime"
+                rules={[{ required: true, message: 'Please choose the dateTime' }]}
+              >
+                <DatePicker.RangePicker
+                  style={{ width: '100%' }}
+                  // getPopupContainer={(trigger) => trigger.parentElement!}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={24}>
+              <Form.Item
+                name="description"
+                label="Description"
+                rules={[
+                  {
+                    required: true,
+                    message: 'please enter url description',
+                  },
+                ]}
+              >
+                <Input.TextArea rows={4} placeholder="please enter url description" />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+      </Drawer>
       <Sider
         style={{
-          overflow: 'auto',
           height: '100vh',
           position: 'fixed',
-          left: 0,
-          top: 0,
+          top: 80,
           bottom: 0,
+          width: 300,
         }}
       >
-        <div className="demo-logo-vertical" />
         <Menu
           theme="dark"
           mode="inline"
           defaultSelectedKeys={['4']}
           items={items}
           onSelect={({ key }) => LookRoom(key)}
+          style={{ width: 300 }} // ここで幅を指定
         />
       </Sider>
       <Layout className="site-layout" style={{ marginLeft: 100 }}>
