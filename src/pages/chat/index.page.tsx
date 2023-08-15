@@ -1,5 +1,7 @@
 import type { MessageModel } from '$/commonTypesWithClient/models';
-import { Colors, Icon } from '@blueprintjs/core';
+import { AliwangwangOutlined, CommentOutlined, CustomerServiceOutlined } from '@ant-design/icons';
+import type { MenuProps } from 'antd';
+import { FloatButton, Layout } from 'antd';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import type { ChangeEvent, FormEvent } from 'react';
@@ -9,7 +11,7 @@ import { BasicHeader } from 'src/pages/@components/BasicHeader/BasicHeader';
 import { apiClient } from 'src/utils/apiClient';
 import { userAtom } from '../../atoms/user';
 import styles from './index.module.css';
-
+const { Header, Content, Footer, Sider } = Layout;
 const Home = () => {
   const [user] = useAtom(userAtom);
   const [roomId, setRoomId] = useState('');
@@ -36,6 +38,12 @@ const Home = () => {
   const [editMenuVisible, setEditMenuVisible] = useState(false);
   const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+
+  const items: MenuProps['items'] = [AliwangwangOutlined].map((icon, index) => ({
+    key: String(index + 1),
+    icon: React.createElement(icon),
+    label: ` ${index + 1}`,
+  }));
 
   useEffect(() => {
     const initializeVideo = async () => {
@@ -341,15 +349,29 @@ const Home = () => {
           )}
         </div>
       </div>
-      {/* <div className="video-container">
+      <div className="video-container">
         <video ref={videoRef} style={{ width: '100%', maxWidth: '100%' }} autoPlay playsInline />
-      </div> */}
-      <Icon
-        icon="paragraph"
-        size={500}
-        style={{ color: Colors.GREEN1, background: Colors.WHITE }}
-      />
-      <Icon icon="lock" size={500} />
+      </div>
+      <>
+        <FloatButton.Group
+          trigger="click"
+          type="primary"
+          style={{ right: 24 }}
+          icon={<CustomerServiceOutlined />}
+        >
+          <FloatButton />
+          <FloatButton icon={<CommentOutlined />} />
+        </FloatButton.Group>
+        <FloatButton.Group
+          trigger="hover"
+          type="primary"
+          style={{ right: 94 }}
+          icon={<CustomerServiceOutlined />}
+        >
+          <FloatButton />
+          <FloatButton icon={<CommentOutlined />} />
+        </FloatButton.Group>
+      </>
     </>
   );
 };
