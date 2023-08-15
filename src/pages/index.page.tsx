@@ -1,13 +1,19 @@
 import type { MessageModel } from '$/commonTypesWithClient/models';
-import { AliwangwangOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
-import { AutoComplete, FloatButton, Input, Layout, Menu, Popconfirm, theme } from 'antd';
+import { AliwangwangOutlined, PlusOutlined, SearchOutlined, SendOutlined } from '@ant-design/icons';
+import type { MenuProps } from 'antd';
+import { AutoComplete, FloatButton, Input, Layout, Menu, Popconfirm, theme, Button, Divider } from 'antd';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from 'src/utils/apiClient';
 import styles from './index.module.css';
-
+import { Modal, Upload } from 'antd';
+import type { RcFile, UploadProps } from 'antd/es/upload';
+import type { UploadFile } from 'antd/es/upload/interface';
+import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
+import { Content, Footer, Header } from 'antd/es/layout/layout';
+import Sider from 'antd/es/layout/Sider';
 const App: React.FC = () => {
   const [user] = useAtom(userAtom);
   const [roomId, setRoomId] = useState('');
@@ -41,16 +47,109 @@ const App: React.FC = () => {
   const [popconfirmVisible, setPopconfirmVisible] = useState(false);
   const [popsearchVisible, setsearchVisible] = useState(false);
 
-  const { Header, Content, Footer, Sider } = Layout;
-  const roomNames = aroom;
-  const items = roomNames.map((roomName, index) => ({
-    key: String(index + 1),
-    icon: React.createElement(AliwangwangOutlined),
-    label: roomName,
-    onClick: () => {
-      LookRoom(roomName);
+  type MenuItem = Required<MenuProps>['items'][number];
+  function getItem(
+    label: React.ReactNode,
+    key: React.Key,
+    icon?: React.ReactNode,
+    children?: MenuItem[],
+    type?: 'group',
+  ): MenuItem {
+    return {
+      key,
+      icon,
+      children,
+      label,
+      type,
+    } as MenuItem;
+  }
+  // const { Header, Content, Footer, Sider } = Layout;
+  // const roomNames = aroom;
+  // const items = roomNames.map((roomName, index) => ({
+  //   key: String(index + 1),
+  //   icon: React.createElement(AliwangwangOutlined),
+  //   label: roomName,
+  //   onClick: () => {
+  //     LookRoom(roomName);
+  //   },
+  // }));
+  const items: MenuProps['items'] = [
+    getItem('Navigation One', 'sub1', <MailOutlined />, [
+      getItem('Item 1', 'g1', null, [getItem('Option 1', '1'), getItem('Option 2', '2')], 'group'),
+      getItem('Item 2', 'g2', null, [getItem('Option 3', '3'), getItem('Option 4', '4')], 'group'),
+    ]),
+
+    getItem('Navigation Two', 'sub2', <AppstoreOutlined />, [
+      getItem('Option 5', '5'),
+      getItem('Option 6', '6'),
+      getItem('Submenu', 'sub3', null, [getItem('Option 7', '7'), getItem('Option 8', '8')]),
+    ]),
+
+    { type: 'divider' },
+
+    getItem('Navigation Three', 'sub4', <SettingOutlined />, [
+      getItem('Option 9', '9'),
+      getItem('Option 10', '10'),
+      getItem('Option 11', '11'),
+      getItem('Option 12', '12'),
+    ]),
+
+    getItem('Group', 'grp', null, aroom.map((room, index) => getItem(room, `group-${index}`)), 'group'),
+  ];
+
+  const getBase64 = (file: RcFile): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
+
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState('');
+  const [previewTitle, setPreviewTitle] = useState('');
+  const [fileList, setFileList] = useState<UploadFile[]>([
+    {
+      uid: '-1',
+      name: 'image.png',
+      status: 'done',
+      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
     },
-  }));
+    {
+      uid: '-xxx',
+      percent: 50,
+      name: 'image.png',
+      status: 'uploading',
+      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    },
+    {
+      uid: '-5',
+      name: 'image.png',
+      status: 'error',
+    },
+  ]);
+
+  // const handlePreview = async (file: UploadFile) => {
+  //   if (!file.url && !file.preview) {
+  //     file.preview = await getBase64(file.originFileObj as RcFile);
+  //   }
+
+  //   setPreviewImage(file.url || (file.preview as string));
+  //   setPreviewOpen(true);
+  //   setPreviewTitle(file.name || file.url!.substring(file.url!.lastIndexOf('/') + 1));
+  // };
+
+  const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>
+    setFileList(newFileList);
+
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
+
+  const handleCancel = () => setPreviewOpen(false);
 
   const getPanelValue = (searchText: string) =>
     !searchText ? [] : [mockVal(searchText), mockVal(searchText, 2), mockVal(searchText, 3)];
@@ -279,27 +378,27 @@ const App: React.FC = () => {
         <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
           <div style={{ padding: 24, textAlign: 'center', background: colorBgContainer }}>
             <p>long content</p>
-            {
-              messages
-                .sort((a, b) => a.sent_at - b.sent_at)
-                .map((message) => (
+            {messages
+              .sort((a, b) => a.sent_at - b.sent_at)
+              .map((message, index) => (
+                <React.Fragment key={message.id2}>
+                  {index !== 0 && <Divider orientation="left" plain />}
                   <div
-                    key={message.id2}
                     className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
                       }`}
                   >
                     <div className={styles.username}>{message.username}</div>
                     <div className={styles.content}>{message.contentmess}</div>
                   </div>
-                ))
-            }
+                </React.Fragment>
+              ))}
           </div>
         </Content>
         <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
       </Layout>
       <div style={{ position: 'relative' }}>
         <AutoComplete
-          style={{ width: 400, top: 750, right: 400 }}
+          style={{ position: 'fixed', width: 800, height: 600, top: 750, right: 330 }}
           // value={inputValue}
           // options={autoCompleteOptions}
           onSelect={onSelect}
@@ -308,11 +407,9 @@ const App: React.FC = () => {
         />
         <br />
         <br />
-        <button style={{ top: 800, right: 75 }} onClick={() => inputcomment()}>
-          Save
-        </button>
       </div>
-      <FloatButton icon={<SearchOutlined />} type="primary" style={{ top: 800, left: 75 }} />
+      <Button icon={<SendOutlined />} style={{ position: 'fixed', top: 750, right: 300 }} type="primary" onClick={() => inputcomment()} />
+      <FloatButton icon={<SearchOutlined />} type="primary" style={{ position: 'fixed', top: 800, left: 75 }} />
       <Popconfirm
         title={
           <Input
@@ -351,6 +448,20 @@ const App: React.FC = () => {
       >
         <FloatButton icon={<SearchOutlined />} type="primary" style={{ top: 800, left: 75 }} />
       </Popconfirm>
+      {/* <>
+      <Upload
+        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+        listType="picture-circle"
+        fileList={fileList}
+        onPreview={handlePreview}
+        onChange={handleChange}
+      >
+        {fileList.length >= 8 ? null : uploadButton}
+      </Upload>
+      <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
+        <img alt="example" style={{ width: '100%' }} src={previewImage} />
+      </Modal>
+    </> */}
     </Layout>
   );
 };
