@@ -4,7 +4,7 @@ import assert from 'assert';
 import { randomUUID } from 'crypto';
 export const messageUsecase = {
   create: async (roomId: string, sender_id: string, content: string, name: string) => {
-    console.log(name);
+    console.log(content);
     const newMessage: MessageModel = {
       id2: randomUUID(),
       room: roomId,
