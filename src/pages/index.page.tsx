@@ -1,31 +1,17 @@
 import type { MessageModel } from '$/commonTypesWithClient/models';
-import {
-  AppstoreOutlined,
-  MailOutlined,
-  PlusOutlined,
-  SearchOutlined,
-  SendOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
+
+import { AliwangwangOutlined, PlusOutlined, SearchOutlined, SendOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import {
-  AutoComplete,
-  Button,
-  Divider,
-  FloatButton,
-  Input,
-  Layout,
-  Menu,
-  Popconfirm,
-  theme,
-} from 'antd';
+import { AutoComplete, FloatButton, Input, Layout, Menu, Popconfirm, theme, Button, Divider } from 'antd';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from 'src/utils/apiClient';
 import styles from './index.module.css';
+import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
 const App: React.FC = () => {
+
   const [user] = useAtom(userAtom);
   const [roomId, setRoomId] = useState('');
   const [roomId2, setRoomId2] = useState('');
@@ -60,6 +46,7 @@ const App: React.FC = () => {
 
   const { Header, Content, Footer, Sider } = Layout;
   const roomNames = aroom;
+
   type MenuItem = Required<MenuProps>['items'][number];
   function getItem(
     label: React.ReactNode,
@@ -105,6 +92,7 @@ const App: React.FC = () => {
       'group'
     ),
   ];
+
 
   const getPanelValue = (searchText: string) =>
     !searchText ? [] : [mockVal(searchText), mockVal(searchText, 2), mockVal(searchText, 3)];
@@ -339,9 +327,8 @@ const App: React.FC = () => {
                 <React.Fragment key={message.id2}>
                   {index !== 0 && <Divider orientation="left" plain />}
                   <div
-                    className={`${styles.commentBubble} ${
-                      message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                    }`}
+                    className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                      }`}
                   >
                     <div className={styles.username}>{message.username}</div>
                     <div className={styles.content}>{message.contentmess}</div>
@@ -363,9 +350,6 @@ const App: React.FC = () => {
         />
         <br />
         <br />
-        <button style={{ top: 800, right: 75 }} onClick={() => inputcomment()}>
-          Save
-        </button>
       </div>
       <Button
         icon={<SendOutlined />}
@@ -422,6 +406,20 @@ const App: React.FC = () => {
           style={{ position: 'fixed', top: 800, left: 75 }}
         />
       </Popconfirm>
+      {/* <>
+      <Upload
+        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+        listType="picture-circle"
+        fileList={fileList}
+        onPreview={handlePreview}
+        onChange={handleChange}
+      >
+        {fileList.length >= 8 ? null : uploadButton}
+      </Upload>
+      <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
+        <img alt="example" style={{ width: '100%' }} src={previewImage} />
+      </Modal>
+    </> */}
     </Layout>
   );
 };

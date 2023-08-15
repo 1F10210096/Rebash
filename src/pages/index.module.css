@@ -59,7 +59,7 @@
 }
 
 .username {
-  font-size: 24px;
+  font-size: 20px;
   font-family: 'Arial', sans-serif;
 }
 
@@ -82,4 +82,5 @@
 
 .content {
   margin-top: 10px;
+  font-size: 19px;
 }
