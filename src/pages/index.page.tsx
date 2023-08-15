@@ -103,7 +103,7 @@ const App: React.FC = () => {
       'Group',
       'grp',
       null,
-      aroom.map((room, index) => getItem(room, `group-${index}`)),
+      aroom.map((room) => getItem(room, room)),
       'group'
     ),
   ];
@@ -221,6 +221,7 @@ const App: React.FC = () => {
   };
 
   const LookRoom = async (roomId3: string) => {
+    console.log('a');
     console.log(roomId3);
     setRoomId(roomId3);
     await apiClient.room.post({ body: { roomId3 } });
@@ -328,9 +329,15 @@ const App: React.FC = () => {
         }}
       >
         <div className="demo-logo-vertical" />
-        <Menu theme="dark" mode="inline" defaultSelectedKeys={['4']} items={items} />
+        <Menu
+          theme="dark"
+          mode="inline"
+          defaultSelectedKeys={['4']}
+          items={items}
+          onSelect={({ key }) => LookRoom(key)}
+        />
       </Sider>
-      <Layout className="site-layout" style={{ marginLeft: 200 }}>
+      <Layout className="site-layout" style={{ marginLeft: 100 }}>
         <Header style={{ padding: 0, background: colorBgContainer }} />
         <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
           <div style={{ padding: 24, textAlign: 'center', background: colorBgContainer }}>
