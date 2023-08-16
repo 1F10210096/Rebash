@@ -25,8 +25,11 @@ export const userrepository = {
     });
   },
   findUser: async (userId: string | undefined): Promise<User1Model | undefined> => {
+    console.log(userId)
     const userlist = await prismaClient.user.findMany();
+    console.log("ads2")
     const users = userlist.find((user) => user.userId === userId);
+    console.log(users)
     return users && toUser1Model(users);
   },
   findRoom: async (userId: string | undefined): Promise<User1Model | undefined> => {

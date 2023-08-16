@@ -10,7 +10,8 @@ import {
   SearchOutlined,
   SendOutlined,
   SettingOutlined,
-  UserOutlined
+  UserOutlined,
+  CheckOutlined
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import {
@@ -185,6 +186,8 @@ const App: React.FC = () => {
   } = theme.useToken();
   const showDrawer = () => {
     setOpen(true);
+    lookmymessage();
+
   };
 
   const onClose = () => {
@@ -269,13 +272,25 @@ const App: React.FC = () => {
     await Roomlist();
   };
   const mymessage = async () => {
-    const comment ="aoileklfsd"
-    setComent(comment)
     if (!user) return;
     const userId = user.id;
-    console.log(roomId);
-    const userroom = await apiClient.createcomment.$post({ body: { userId,comment } });
+    const comment = message
+    console.log(comment);
+    const usermessage = await apiClient.createcomment.$post({ body: { userId, comment } });
+    setaComment(usermessage.comment)
+  };
 
+  const lookmymessage = async () => {
+    if (!user) return;
+    console.log("234")
+    const userId = user.id;
+    const usermessage = await apiClient.usercheck.$post({ body: { userId } });
+    if (usermessage === undefined) {
+      console.log("usernasi")
+    } else {
+      console.log(usermessage.comment)
+      setaComment(usermessage.comment)
+    }
   };
 
   const inputcomment = async () => {
@@ -327,6 +342,12 @@ const App: React.FC = () => {
       setmyId(user?.id || '');
     }
   };
+  const onChange1 = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    console.log('Change:', e.target.value);
+    setaComment(e.target.value)
+  };
+  const { TextArea } = Input;
+
 
   // const handleInfo = async (messageId: string) => {
   //   try {
@@ -390,6 +411,7 @@ const App: React.FC = () => {
 
   return (
     <Layout hasSider>
+      <div>user {myId}</div>
       {/* <>
         <Upload
           action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
@@ -417,9 +439,16 @@ const App: React.FC = () => {
         <Button type="primary" onClick={showDrawer}>
           Open
         </Button>
-        <Drawer title="Basic Drawer" placement="right" onClose={onClose} open={open}>
+        <Drawer title="your profile" placement="right" onClose={onClose} open={open} width={800} >
           <p>{user?.displayName}</p>
-          <p>Some contents...</p>
+          <br />
+          <p>message</p>
+          <TextArea showCount maxLength={100} onChange={onChange1} value={message} />
+          <Button type="primary" icon={<CheckOutlined />} onClick={mymessage} >
+            ok
+          </Button>
+          <br />
+          <br />
           <p>Some contents...</p>
         </Drawer>
       </>
