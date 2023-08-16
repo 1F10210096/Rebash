@@ -333,8 +333,8 @@ const App: React.FC = () => {
     <Layout hasSider>
       <div
         style={{
-          width: 200,
-          height: 80,
+          width: 300,
+          height: 120,
           background: backgroundColor,
         }}
       />
@@ -445,10 +445,10 @@ const App: React.FC = () => {
         style={{
           height: '100vh',
           position: 'fixed',
-          top: 80,
+          top: 120,
           bottom: 0,
-          width: 300,
         }}
+        width={300} // 幅を指定
       >
         <Menu
           theme="dark"
