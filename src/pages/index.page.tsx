@@ -1,46 +1,40 @@
 import type { MessageModel } from '$/commonTypesWithClient/models';
-import { Avatar, Modal, Upload } from 'antd';
-import type { RcFile, UploadProps } from 'antd/es/upload';
+import { Avatar } from 'antd';
+import type { RcFile } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
 
 import {
   AppstoreOutlined,
+  CheckOutlined,
   MailOutlined,
   PlusOutlined,
   SearchOutlined,
   SendOutlined,
   SettingOutlined,
   UserOutlined,
-  CheckOutlined
 } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
+import type { DatePickerProps, MenuProps } from 'antd';
 import {
   AutoComplete,
   Button,
-  Col,
   DatePicker,
   Divider,
   Drawer,
   FloatButton,
-  Form,
   Input,
   Layout,
   Menu,
   Popconfirm,
-  Row,
-  Select,
-  Space,
   theme,
 } from 'antd';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from 'src/utils/apiClient';
 import styles from './index.module.css';
-import type { DatePickerProps } from 'antd';
-import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat);
 
 const App: React.FC = () => {
@@ -70,7 +64,7 @@ const App: React.FC = () => {
   const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
   const [value, setValue] = useState('');
-  const [birth, setBirth] = useState("2015/01/05");
+  const [birth, setBirth] = useState('2015/01/05');
   const [anotherOptions, setAnotherOptions] = useState<{ value: string }[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [popconfirmVisible, setPopconfirmVisible] = useState(false);
@@ -86,8 +80,6 @@ const App: React.FC = () => {
 
   const customFormat: DatePickerProps['format'] = (value) =>
     `custom format: ${value.format(dateFormat)}`;
-
-
 
   //画像アップロード処理
 
@@ -124,8 +116,8 @@ const App: React.FC = () => {
   };
   const onChange2: DatePickerProps['onChange'] = (date, dateString) => {
     // console.log(date, dateString);
-    setBirth(dateString)
-    console.log(dateString)
+    setBirth(dateString);
+    console.log(dateString);
   };
 
   const uploadButton = (
@@ -206,7 +198,6 @@ const App: React.FC = () => {
   const showDrawer = () => {
     setOpen(true);
     lookmystatus();
-
   };
 
   const onClose = () => {
@@ -293,39 +284,39 @@ const App: React.FC = () => {
   const mymessage = async () => {
     if (!user) return;
     const userId = user.id;
-    const comment = message
+    const comment = message;
     console.log(comment);
     const usermessage = await apiClient.createcomment.$post({ body: { userId, comment } });
-    setaComment(usermessage.comment)
+    setaComment(usermessage.comment);
   };
 
   const lookmystatus = async () => {
     if (!user) return;
-    console.log("234")
+    console.log('234');
     const userId = user.id;
     const usermessage = await apiClient.usercheck.$post({ body: { userId } });
     if (usermessage === undefined) {
-      console.log("usernasi")
+      console.log('usernasi');
     } else {
-      console.log(usermessage.comment)
-      setaComment(usermessage.comment)
-      console.log(usermessage.birth)
-      console.log("asdaw")
-      setBirth(usermessage.birth)
-      console.log(birth)
+      console.log(usermessage.comment);
+      setaComment(usermessage.comment);
+      console.log(usermessage.birth);
+      console.log('asdaw');
+      setBirth(usermessage.birth);
+      console.log(birth);
     }
   };
   const mybirth = async () => {
     if (!user) return;
     const userId = user.id;
-    const birthday = birth
+    const birthday = birth;
     const usermessage = await apiClient.birth.$post({ body: { userId, birthday } });
-    setBirth(usermessage.birth)
+    setBirth(usermessage.birth);
   };
 
   const inputcomment = async () => {
     if (!user) return;
-    console.log(user.photoURL)
+    console.log(user.photoURL);
     console.log(value);
     const sender_id = user.id;
     const content = value;
@@ -374,10 +365,9 @@ const App: React.FC = () => {
   };
   const onChange1 = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     console.log('Change:', e.target.value);
-    setaComment(e.target.value)
+    setaComment(e.target.value);
   };
   const { TextArea } = Input;
-
 
   // const handleInfo = async (messageId: string) => {
   //   try {
@@ -466,19 +456,25 @@ const App: React.FC = () => {
       <Avatar style={{ backgroundColor: '#87d068', right: 500, top: 40 }} icon={<UserOutlined />} />
       <div style={{ top: 800, fontSize: '16px', color: 'blue' }}>{user?.displayName}</div>
       <>
-        <Drawer title="your profile" placement="right" onClose={onClose} open={open} width={800} >
+        <Drawer title="your profile" placement="right" onClose={onClose} open={open} width={800}>
           <p>{user?.displayName}</p>
           <br />
           <p>message</p>
           <TextArea showCount maxLength={100} onChange={onChange1} value={message} />
-          <Button type="primary" icon={<CheckOutlined />} onClick={mymessage} >
+          <Button type="primary" icon={<CheckOutlined />} onClick={mymessage}>
             ok
           </Button>
           <br />
           <br />
           <p>birthday</p>
-          <DatePicker onChange={onChange2} defaultValue={dayjs(birth, dateFormat)} format={dateFormat}>birthday</DatePicker>
-          <Button type="primary" icon={<CheckOutlined />} onClick={mybirth} >
+          <DatePicker
+            onChange={onChange2}
+            defaultValue={dayjs(birth, dateFormat)}
+            format={dateFormat}
+          >
+            birthday
+          </DatePicker>
+          <Button type="primary" icon={<CheckOutlined />} onClick={mybirth}>
             ok
           </Button>
           <p>Some contents...</p>
@@ -514,8 +510,9 @@ const App: React.FC = () => {
                 <React.Fragment key={message.id2}>
                   {index !== 0 && <Divider orientation="left" plain />}
                   <div
-                    className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                      }`}
+                    className={`${styles.commentBubble} ${
+                      message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                    }`}
                   >
                     <div className={styles.username}>{message.username}</div>
                     <div className={styles.content}>{message.contentmess}</div>
