@@ -8,6 +8,9 @@ export const userUsecase = {
       id: userId,
       comment: '',
       roomId: [],
+      birth: '2015/01/05',
+      sex: 0,
+      status: 0,
     };
     await userrepository.save(newUser);
     return newUser;
@@ -44,6 +47,15 @@ export const userUsecase = {
     assert(user, 'userなし');
     console.log('a');
     user.comment = comment;
+    await userrepository.save(user);
+    return user;
+  },
+  birth: async (birthday: string, userId: string): Promise<User1Model> => {
+    console.log(birthday);
+    const user = await userrepository.findUser(userId);
+    assert(user, 'userなし');
+    console.log('a');
+    user.birth = birthday;
     await userrepository.save(user);
     return user;
   },

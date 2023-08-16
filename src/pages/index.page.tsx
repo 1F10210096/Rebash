@@ -38,6 +38,11 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from 'src/utils/apiClient';
 import styles from './index.module.css';
+import type { DatePickerProps } from 'antd';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
+
 const App: React.FC = () => {
   const [user] = useAtom(userAtom);
   const [roomId, setRoomId] = useState('');
@@ -65,7 +70,7 @@ const App: React.FC = () => {
   const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
   const [value, setValue] = useState('');
-  const [options, setOptions] = useState('');
+  const [birth, setBirth] = useState("2015/01/05");
   const [anotherOptions, setAnotherOptions] = useState<{ value: string }[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [popconfirmVisible, setPopconfirmVisible] = useState(false);
@@ -74,6 +79,15 @@ const App: React.FC = () => {
   const backgroundColor = '#02021e';
   const { Header, Content, Footer, Sider } = Layout;
   const roomNames = aroom;
+  const onChange: DatePickerProps['onChange'] = (date, dateString) => {
+    console.log(date, dateString);
+  };
+  const dateFormat = 'YYYY/MM/DD';
+
+  const customFormat: DatePickerProps['format'] = (value) =>
+    `custom format: ${value.format(dateFormat)}`;
+
+
 
   //画像アップロード処理
 
@@ -107,6 +121,11 @@ const App: React.FC = () => {
         file.name || previewImageUrl.substring(previewImageUrl.lastIndexOf('/') + 1) || 'Untitled'
       );
     }
+  };
+  const onChange2: DatePickerProps['onChange'] = (date, dateString) => {
+    // console.log(date, dateString);
+    setBirth(dateString)
+    console.log(dateString)
   };
 
   const uploadButton = (
@@ -173,7 +192,7 @@ const App: React.FC = () => {
     console.log('onSelect', data);
   };
 
-  const onChange = (data: string) => {
+  const onChange3 = (data: string) => {
     setValue(data);
   };
 
@@ -186,7 +205,7 @@ const App: React.FC = () => {
   } = theme.useToken();
   const showDrawer = () => {
     setOpen(true);
-    lookmymessage();
+    lookmystatus();
 
   };
 
@@ -280,7 +299,7 @@ const App: React.FC = () => {
     setaComment(usermessage.comment)
   };
 
-  const lookmymessage = async () => {
+  const lookmystatus = async () => {
     if (!user) return;
     console.log("234")
     const userId = user.id;
@@ -290,7 +309,18 @@ const App: React.FC = () => {
     } else {
       console.log(usermessage.comment)
       setaComment(usermessage.comment)
+      console.log(usermessage.birth)
+      console.log("asdaw")
+      setBirth(usermessage.birth)
+      console.log(birth)
     }
+  };
+  const mybirth = async () => {
+    if (!user) return;
+    const userId = user.id;
+    const birthday = birth
+    const usermessage = await apiClient.birth.$post({ body: { userId, birthday } });
+    setBirth(usermessage.birth)
   };
 
   const inputcomment = async () => {
@@ -411,7 +441,6 @@ const App: React.FC = () => {
 
   return (
     <Layout hasSider>
-      <div>user {myId}</div>
       {/* <>
         <Upload
           action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
@@ -435,10 +464,8 @@ const App: React.FC = () => {
       />
       <div className={styles.box1} onClick={showDrawer} />
       <Avatar style={{ backgroundColor: '#87d068', right: 500, top: 40 }} icon={<UserOutlined />} />
+      <div style={{ top: 800, fontSize: '16px', color: 'blue' }}>{user?.displayName}</div>
       <>
-        <Button type="primary" onClick={showDrawer}>
-          Open
-        </Button>
         <Drawer title="your profile" placement="right" onClose={onClose} open={open} width={800} >
           <p>{user?.displayName}</p>
           <br />
@@ -449,6 +476,11 @@ const App: React.FC = () => {
           </Button>
           <br />
           <br />
+          <p>birthday</p>
+          <DatePicker onChange={onChange2} defaultValue={dayjs(birth, dateFormat)} format={dateFormat}>birthday</DatePicker>
+          <Button type="primary" icon={<CheckOutlined />} onClick={mybirth} >
+            ok
+          </Button>
           <p>Some contents...</p>
         </Drawer>
       </>
@@ -456,6 +488,7 @@ const App: React.FC = () => {
         style={{
           height: '100vh',
           position: 'fixed',
+
           top: 120,
           bottom: 0,
         }}
@@ -499,7 +532,7 @@ const App: React.FC = () => {
           // value={inputValue}
           // options={autoCompleteOptions}
           onSelect={onSelect}
-          onSearch={onChange}
+          onSearch={onChange3}
           placeholder="input here"
         />
         <br />
