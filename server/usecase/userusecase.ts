@@ -38,4 +38,11 @@ export const userUsecase = {
       return user;
     }
   },
+  comment: async (userId: string, comment: string): Promise<User1Model> => {
+    const user = await userrepository.findUser(userId);
+    assert(user, 'userなし');
+    user.comment = comment;
+    await userrepository.save(user);
+    return user;
+  },
 };

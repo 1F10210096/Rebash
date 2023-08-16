@@ -15,6 +15,7 @@ export const userrepository = {
       where: { userId: user.id },
       update: {
         roomIdasse: user.roomId,
+        comment: user.comment,
       },
       create: {
         userId: user.id,

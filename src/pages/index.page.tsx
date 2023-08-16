@@ -1,5 +1,5 @@
 import type { MessageModel } from '$/commonTypesWithClient/models';
-import { Modal, Upload } from 'antd';
+import { Avatar, Modal, Upload } from 'antd';
 import type { RcFile, UploadProps } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
 
@@ -10,6 +10,7 @@ import {
   SearchOutlined,
   SendOutlined,
   SettingOutlined,
+  UserOutlined
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import {
@@ -114,8 +115,9 @@ const App: React.FC = () => {
     </div>
   );
 
-  const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>
-    setFileList(newFileList);
+  // const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>
+  //   setFileList(newFileList);
+  //   console.log(fileList)
 
   type MenuItem = Required<MenuProps>['items'][number];
   function getItem(
@@ -266,9 +268,19 @@ const App: React.FC = () => {
     setuserasse(a.body.user);
     await Roomlist();
   };
+  const mymessage = async () => {
+    const comment ="aoileklfsd"
+    setComent(comment)
+    if (!user) return;
+    const userId = user.id;
+    console.log(roomId);
+    const userroom = await apiClient.createcomment.$post({ body: { userId,comment } });
+
+  };
 
   const inputcomment = async () => {
     if (!user) return;
+    console.log(user.photoURL)
     console.log(value);
     const sender_id = user.id;
     const content = value;
@@ -378,7 +390,7 @@ const App: React.FC = () => {
 
   return (
     <Layout hasSider>
-      <>
+      {/* <>
         <Upload
           action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
           listType="picture-circle"
@@ -391,7 +403,7 @@ const App: React.FC = () => {
         <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
           <img alt="example" style={{ width: '100%' }} src={previewImage} />
         </Modal>
-      </>
+      </> */}
       <div
         style={{
           width: 300,
@@ -400,108 +412,17 @@ const App: React.FC = () => {
         }}
       />
       <div className={styles.box1} onClick={showDrawer} />
-      <Drawer
-        title="Create a new account"
-        width={720}
-        onClose={onClose}
-        open={open}
-        bodyStyle={{ paddingBottom: 80 }}
-        extra={
-          <Space>
-            <Button onClick={onClose}>Cancel</Button>
-            <Button onClick={onClose} type="primary">
-              Submit
-            </Button>
-          </Space>
-        }
-      >
-        <Form layout="vertical" hideRequiredMark>
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                name="name"
-                label="Name"
-                rules={[{ required: true, message: 'Please enter user name' }]}
-              >
-                <Input placeholder="Please enter user name" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="url"
-                label="Url"
-                rules={[{ required: true, message: 'Please enter url' }]}
-              >
-                <Input
-                  style={{ width: '100%' }}
-                  addonBefore="http://"
-                  addonAfter=".com"
-                  placeholder="Please enter url"
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                name="owner"
-                label="Owner"
-                rules={[{ required: true, message: 'Please select an owner' }]}
-              >
-                <Select placeholder="Please select an owner" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="type"
-                label="Type"
-                rules={[{ required: true, message: 'Please choose the type' }]}
-              >
-                <Select placeholder="Please choose the type" />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                name="approver"
-                label="Approver"
-                rules={[{ required: true, message: 'Please choose the approver' }]}
-              >
-                <Select placeholder="Please choose the approver" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="dateTime"
-                label="DateTime"
-                rules={[{ required: true, message: 'Please choose the dateTime' }]}
-              >
-                <DatePicker.RangePicker
-                  style={{ width: '100%' }}
-                  // getPopupContainer={(trigger) => trigger.parentElement!}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={24}>
-              <Form.Item
-                name="description"
-                label="Description"
-                rules={[
-                  {
-                    required: true,
-                    message: 'please enter url description',
-                  },
-                ]}
-              >
-                <Input.TextArea rows={4} placeholder="please enter url description" />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
-      </Drawer>
+      <Avatar style={{ backgroundColor: '#87d068', right: 500, top: 40 }} icon={<UserOutlined />} />
+      <>
+        <Button type="primary" onClick={showDrawer}>
+          Open
+        </Button>
+        <Drawer title="Basic Drawer" placement="right" onClose={onClose} open={open}>
+          <p>{user?.displayName}</p>
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+        </Drawer>
+      </>
       <Sider
         style={{
           height: '100vh',
@@ -531,9 +452,8 @@ const App: React.FC = () => {
                 <React.Fragment key={message.id2}>
                   {index !== 0 && <Divider orientation="left" plain />}
                   <div
-                    className={`${styles.commentBubble} ${
-                      message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                    }`}
+                    className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                      }`}
                   >
                     <div className={styles.username}>{message.username}</div>
                     <div className={styles.content}>{message.contentmess}</div>

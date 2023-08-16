@@ -1,8 +1,8 @@
-import type { RoomModel } from '$/commonTypesWithClient/models';
+import type { User1Model } from '$/commonTypesWithClient/models';
 
 export type Methods = {
   post: {
-    reqBody: { roomId: string; acomment: string };
-    resBody: RoomModel;
+    reqBody: { userId: string; comment: string };
+    resBody: User1Model;
   };
 };
