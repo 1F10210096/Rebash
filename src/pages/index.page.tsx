@@ -450,11 +450,24 @@ const App: React.FC = () => {
           width: 300,
           height: 120,
           background: backgroundColor,
+          position: 'fixed'
         }}
-      />
+      >      <div className={styles.box1} onClick={showDrawer} /><div
+        style={{
+          top: 50,
+          left: 67,
+          fontSize: '1.5em', // フォントサイズを変更
+          textAlign: 'center', // テキストを中央揃えに
+          lineHeight: '1em', // 行間を調整
+          fontWeight: 'bold', // フォントを太字に
+          textShadow:
+            '0 0 0.1em rgb(255 255 24 / 5%), 0.01em 0.04em 0.03em rgb(255 255 255 / 80%)', // テキストシャドウを指定
+          backgroundClip: 'text', // Webkitブラウザ用のテキストの背景クリップを指定
+          position: 'fixed' // 要素の位置を固定
+        }}
+      >{user?.displayName}</div></div>
       <div className={styles.box1} onClick={showDrawer} />
-      <Avatar style={{ backgroundColor: '#87d068', right: 500, top: 40 }} icon={<UserOutlined />} />
-      <div style={{ top: 800, fontSize: '16px', color: 'blue' }}>{user?.displayName}</div>
+      <Avatar style={{ backgroundColor: '#87d068', left: 30, top: 45, position: 'fixed' }} icon={<UserOutlined />} />
       <>
         <Drawer title="your profile" placement="right" onClose={onClose} open={open} width={800}>
           <p>{user?.displayName}</p>
@@ -510,9 +523,8 @@ const App: React.FC = () => {
                 <React.Fragment key={message.id2}>
                   {index !== 0 && <Divider orientation="left" plain />}
                   <div
-                    className={`${styles.commentBubble} ${
-                      message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                    }`}
+                    className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                      }`}
                   >
                     <div className={styles.username}>{message.username}</div>
                     <div className={styles.content}>{message.contentmess}</div>
@@ -541,7 +553,7 @@ const App: React.FC = () => {
         type="primary"
         onClick={() => inputcomment()}
       />
-      <FloatButton icon={<SearchOutlined />} type="primary" style={{ top: 800, left: 75 }} />
+      <FloatButton icon={<SearchOutlined />} type="primary"   style={{ top: 800, left: 75 }} />
       <Popconfirm
         title={
           <Input
