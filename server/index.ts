@@ -1,11 +1,12 @@
 import http from 'http';
 import os from 'os';
 import { Server } from 'socket.io';
-const server = http.createServer();
-server.listen(8000, () => {
-  console.log('Listening on port 8000...');
-});
 
+const server = http.createServer();
+console.log(server);
+server.listen(3000, () => {
+  console.log('Listening on port 3000...');
+});
 const io = new Server(server);
 
 io.on('connection', (socket) => {
