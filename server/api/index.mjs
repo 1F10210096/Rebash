@@ -1,11 +1,18 @@
-import cors from 'cors'; // CORSミドルウェアのインポート
 import express from 'express';
 import http from 'http';
 import os from 'os';
 import { Server } from 'socket.io';
+
 try {
   const app = express();
-  app.use(cors()); // CORSミドルウェアの使用
+
+  // CORSヘッダーの設定
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'http://localhost:3000'); // クライアントのURLに置き換える
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+  });
 
   const server = http.createServer(app);
 
@@ -19,11 +26,11 @@ try {
   const io = new Server(server, {
     path: '/socket.io',
   });
+
   io.on('connection', (socket) => {
     // WebSocketの接続が確立したときの処理
     console.log(`[connect] ${socket.id}`);
     console.log(Array.from(io.sockets.sockets.keys()));
-
     // convenience function to log server messages on the client
     function log(text) {
       socket.emit('log', `Message from server: ${text}`);

@@ -5,7 +5,7 @@ import * as SocketIOClient from 'socket.io-client';
 
 import io from 'socket.io-client';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface Props {}
+interface Props { }
 interface State {
   isInitiator: boolean;
   isStarted: boolean;
@@ -23,6 +23,14 @@ type TextMessage = 'got user media' | 'bye';
 
 type Message = TextMessage | RTCSessionDescriptionInit | CandidateMessage;
 
+const managerOptions = {
+  path: '/socket.io',
+  // CORS設定を追加
+  cors: {
+    origin: 'http://localhost:3000', // クライアントのURLに置き換える
+    methods: ['GET', 'POST'],
+  },
+};
 class Sample5 extends React.Component<Props, State> {
   private localVideoRef: React.RefObject<HTMLVideoElement>;
   private remoteVideoRef: React.RefObject<HTMLVideoElement>;
@@ -35,9 +43,7 @@ class Sample5 extends React.Component<Props, State> {
     super(props);
     this.localVideoRef = React.createRef();
     this.remoteVideoRef = React.createRef();
-    this.socket = io('http://localhost:8000', {
-      path: '/socket.io',
-    });
+    this.socket = io('http://localhost:8000', managerOptions);
     this.state = {
       isInitiator: false,
       isStarted: false,
@@ -135,6 +141,7 @@ class Sample5 extends React.Component<Props, State> {
     this.localStream = await navigator.mediaDevices.getUserMedia({
       video: true,
     });
+    
     if (this.localVideoRef.current) {
       this.localVideoRef.current.srcObject = this.localStream;
       this.sendMessage('got user media');
