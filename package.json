@@ -24,9 +24,7 @@
     "test:watch": "vitest",
     "test:updateSnapshot": "vitest -u",
     "pretypecheck": "npm run generate && npm run generate --prefix server && npm run hcm",
-    "typecheck": "tsc --noEmit && tsc --noEmit -p server",
-    "start": "webpack-dev-server",
-    "start:server": "npm run dev:server"
+    "typecheck": "tsc --noEmit && tsc --noEmit -p server"
   },
   "dependencies": {
     "@aspida/axios": "^1.11.0",
