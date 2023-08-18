@@ -5,7 +5,7 @@ import * as SocketIOClient from 'socket.io-client';
 
 import io from 'socket.io-client';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface Props { }
+interface Props {}
 interface State {
   isInitiator: boolean;
   isStarted: boolean;
@@ -141,7 +141,7 @@ class Sample5 extends React.Component<Props, State> {
     this.localStream = await navigator.mediaDevices.getUserMedia({
       video: true,
     });
-    
+
     if (this.localVideoRef.current) {
       this.localVideoRef.current.srcObject = this.localStream;
       this.sendMessage('got user media');
