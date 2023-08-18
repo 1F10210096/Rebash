@@ -5,7 +5,7 @@ import * as SocketIOClient from 'socket.io-client';
 
 import io from 'socket.io-client';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface Props {}
+interface Props { }
 interface State {
   isInitiator: boolean;
   isStarted: boolean;
@@ -35,12 +35,15 @@ class Sample5 extends React.Component<Props, State> {
     super(props);
     this.localVideoRef = React.createRef();
     this.remoteVideoRef = React.createRef();
-    this.socket = io('http://localhost:3000');
+    this.socket = io('http://localhost:3000', {
+      path: '/socket.io',
+    });
     this.state = {
       isInitiator: false,
       isStarted: false,
       isChannelReady: false,
     };
+    console.log(this.socket)
     console.log('a');
     const room = 'foo' as string;
     if (room !== '') {

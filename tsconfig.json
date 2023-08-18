@@ -29,7 +29,8 @@
     "*.js",
     ".eslintrc.js",
     "src/pages/index.page.tsx",
-    "node_modules/@types"
+    "node_modules/@types",
+    "server/api/index.ts"
   ],
   "exclude": ["node_modules", "server"]
 }
