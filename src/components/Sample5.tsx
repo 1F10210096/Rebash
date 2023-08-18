@@ -29,7 +29,7 @@ const Sample5 = () => {
   const getSocket = () => {
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     if (!socketRef.current) {
-      socketRef.current = io('http://localhost:3000', {
+      socketRef.current = io('http://localhost:8000', {
         path: '/socket.io',
       });
     }
@@ -40,7 +40,6 @@ const Sample5 = () => {
       messageEventTargetRef.current = new EventTarget();
     }
     return messageEventTargetRef.current;
-
   };
 
   const sendMessage = useCallback((message: Message) => {
@@ -262,8 +261,6 @@ const Sample5 = () => {
       />
     </div>
   );
-
 };
 
 export default Sample5;
-

@@ -1,17 +1,19 @@
+import cors from 'cors'; // CORSミドルウェアのインポート
 import express from 'express';
 import http from 'http';
 import os from 'os';
 import { Server } from 'socket.io';
-console.log('wda;@l,afkwlop;fkjma:ep@ofkjmae:iogkajeroglkarlgmagpe]grap');
 try {
   const app = express();
+  app.use(cors()); // CORSミドルウェアの使用
+
   const server = http.createServer(app);
 
   const apiRouter = express.Router();
   app.use('/api', apiRouter);
 
-  server.listen(3000, () => {
-    console.log('Listening on port 3000...');
+  server.listen(8000, () => {
+    console.log('Listening on port 8000...');
   });
 
   const io = new Server(server, {
