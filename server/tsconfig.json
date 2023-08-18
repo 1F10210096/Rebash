@@ -24,7 +24,8 @@
     "aspida.config.js",
     ".eslintrc.js",
     "index.ts",
-    "api/index.mjs"
+    "api/index.mjs",
+    "api/voice/index.ts"
   ],
   "exclude": ["node_modules"]
 }

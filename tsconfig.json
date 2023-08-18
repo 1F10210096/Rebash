@@ -30,7 +30,8 @@
     ".eslintrc.js",
     "src/pages/index.page.tsx",
     "node_modules/@types",
-    "server/api/index.mjs"
+    "server/api/index.mjs",
+    "server/api/voice/index.ts"
   ],
   "exclude": ["node_modules", "server"]
 }
