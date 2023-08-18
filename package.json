@@ -24,7 +24,9 @@
     "test:watch": "vitest",
     "test:updateSnapshot": "vitest -u",
     "pretypecheck": "npm run generate && npm run generate --prefix server && npm run hcm",
-    "typecheck": "tsc --noEmit && tsc --noEmit -p server"
+    "typecheck": "tsc --noEmit && tsc --noEmit -p server",
+    "start": "webpack-dev-server",
+    "start:server": "npm run dev:server"
   },
   "dependencies": {
     "@aspida/axios": "^1.11.0",
@@ -35,6 +37,7 @@
     "@types/antd": "^1.0.0",
     "@types/socket.io": "^3.0.2",
     "antd": "^5.8.3",
+    "aspida": "^1.14.0",
     "axios": "^0.27.2",
     "compass-mixins": "^0.12.12",
     "dayjs": "^1.11.9",
@@ -82,7 +85,9 @@
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4",
     "vite-tsconfig-paths": "^3.5.0",
-    "vitest": "^0.22.1"
+    "vitest": "^0.22.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
   },
   "engines": {
     "node": ">=18.0.0"

@@ -1,633 +1,244 @@
-import type { MessageModel } from '$/commonTypesWithClient/models';
-import { Avatar } from 'antd';
-import type { RcFile } from 'antd/es/upload';
-import type { UploadFile } from 'antd/es/upload/interface';
+import React from 'react';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import * as SocketIOClient from 'socket.io-client';
 
-import {
-  AppstoreOutlined,
-  CheckOutlined,
-  MailOutlined,
-  PlusOutlined,
-  SearchOutlined,
-  SendOutlined,
-  SettingOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
-import type { DatePickerProps, MenuProps } from 'antd';
-import {
-  AutoComplete,
-  Button,
-  DatePicker,
-  Divider,
-  Drawer,
-  FloatButton,
-  Input,
-  Layout,
-  Menu,
-  Popconfirm,
-  theme,
-} from 'antd';
-import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { useAtom } from 'jotai';
-import { useRouter } from 'next/router';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { userAtom } from 'src/atoms/user';
-import { apiClient } from 'src/utils/apiClient';
-import styles from './index.module.css';
-dayjs.extend(customParseFormat);
+import io from 'socket.io-client';
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface Props {}
+interface State {
+  isInitiator: boolean;
+  isStarted: boolean;
+  isChannelReady: boolean;
+}
 
-const App: React.FC = () => {
-  const [user] = useAtom(userAtom);
-  const [roomId, setRoomId] = useState('');
-  const [roomId2, setRoomId2] = useState('');
-  const [aroom, setARoomId] = useState<string[]>([]);
-  const [message, setaComment] = useState('');
-  const [myId, setmyId] = useState<string>('');
+interface CandidateMessage {
+  type: 'candidate';
+  label: number | null;
+  id: string | null;
+  candidate: string;
+}
 
-  const [userasse, setuserasse] = useState<string[]>([]);
-  const [messages, setMessages] = useState<MessageModel[]>([]);
-  const [myMessages, setMyMessages] = useState<string[]>([]);
-  const [otherMessages, setOtherMessages] = useState<string[]>([]);
-  const router = useRouter(); // Next.js のルーターを取得
-  const [roomId1, setRoomId1] = useState(''); // 状態変数 roomId を宣言
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const mediaStreamRef = useRef<MediaStream | undefined>();
-  const [showForm, setShowForm] = useState(false);
-  const [searchRoomId, setSearchRoomId] = useState('');
-  const [coment, setComent] = useState('');
-  const [infoname, setInfoName] = useState('');
-  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
-  const [editedMessage, setEditedMessage] = useState('');
-  const [contextMenuVisible, setContextMenuVisible] = useState(false);
-  const [editMenuVisible, setEditMenuVisible] = useState(false);
-  const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
-  const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
-  const [value, setValue] = useState('');
-  const [birth, setBirth] = useState('2015/01/05');
-  const [anotherOptions, setAnotherOptions] = useState<{ value: string }[]>([]);
-  const [inputValue, setInputValue] = useState('');
-  const [popconfirmVisible, setPopconfirmVisible] = useState(false);
-  const [popsearchVisible, setsearchVisible] = useState(false);
-  const [open, setOpen] = useState(false);
-  const backgroundColor = '#02021e';
-  const { Header, Content, Footer, Sider } = Layout;
-  const roomNames = aroom;
-  const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-    console.log(date, dateString);
-  };
-  const dateFormat = 'YYYY/MM/DD';
+type TextMessage = 'got user media' | 'bye';
 
-  const customFormat: DatePickerProps['format'] = (value) =>
-    `custom format: ${value.format(dateFormat)}`;
+type Message = TextMessage | RTCSessionDescriptionInit | CandidateMessage;
 
-  //画像アップロード処理
+class Sample5 extends React.Component<Props, State> {
+  private localVideoRef: React.RefObject<HTMLVideoElement>;
+  private remoteVideoRef: React.RefObject<HTMLVideoElement>;
+  private socket?: SocketIOClient.Socket;
+  private localStream?: MediaStream;
+  private remoteStream?: MediaStream;
+  private peerConnection?: RTCPeerConnection;
+  public constructor(props: Props) {
+    console.log('a454');
+    super(props);
+    this.localVideoRef = React.createRef();
+    this.remoteVideoRef = React.createRef();
+    this.socket = io('http://localhost:3000');
+    this.state = {
+      isInitiator: false,
+      isStarted: false,
+      isChannelReady: false,
+    };
+    console.log('a');
+    const room = 'foo' as string;
+    if (room !== '') {
+      console.log(`Asking to join room ${room}`);
+      this.socket.emit('create or join', room);
+    }
+    console.log('WDASDAd');
 
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState('');
-  const [previewTitle, setPreviewTitle] = useState('');
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const getBase64 = (file: RcFile): Promise<string> =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
+    this.socket.on('created', (room: string, clientId: string) => {
+      console.log('dawdasda');
+      console.log(room, clientId);
+      this.setState({ isInitiator: true });
     });
 
-  const handleCancel = () => setPreviewOpen(false);
+    this.socket.on('full', (room: string) => {
+      console.log(`Room ${room} is full :^(`);
+    });
 
-  const handlePreview = async (file: UploadFile) => {
-    if (file.url === null && file.preview === null) {
-      file.preview = await getBase64(file.originFileObj as RcFile);
-    }
+    this.socket.on('ipaddr', (ipaddr: string) => {
+      console.log(`Server IP address is ${ipaddr}`);
+    });
 
-    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    const previewImageUrl = file.url || file.preview;
+    this.socket.on('join', (room: string) => {
+      console.log(`Another peer made a request to join room ${room}`);
+      console.log(`This peer is the initiator of room ${room}!`);
+      this.setState({ isChannelReady: true });
+    });
 
-    if (previewImageUrl !== undefined) {
-      // ここを修正
-      setPreviewImage(previewImageUrl);
-      setPreviewOpen(true);
-      setPreviewTitle(
-        file.name || previewImageUrl.substring(previewImageUrl.lastIndexOf('/') + 1) || 'Untitled'
-      );
-    }
-  };
-  const onChange2: DatePickerProps['onChange'] = (date, dateString) => {
-    // console.log(date, dateString);
-    setBirth(dateString);
-    console.log(dateString);
-  };
+    this.socket.on('joined', (room: string, clientId: string) => {
+      console.log(room, clientId);
+      this.setState({ isChannelReady: true });
+    });
 
-  const uploadButton = (
-    <div>
-      <PlusOutlined />
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </div>
-  );
+    this.socket.on('log', (text: string) => {
+      console.log(text);
+    });
 
-  // const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>
-  //   setFileList(newFileList);
-  //   console.log(fileList)
-
-  type MenuItem = Required<MenuProps>['items'][number];
-  function getItem(
-    label: React.ReactNode,
-    key: React.Key,
-    icon?: React.ReactNode,
-    children?: MenuItem[],
-    type?: 'group'
-  ): MenuItem {
-    return {
-      key,
-      icon,
-      children,
-      label,
-      type,
-    } as MenuItem;
-  }
-  const items: MenuProps['items'] = [
-    getItem('Navigation One', 'sub1', <MailOutlined />, [
-      getItem('Item 1', 'g1', null, [getItem('Option 1', '1'), getItem('Option 2', '2')], 'group'),
-      getItem('Item 2', 'g2', null, [getItem('Option 3', '3'), getItem('Option 4', '4')], 'group'),
-    ]),
-
-    getItem('Navigation Two', 'sub2', <AppstoreOutlined />, [
-      getItem('Option 5', '5'),
-      getItem('Option 6', '6'),
-      getItem('Submenu', 'sub3', null, [getItem('Option 7', '7'), getItem('Option 8', '8')]),
-    ]),
-
-    { type: 'divider' },
-
-    getItem('Navigation Three', 'sub4', <SettingOutlined />, [
-      getItem('Option 9', '9'),
-      getItem('Option 10', '10'),
-      getItem('Option 11', '11'),
-      getItem('Option 12', '12'),
-    ]),
-
-    getItem(
-      'Group',
-      'grp',
-      null,
-      aroom.map((room) => getItem(room, room)),
-      'group'
-    ),
-  ];
-
-  const getPanelValue = (searchText: string) =>
-    !searchText ? [] : [mockVal(searchText), mockVal(searchText, 2), mockVal(searchText, 3)];
-
-  const onSelect = (data: string) => {
-    console.log('onSelect', data);
-  };
-
-  const onChange3 = (data: string) => {
-    setValue(data);
-  };
-
-  const mockVal = (str: string, repeat = 1) => ({
-    value: str.repeat(repeat),
-  });
-
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
-  const showDrawer = () => {
-    setOpen(true);
-    lookmystatus();
-  };
-
-  const onClose = () => {
-    setOpen(false);
-  };
-  useEffect(() => {
-    const initializeVideo = async () => {
-      mediaStreamRef.current = await navigator.mediaDevices.getUserMedia({
-        video: true,
+    const messageEventTarget = new EventTarget();
+    messageEventTarget.addEventListener('got user media', () => {
+      this.initiatorStart();
+    });
+    messageEventTarget.addEventListener('bye', () => {
+      console.log('Session terminated.');
+      if (this.peerConnection) this.peerConnection.close();
+      this.setState({
+        isStarted: false,
+        isChannelReady: false,
+        isInitiator: true,
       });
-
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStreamRef.current;
+    });
+    messageEventTarget.addEventListener('offer', async (e: any) => {
+      const message = e.detail;
+      if (!this.state.isInitiator && !this.state.isStarted) {
+        await this.receiverStart();
       }
-    };
+      if (!this.peerConnection) return;
+      this.peerConnection.setRemoteDescription(new RTCSessionDescription(message));
+      console.log('Sending answer to peer.');
+      const description = await this.peerConnection.createAnswer();
+      this.setLocalAndSendMessage(description);
+    });
+    messageEventTarget.addEventListener('answer', async (e: any) => {
+      const message = e.detail;
+      if (!this.peerConnection) return;
+      this.peerConnection.setRemoteDescription(new RTCSessionDescription(message));
+    });
+    messageEventTarget.addEventListener('candidate', async (e: any) => {
+      const message = e.detail;
+      if (!this.peerConnection || !this.state.isStarted) return;
+      const candidate = new RTCIceCandidate({
+        sdpMLineIndex: message.label,
+        candidate: message.candidate,
+      });
+      this.peerConnection.addIceCandidate(candidate);
+    });
 
-    const cleanupMediaStream = () => {
-      if (mediaStreamRef.current) {
-        mediaStreamRef.current.getTracks()[0].stop();
-      }
-    };
-
-    initializeVideo();
-
-    return () => {
-      cleanupMediaStream();
-    };
-  }, []);
-
-  const Roomlist = useCallback(async () => {
-    const roomlist = await apiClient.roomlist.$post();
-    console.log(roomlist);
-    setARoomId(roomlist.roomId);
-  }, []);
-
-  const createUserdata = useCallback(async () => {
-    const user1 = await apiClient.roomlist.$post();
-    console.log(user1);
-    if (user1 === null) {
-      console.log('a');
-      await apiClient.create.$post();
-    } else {
-      if (user === null) {
-        console.log(user);
+    this.socket.on('message', async (message: Message) => {
+      if (typeof message === 'string') {
+        messageEventTarget.dispatchEvent(new Event(message));
       } else {
-        const userId = user.id;
-        const userroom = await apiClient.usercheck.$post({ body: { userId } });
-        console.log(userroom);
+        messageEventTarget.dispatchEvent(new CustomEvent(message.type, { detail: message }));
       }
+    });
+  }
+
+  public async componentDidMount() {
+    console.log(`hostname: ${location.hostname}`);
+
+    this.localStream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+    });
+    if (this.localVideoRef.current) {
+      this.localVideoRef.current.srcObject = this.localStream;
+      this.sendMessage('got user media');
     }
-  }, [user]);
-  // const inputRoomId = (e: ChangeEvent<HTMLInputElement>) => {
-  //   setRoomId(e.target.value);
-  // };
-  // const serchRoomId = (e: ChangeEvent<HTMLInputElement>) => {
-  //   setSearchRoomId(e.target.value);
-  // };
-  // const inputComment = (e: ChangeEvent<HTMLInputElement>) => {
-  //   setaComment(e.target.value);
-  // };
-  const handleConfirm = async () => {
-    setRoomId(inputValue);
-    console.log('User input:', inputValue);
-    if (!user) return;
-    const userId = user.id;
-    const a = await apiClient.user.post({ body: { roomId, userId } });
-    const b = await apiClient.roomcreate.post({ body: { roomId, userId } });
-    console.log(roomId);
-    setARoomId(a.body.roomId);
-  };
-  const serchId = async () => {
-    if (!user) return;
-    const userId = user.id;
-    console.log(searchRoomId);
-    const a = await apiClient.serchroom.post({ body: { searchRoomId, userId } });
-    await apiClient.userroomcreate.post({ body: { searchRoomId, userId } });
-    console.log(a.body.user);
-    // const userasse = a.user
-    console.log(roomId);
-    setRoomId2(a.body.roomid);
-    setuserasse(a.body.user);
-    await Roomlist();
-  };
-  const mymessage = async () => {
-    if (!user) return;
-    const userId = user.id;
-    const comment = message;
-    console.log(comment);
-    const usermessage = await apiClient.createcomment.$post({ body: { userId, comment } });
-    setaComment(usermessage.comment);
-  };
+    window.addEventListener('beforeunload', () => {
+      this.sendMessage('bye');
+    });
+  }
 
-  const lookmystatus = async () => {
-    if (!user) return;
-    console.log('234');
-    const userId = user.id;
-    const usermessage = await apiClient.usercheck.$post({ body: { userId } });
-    if (usermessage === undefined) {
-      console.log('usernasi');
-    } else {
-      console.log(usermessage.comment);
-      setaComment(usermessage.comment);
-      console.log(usermessage.birth);
-      console.log('asdaw');
-      setBirth(usermessage.birth);
-      console.log(birth);
-    }
-  };
-  const mybirth = async () => {
-    if (!user) return;
-    const userId = user.id;
-    const birthday = birth;
-    const usermessage = await apiClient.birth.$post({ body: { userId, birthday } });
-    setBirth(usermessage.birth);
-  };
+  public async componentWillUnmount() {
+    if (this.peerConnection) this.peerConnection.close();
+    if (this.localStream) this.localStream.getTracks()[0].stop();
+    this.sendMessage('bye');
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    if (this.socket) this.socket.close();
+  }
 
-  const inputcomment = async () => {
-    if (!user) return;
-    console.log(user.photoURL);
-    console.log(value);
-    const sender_id = user.id;
-    const content = value;
-    const name = user.displayName;
-    if (name === undefined) {
-      console.log('usernameなし');
-    } else {
-      const a = await apiClient.message.post({ body: { roomId, sender_id, content, name } });
-    }
-    await LookMessage();
-  };
-
-  const LookRoom = async (roomId3: string) => {
-    console.log('a');
-    console.log(roomId3);
-    setRoomId(roomId3);
-    await apiClient.room.post({ body: { roomId3 } });
-    if (user === null) {
-      console.log('error');
-    } else {
-      const userId = user.id;
-      console.log(userId);
-      const a = await apiClient.roomuser.post({ body: { roomId3 } });
-      console.log(a.body.user);
-      setuserasse(a.body.user);
-    }
-
-    const messages = await apiClient.message_get2.$post({ body: { roomId3 } });
-    console.log(messages);
-    if (messages === undefined) {
-      console.log('messagesがありません');
-    } else {
-      setMessages(messages);
-      setmyId(user?.id || '');
-    }
-  };
-
-  const LookMessage = async () => {
-    const messages = await apiClient.message_get.$post({ body: { roomId } });
-    if (messages === undefined) {
-      console.log('messagesがありません');
-    } else {
-      setMessages(messages);
-      setmyId(user?.id || '');
-    }
-  };
-  const onChange1 = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    console.log('Change:', e.target.value);
-    setaComment(e.target.value);
-  };
-  const { TextArea } = Input;
-
-  // const handleInfo = async (messageId: string) => {
-  //   try {
-  //     const infomessage = await apiClient.infomessage.$post({ body: { messageId } });
-  //     setInfoName(infomessage.sender_Id);
-  //     // console.log(infoname)
-  //     await LookMessage();
-  //   } catch (error) {
-  //     await LookMessage();
-  //   }
-  // };
-
-  // const handleDelete = async (messageId: string) => {
-  //   try {
-  //     await apiClient.deleteMessage.$post({ body: { messageId } });
-  //     await LookMessage();
-  //   } catch (error) {
-  //     await LookMessage();
-  //   }
-  // };
-
-  // const handleToggleForm = () => {
-  //   setShowForm(!showForm);
-  // };
-
-  // const handleEdit = (messageId: string, contentmess: string) => {
-  //   setEditingMessageId(messageId);
-  //   setEditedMessage(contentmess);
-  //   setContextMenuVisible(false);
-  //   setEditMenuVisible(true);
-  //   setComent(contentmess);
-  // };
-  // const handleSaveEdit = async () => {
-  //   setEditMenuVisible(false);
-  //   if (editingMessageId === null) {
-  //     console.log('id2なし');
-  //   }
-  //   {
-  //     await apiClient.edit.$post({ body: { editingMessageId, editedMessage } });
-  //     await LookMessage();
-  //     setEditingMessageId(null);
-  //     setEditedMessage('');
-  //   }
-  // };
-  // const handleRightClick =
-  //   (messageId: string, contentmess: string) =>
-  //     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-  //       e.preventDefault();
-  //       setContextMenuVisible(true);
-  //       setSelectedMessageId(messageId);
-  //       setContextMenuPosition({ x: e.clientX, y: e.clientY });
-  //       setEditingMessageId(messageId);
-  //       setEditedMessage(contentmess);
-  //       setComent(contentmess);
-  //     };
-
-  useEffect(() => {
-    createUserdata();
-    Roomlist();
-  }, [Roomlist, createUserdata]);
-
-  return (
-    <Layout hasSider>
-      {/* <>
-        <Upload
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-          listType="picture-circle"
-          fileList={fileList}
-          onPreview={handlePreview}
-          onChange={handleChange}
-        >
-          {fileList.length >= 8 ? null : uploadButton}
-        </Upload>
-        <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
-          <img alt="example" style={{ width: '100%' }} src={previewImage} />
-        </Modal>
-      </> */}
-      <div
-        style={{
-          width: 300,
-          height: 120,
-          background: backgroundColor,
-          position: 'fixed',
-        }}
-      >
-        {' '}
-        <div className={styles.box1} onClick={showDrawer} />
-        <div
-          style={{
-            top: 50,
-            left: 67,
-            fontSize: '1.5em', // フォントサイズを変更
-            textAlign: 'center', // テキストを中央揃えに
-            lineHeight: '1em', // 行間を調整
-            fontWeight: 'bold', // フォントを太字に
-            textShadow:
-              '0 0 0.1em rgb(255 255 24 / 5%), 0.01em 0.04em 0.03em rgb(255 255 255 / 80%)', // テキストシャドウを指定
-            backgroundClip: 'text', // Webkitブラウザ用のテキストの背景クリップを指定
-            position: 'fixed' // 要素の位置を固定
-          }}
-        >
-          {user?.displayName}
-        </div>
+  public render() {
+    const { isStarted, isChannelReady, isInitiator } = this.state;
+    return (
+      <div>
+        <h2>Sample 5</h2>
+        <p>Signaling and video Peer Connection</p>
+        <p>isStarted: {String(isStarted)},</p>
+        <p>isChannelReady: {String(isChannelReady)}</p>
+        <p>isInitiator: {String(isInitiator)}</p>
+        <video
+          ref={this.localVideoRef}
+          style={{ width: '320px', maxWidth: '100%' }}
+          autoPlay
+          playsInline
+        />
+        <video
+          ref={this.remoteVideoRef}
+          style={{ width: '320px', maxWidth: '100%' }}
+          autoPlay
+          playsInline
+        />
       </div>
-      <div className={styles.box1} onClick={showDrawer} />
-      <Avatar
-        style={{ backgroundColor: '#87d068', left: 30, top: 45, position: 'fixed' }}
-        icon={<UserOutlined />}
-      />
-      <>
-        <Drawer title="your profile" placement="right" onClose={onClose} open={open} width={800}>
-          <p>{user?.displayName}</p>
-          <br />
-          <p>message</p>
-          <TextArea showCount maxLength={100} onChange={onChange1} value={message} />
-          <Button type="primary" icon={<CheckOutlined />} onClick={mymessage}>
-            ok
-          </Button>
-          <br />
-          <br />
-          <p>birthday</p>
-          <DatePicker
-            onChange={onChange2}
-            defaultValue={dayjs(birth, dateFormat)}
-            format={dateFormat}
-          >
-            birthday
-          </DatePicker>
-          <Button type="primary" icon={<CheckOutlined />} onClick={mybirth}>
-            ok
-          </Button>
-          <p>Some contents...</p>
-        </Drawer>
-      </>
-      <Sider
-        style={{
-          height: '100vh',
-          position: 'fixed',
+    );
+  }
 
-          top: 120,
-          bottom: 0,
-        }}
-        width={300} // 幅を指定
-      >
-        <Menu
-          theme="dark"
-          mode="inline"
-          defaultSelectedKeys={['4']}
-          items={items}
-          onSelect={({ key }) => LookRoom(key)}
-          style={{ width: 300 }} // ここで幅を指定
-        />
-      </Sider>
-      <Layout className="site-layout" style={{ marginLeft: 100 }}>
-        <Header style={{ padding: 0, background: colorBgContainer }} />
-        <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-          <div style={{ padding: 24, textAlign: 'center', background: colorBgContainer }}>
-            <p>long content</p>
-            {messages
-              .sort((a, b) => a.sent_at - b.sent_at)
-              .map((message, index) => (
-                <React.Fragment key={message.id2}>
-                  {index !== 0 && <Divider orientation="left" plain />}
-                  <div
-                    className={`${styles.commentBubble} ${
-                      message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                    }`}
-                  >
-                    <div className={styles.username}>{message.username}</div>
-                    <div className={styles.content}>{message.contentmess}</div>
-                  </div>
-                </React.Fragment>
-              ))}
-          </div>
-        </Content>
-        <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
-      </Layout>
-      <div style={{ position: 'relative' }}>
-        <AutoComplete
-          style={{ position: 'fixed', width: 800, height: 600, top: 750, right: 330 }}
-          // value={inputValue}
-          // options={autoCompleteOptions}
-          onSelect={onSelect}
-          onSearch={onChange3}
-          placeholder="input here"
-        />
-        <br />
-        <br />
-      </div>
-      <Button
-        icon={<SendOutlined />}
-        style={{ position: 'fixed', top: 750, right: 300 }}
-        type="primary"
-        onClick={() => inputcomment()}
-      />
-      <FloatButton icon={<SearchOutlined />} type="primary" style={{ top: 800, left: 75 }} />
-      <Popconfirm
-        title={
-          <Input
-            value={roomId}
-            onChange={(e) => setRoomId(e.target.value)}
-            onPressEnter={handleConfirm}
-            placeholder="RoomIdを入力してください"
-          />
-        }
-        visible={popconfirmVisible}
-        onVisibleChange={(visible) => setPopconfirmVisible(visible)}
-        onConfirm={handleConfirm}
-        onCancel={() => setPopconfirmVisible(false)}
-        okText="Add"
-        cancelText="Cancel"
-        placement="left"
-      >
-        <FloatButton icon={<PlusOutlined />} type="primary" style={{ top: 730, left: 75 }} />
-      </Popconfirm>
-      <Popconfirm
-        title={
-          <Input
-            value={searchRoomId}
-            onChange={(e) => setSearchRoomId(e.target.value)}
-            onPressEnter={serchId}
-            placeholder="RoomIdを入力してください"
-          />
-        }
-        visible={popconfirmVisible}
-        onVisibleChange={(visible) => setsearchVisible(visible)}
-        onConfirm={serchId}
-        onCancel={() => setsearchVisible(false)}
-        okText="Search"
-        cancelText="Cancel"
-        placement="left"
-      >
-        <Button
-          icon={<SendOutlined />}
-          style={{ position: 'fixed', top: 750, right: 300 }}
-          type="primary"
-          onClick={() => inputcomment()}
-        />
-        <FloatButton
-          icon={<SearchOutlined />}
-          type="primary"
-          style={{ position: 'fixed', top: 800, left: 75 }}
-        />
-      </Popconfirm>
-      {/* <>
-      <Upload
-        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-        listType="picture-circle"
-        fileList={fileList}
-        onPreview={handlePreview}
-        onChange={handleChange}
-      >
-        {fileList.length >= 8 ? null : uploadButton}
-      </Upload>
-      <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
-        <img alt="example" style={{ width: '100%' }} src={previewImage} />
-      </Modal>
-    </> */}
-    </Layout>
-  );
-};
+  private onicecandidate = (event: RTCPeerConnectionIceEvent) => {
+    console.log('icecandidate event: ', event);
+    if (event.candidate) {
+      this.sendMessage({
+        type: 'candidate',
+        label: event.candidate.sdpMLineIndex,
+        id: event.candidate.sdpMid,
+        candidate: event.candidate.candidate,
+      });
+    } else {
+      console.log('End of candidates.');
+    }
+  };
 
-export default App;
+  private ontrack = (event: RTCTrackEvent) => {
+    console.log('ontrack');
+    if (!this.remoteVideoRef.current) return;
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    if (event.streams && event.streams[0]) return;
+    this.remoteStream = new MediaStream();
+    this.remoteStream.addTrack(event.track);
+    this.remoteVideoRef.current.srcObject = this.remoteStream;
+  };
+
+  private createPeer = () => {
+    console.log('>>>>>> creating peer connection');
+    if (!this.localStream) return;
+    this.peerConnection = new RTCPeerConnection();
+    this.peerConnection.addEventListener('icecandidate', this.onicecandidate);
+    this.peerConnection.addEventListener('track', this.ontrack);
+    this.peerConnection.addTrack(this.localStream.getVideoTracks()[0]);
+    this.setState({ isStarted: true });
+  };
+
+  private initiatorStart = async () => {
+    const { isStarted, isChannelReady } = this.state;
+    console.log('>>>>>>> initiatorStart() ', isStarted, isChannelReady);
+    if (!isStarted && isChannelReady) {
+      this.createPeer();
+      if (!this.peerConnection) return;
+      console.log('Sending offer to peer');
+      const description = await this.peerConnection.createOffer();
+      this.setLocalAndSendMessage(description);
+    }
+  };
+
+  private receiverStart = async () => {
+    const { isStarted, isChannelReady } = this.state;
+    console.log('>>>>>>> receiverStart() ', isStarted, isChannelReady);
+    if (!isStarted && isChannelReady) {
+      this.createPeer();
+    }
+  };
+
+  private sendMessage = (message: Message) => {
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    if (!this.socket) return;
+    console.log('Client sending message: ', message);
+    this.socket.emit('message', message);
+  };
+
+  private setLocalAndSendMessage = (description: RTCSessionDescriptionInit) => {
+    if (!this.peerConnection) return;
+    this.peerConnection.setLocalDescription(description);
+    this.sendMessage(description);
+  };
+}
+export default Sample5;
