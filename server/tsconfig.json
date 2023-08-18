@@ -24,7 +24,7 @@
     "aspida.config.js",
     ".eslintrc.js",
     "index.ts",
-    "api/index.ts"
+    "api/index.mjs"
   ],
   "exclude": ["node_modules"]
 }

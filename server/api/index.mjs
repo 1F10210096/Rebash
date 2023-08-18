@@ -23,7 +23,7 @@ try {
     console.log(Array.from(io.sockets.sockets.keys()));
 
     // convenience function to log server messages on the client
-    function log(text:string) {
+    function log(text) {
       socket.emit('log', `Message from server: ${text}`);
     }
 
