@@ -83,6 +83,9 @@ const App: React.FC = () => {
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [friend, setFriend] = useState<string[]>([]);
+  const [sent_friend, setSend_friend] = useState('');
+  const [receive_friend, setReceive_friend] = useState('');
   const getBase64 = (file: RcFile): Promise<string> =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -388,6 +391,13 @@ const App: React.FC = () => {
       setEditedMessage(contentmess);
       setComent(contentmess);
     };
+
+  const send_friendId = async (Id: string) => {
+    setReceive_friend(Id);
+    if (!user) return;
+    const userId = user.id;
+    await apiClient.friend.$post({ body: { receive_friend, userId } });
+  };
   useEffect(() => {
     createUserdata();
     Roomlist();
@@ -416,8 +426,10 @@ const App: React.FC = () => {
         }}
       />
       <div className={styles.box1} onClick={showDrawer} />
-      <Avatar style={{ backgroundColor: '#87d068', right: 500, top: 40 }} icon={<UserOutlined />} />
-      <div style={{ top: 800, fontSize: '16px', color: 'blue' }}>{user?.displayName}</div>
+      <Avatar style={{ backgroundColor: '#87d068', right: 230, top: 40 }} icon={<UserOutlined />} />
+      <div style={{ top: 800 }} className="fuchidori">
+        {user?.displayName}
+      </div>
       <>
         <Drawer title="your profile" placement="right" onClose={onClose} open={open} width={800}>
           <p>{user?.displayName}</p>
