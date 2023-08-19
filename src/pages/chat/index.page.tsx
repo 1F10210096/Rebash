@@ -1,7 +1,6 @@
 import type { MessageModel } from '$/commonTypesWithClient/models';
 import {
   AppstoreOutlined,
-  CheckOutlined,
   MailOutlined,
   PlusOutlined,
   SearchOutlined,
@@ -14,9 +13,7 @@ import {
   AutoComplete,
   Avatar,
   Button,
-  DatePicker,
   Divider,
-  Drawer,
   FloatButton,
   Input,
   Layout,
@@ -326,47 +323,6 @@ const App: React.FC = () => {
       await LookMessage();
     }
   };
-  const handleDelete = async (messageId: string) => {
-    try {
-      await apiClient.deleteMessage.$post({ body: { messageId } });
-      await LookMessage();
-    } catch (error) {
-      await LookMessage();
-    }
-  };
-  const handleToggleForm = () => {
-    setShowForm(!showForm);
-  };
-  const handleEdit = (messageId: string, contentmess: string) => {
-    setEditingMessageId(messageId);
-    setEditedMessage(contentmess);
-    setContextMenuVisible(false);
-    setEditMenuVisible(true);
-    setComent(contentmess);
-  };
-  const handleSaveEdit = async () => {
-    setEditMenuVisible(false);
-    if (editingMessageId === null) {
-      console.log('id2なし');
-    }
-    {
-      await apiClient.edit.$post({ body: { editingMessageId, editedMessage } });
-      await LookMessage();
-      setEditingMessageId(null);
-      setEditedMessage('');
-    }
-  };
-  const handleRightClick =
-    (messageId: string, contentmess: string) =>
-      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        e.preventDefault();
-        setContextMenuVisible(true);
-        setSelectedMessageId(messageId);
-        setContextMenuPosition({ x: e.clientX, y: e.clientY });
-        setEditingMessageId(messageId);
-        setEditedMessage(contentmess);
-        setComent(contentmess);
-      };
   useEffect(() => {
     createUserdata();
     Roomlist();
@@ -397,8 +353,7 @@ const App: React.FC = () => {
       <div className={styles.box1} onClick={showDrawer} />
       <Avatar style={{ backgroundColor: '#87d068', right: 500, top: 40 }} icon={<UserOutlined />} />
       <div style={{ top: 800, fontSize: '16px', color: 'blue' }}>{user?.displayName}</div>
-      <>
-      </>
+      <></>
       <Sider
         style={{
           height: '100vh',
