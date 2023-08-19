@@ -10,6 +10,9 @@ const toUser1Model = (prismaRoom: user): User1Model => ({
   birth: prismaRoom.birth,
   sex: prismaRoom.sex,
   status: prismaRoom.sex,
+  sender_id: prismaRoom.sender_id,
+  receive_id: prismaRoom.receive_id,
+  friend: prismaRoom.friend,
 });
 
 export const userrepository = {
@@ -22,6 +25,9 @@ export const userrepository = {
         birth: user.birth,
         sex: user.sex,
         status: user.status,
+        sender_id: user.sender_id,
+        receive_id: user.receive_id,
+        friend: user.friend,
       },
       create: {
         userId: user.id,
@@ -30,6 +36,9 @@ export const userrepository = {
         birth: user.birth,
         sex: user.sex,
         status: user.status,
+        sender_id: user.sender_id,
+        receive_id: user.receive_id,
+        friend: user.friend,
       },
     });
   },

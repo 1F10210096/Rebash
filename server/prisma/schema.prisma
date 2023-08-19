@@ -28,6 +28,9 @@ model user {
   birth      String
   sex        Int
   status     Int
+  sender_id  String[]
+  receive_id String[]
+  friend     String[]
 }
 
 model message {

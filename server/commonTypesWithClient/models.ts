@@ -28,6 +28,9 @@ export type User1Model = {
   birth: string;
   sex: number;
   status: number;
+  sender_id: string[];
+  receive_id: string[];
+  friend: string[];
 };
 
 export type MessageModel = {
