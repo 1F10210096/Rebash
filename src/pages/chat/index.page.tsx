@@ -95,6 +95,8 @@ const App: React.FC = () => {
   const [syouninfriend, setSyouninFriend] = useState('');
   const [searchfriend, setSearchFriend] = useState('');
   const [del_friend, setDel_Friend] = useState('');
+  const [sex, setSex] = useState(0);
+  const [sex_str, setSex_str] = useState('');
 
   const getBase64 = (file: RcFile): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -432,6 +434,15 @@ const App: React.FC = () => {
     if (!user) return;
     const userId = user.id;
     await apiClient.del_friend.$post({ body: { del_friend, userId } });
+  };
+
+  const select_sex = async () => {
+    if (!user) return;
+    const userId = user.id;
+    const sexes = await apiClient.sex.$post({ body: { sex, userId } });
+    const sexString = sexes.sex === 1 ? '男' : sexes.sex === 2 ? '女' : '';
+    setSex_str(sexString);
+    return sexString;
   };
   useEffect(() => {
     createUserdata();

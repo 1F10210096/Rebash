@@ -81,7 +81,7 @@ export const userUsecase = {
     await userrepository.save(user);
     return user;
   },
-  delfriend: async (del_friend: string, userId: string): Promise<User1Model> => {
+  del_friend: async (del_friend: string, userId: string): Promise<User1Model> => {
     console.log(del_friend);
     const user = await userrepository.findUser(userId);
     assert(user, 'userなし');
@@ -93,6 +93,16 @@ export const userUsecase = {
 
     console.log('a');
     // ユーザー情報を保存
+    await userrepository.save(user);
+
+    return user;
+  },
+  sex: async (sex: number, userId: string): Promise<User1Model> => {
+    console.log(sex);
+    const user = await userrepository.findUser(userId);
+    assert(user, 'userなし');
+    console.log('a');
+    user.sex = sex;
     await userrepository.save(user);
 
     return user;
