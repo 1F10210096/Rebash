@@ -67,7 +67,8 @@ export const userUsecase = {
     const user = await userrepository.findUser(userId);
     assert(user, 'userなし');
     console.log('a');
-    user.receive_id.push(userId);
+    user.receive_id.push(receive_friend);
+    user.sender_id.push(userId);
     await userrepository.save(user);
     return user;
   },

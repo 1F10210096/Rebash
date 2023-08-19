@@ -3,7 +3,7 @@ import type { User1Model } from '$/commonTypesWithClient/models';
 
 export type Methods = {
   post: {
-    reqBody: { receive_friend: string; userId: UserId };
+    reqBody: { searchfriend: string; userId: UserId };
     resBody: User1Model;
   };
 };

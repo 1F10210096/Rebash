@@ -86,6 +86,9 @@ const App: React.FC = () => {
   const [friend, setFriend] = useState<string[]>([]);
   const [sent_friend, setSend_friend] = useState('');
   const [receive_friend, setReceive_friend] = useState('');
+  const [options1, setOptions1] = useState('');
+  const [searchfriend, setSearchFriend] = useState('');
+
   const getBase64 = (file: RcFile): Promise<string> =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -164,6 +167,7 @@ const App: React.FC = () => {
       'group'
     ),
   ];
+
   const getPanelValue = (searchText: string) =>
     !searchText ? [] : [mockVal(searchText), mockVal(searchText, 2), mockVal(searchText, 3)];
   const onSelect = (data: string) => {
@@ -382,21 +386,20 @@ const App: React.FC = () => {
   };
   const handleRightClick =
     (messageId: string, contentmess: string) =>
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      e.preventDefault();
-      setContextMenuVisible(true);
-      setSelectedMessageId(messageId);
-      setContextMenuPosition({ x: e.clientX, y: e.clientY });
-      setEditingMessageId(messageId);
-      setEditedMessage(contentmess);
-      setComent(contentmess);
-    };
+      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.preventDefault();
+        setContextMenuVisible(true);
+        setSelectedMessageId(messageId);
+        setContextMenuPosition({ x: e.clientX, y: e.clientY });
+        setEditingMessageId(messageId);
+        setEditedMessage(contentmess);
+        setComent(contentmess);
+      };
 
-  const send_friendId = async (Id: string) => {
-    setReceive_friend(Id);
+  const send_friendId = async () => {
     if (!user) return;
     const userId = user.id;
-    await apiClient.friend.$post({ body: { receive_friend, userId } });
+    const friend = await apiClient.friend.$post({ body: { searchfriend, userId } });
   };
   useEffect(() => {
     createUserdata();
@@ -485,9 +488,8 @@ const App: React.FC = () => {
                 <React.Fragment key={message.id2}>
                   {index !== 0 && <Divider orientation="left" plain />}
                   <div
-                    className={`${styles.commentBubble} ${
-                      message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                    }`}
+                    className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                      }`}
                   >
                     <div className={styles.username}>{message.username}</div>
                     <div className={styles.content}>{message.contentmess}</div>
@@ -565,6 +567,14 @@ const App: React.FC = () => {
           style={{ position: 'fixed', top: 800, left: 75 }}
         />
       </Popconfirm>
+      <Input
+        value={searchRoomId}
+        onChange={(e) => setSearchFriend(e.target.value)}
+        onPressEnter={send_friendId}
+        placeholder="RoomIdを入力してください"
+      />
+      <br />
+      <br />
       {/* <>
       <Upload
         action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
