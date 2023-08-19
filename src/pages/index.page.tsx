@@ -5,7 +5,7 @@ import * as SocketIOClient from 'socket.io-client';
 
 import io from 'socket.io-client';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface Props { }
+interface Props {}
 interface State {
   isInitiator: boolean;
   isStarted: boolean;
