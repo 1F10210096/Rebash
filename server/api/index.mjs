@@ -7,7 +7,7 @@ try {
   const app = express();
 
   // CORSヘッダーの設定
-  app.use((req, res, next) => {
+  app.use((_req, res, next) => {
     res.header('Access-Control-Allow-Origin', 'http://localhost:3000'); // クライアントのURLに置き換える
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
@@ -25,6 +25,10 @@ try {
 
   const io = new Server(server, {
     path: '/socket.io',
+    cors: {
+      origin: 'http://localhost:3000', // クライアントのURLに置き換える
+      methods: ['GET', 'POST'],
+    },
   });
 
   io.on('connection', (socket) => {
