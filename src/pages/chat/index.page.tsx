@@ -414,15 +414,15 @@ const App: React.FC = () => {
   };
   const handleRightClick =
     (messageId: string, contentmess: string) =>
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      e.preventDefault();
-      setContextMenuVisible(true);
-      setSelectedMessageId(messageId);
-      setContextMenuPosition({ x: e.clientX, y: e.clientY });
-      setEditingMessageId(messageId);
-      setEditedMessage(contentmess);
-      setComent(contentmess);
-    };
+      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.preventDefault();
+        setContextMenuVisible(true);
+        setSelectedMessageId(messageId);
+        setContextMenuPosition({ x: e.clientX, y: e.clientY });
+        setEditingMessageId(messageId);
+        setEditedMessage(contentmess);
+        setComent(contentmess);
+      };
 
   const send_friendId = async () => {
     if (!user) return;
@@ -439,6 +439,19 @@ const App: React.FC = () => {
   const select_sex = async () => {
     if (!user) return;
     const userId = user.id;
+    const sexes = await apiClient.sex.$post({ body: { sex, userId } });
+    const sexString = sexes.sex === 1 ? '男' : sexes.sex === 2 ? '女' : '';
+    setSex_str(sexString);
+    return sexString;
+  };
+  const Reselect_sex = async () => {
+    if (!user) return;
+    const userId = user.id;
+    if (sex_str === "男") {
+      setSex(1);
+    } else if (sex_str === "女") {
+      setSex(2);
+    }
     const sexes = await apiClient.sex.$post({ body: { sex, userId } });
     const sexString = sexes.sex === 1 ? '男' : sexes.sex === 2 ? '女' : '';
     setSex_str(sexString);
@@ -562,9 +575,8 @@ const App: React.FC = () => {
                 <React.Fragment key={message.id2}>
                   {index !== 0 && <Divider orientation="left" plain />}
                   <div
-                    className={`${styles.commentBubble} ${
-                      message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                    }`}
+                    className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                      }`}
                   >
                     <div className={styles.username}>{message.username}</div>
                     <div className={styles.content}>{message.contentmess}</div>
