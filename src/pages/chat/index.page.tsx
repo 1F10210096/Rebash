@@ -1,7 +1,29 @@
 import type { MessageModel } from '$/commonTypesWithClient/models';
-import { PlusOutlined, SearchOutlined, SendOutlined, UserOutlined } from '@ant-design/icons';
-import type { DatePickerProps } from 'antd';
-import { Avatar, Button, Divider, FloatButton, Input, Layout, Popconfirm, theme } from 'antd';
+import {
+  AppstoreOutlined,
+  CheckOutlined,
+  MailOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  SendOutlined,
+  SettingOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+import type { DatePickerProps, MenuProps } from 'antd';
+import {
+  AutoComplete,
+  Avatar,
+  Button,
+  DatePicker,
+  Divider,
+  Drawer,
+  FloatButton,
+  Input,
+  Layout,
+  Menu,
+  Popconfirm,
+  theme,
+} from 'antd';
 import type { RcFile } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
 import dayjs from 'dayjs';
@@ -58,6 +80,8 @@ const App: React.FC = () => {
     `custom format: ${value.format(dateFormat)}`;
 
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState('');
+  const [previewTitle, setPreviewTitle] = useState('');
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const getBase64 = (file: RcFile): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -93,6 +117,55 @@ const App: React.FC = () => {
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
+  // const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>
+  //   setFileList(newFileList);
+  //   console.log(fileList)
+  type MenuItem = Required<MenuProps>['items'][number];
+  function getItem(
+    label: React.ReactNode,
+    key: React.Key,
+    icon?: React.ReactNode,
+    children?: MenuItem[],
+    type?: 'group'
+  ): MenuItem {
+    return {
+      key,
+      icon,
+      children,
+      label,
+      type,
+    } as MenuItem;
+  }
+  const items: MenuProps['items'] = [
+    getItem('Navigation One', 'sub1', <MailOutlined />, [
+      getItem('Item 1', 'g1', null, [getItem('Option 1', '1'), getItem('Option 2', '2')], 'group'),
+      getItem('Item 2', 'g2', null, [getItem('Option 3', '3'), getItem('Option 4', '4')], 'group'),
+    ]),
+    getItem('Navigation Two', 'sub2', <AppstoreOutlined />, [
+      getItem('Option 5', '5'),
+      getItem('Option 6', '6'),
+      getItem('Submenu', 'sub3', null, [getItem('Option 7', '7'), getItem('Option 8', '8')]),
+    ]),
+    { type: 'divider' },
+    getItem('Navigation Three', 'sub4', <SettingOutlined />, [
+      getItem('Option 9', '9'),
+      getItem('Option 10', '10'),
+      getItem('Option 11', '11'),
+      getItem('Option 12', '12'),
+    ]),
+    getItem(
+      'Group',
+      'grp',
+      null,
+      aroom.map((room) => getItem(room, room)),
+      'group'
+    ),
+  ];
+  const getPanelValue = (searchText: string) =>
+    !searchText ? [] : [mockVal(searchText), mockVal(searchText, 2), mockVal(searchText, 3)];
+  const onSelect = (data: string) => {
+    console.log('onSelect', data);
+  };
   const onChange3 = (data: string) => {
     setValue(data);
   };
@@ -105,6 +178,9 @@ const App: React.FC = () => {
   const showDrawer = () => {
     setOpen(true);
     lookmystatus();
+  };
+  const onClose = () => {
+    setOpen(false);
   };
   useEffect(() => {
     const initializeVideo = async () => {
@@ -203,6 +279,13 @@ const App: React.FC = () => {
       console.log(birth);
     }
   };
+  const mybirth = async () => {
+    if (!user) return;
+    const userId = user.id;
+    const birthday = birth;
+    const usermessage = await apiClient.birth.$post({ body: { userId, birthday } });
+    setBirth(usermessage.birth);
+  };
   const inputcomment = async () => {
     if (!user) return;
     console.log(user.photoURL);
@@ -249,37 +332,18 @@ const App: React.FC = () => {
       setmyId(user?.id || '');
     }
   };
-  const { TextArea } = Input;
-  const handleInfo = async (messageId: string) => {
-    try {
-      const infomessage = await apiClient.infomessage.$post({ body: { messageId } });
-      setInfoName(infomessage.sender_Id);
-      // console.log(infoname)
-      await LookMessage();
-    } catch (error) {
-      await LookMessage();
-    }
+  const onChange1 = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    console.log('Change:', e.target.value);
+    setaComment(e.target.value);
   };
+  const { TextArea } = Input;
+
   useEffect(() => {
     createUserdata();
     Roomlist();
   }, [Roomlist, createUserdata]);
   return (
     <Layout hasSider>
-      {/* <>
-        <Upload
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-          listType="picture-circle"
-          fileList={fileList}
-          onPreview={handlePreview}
-          onChange={handleChange}
-        >
-          {fileList.length >= 8 ? null : uploadButton}
-        </Upload>
-        <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
-          <img alt="example" style={{ width: '100%' }} src={previewImage} />
-        </Modal>
-      </> */}
       <div
         style={{
           width: 300,
@@ -290,7 +354,50 @@ const App: React.FC = () => {
       <div className={styles.box1} onClick={showDrawer} />
       <Avatar style={{ backgroundColor: '#87d068', right: 500, top: 40 }} icon={<UserOutlined />} />
       <div style={{ top: 800, fontSize: '16px', color: 'blue' }}>{user?.displayName}</div>
-      <></>
+      <>
+        <Drawer title="your profile" placement="right" onClose={onClose} open={open} width={800}>
+          <p>{user?.displayName}</p>
+          <br />
+          <p>message</p>
+          <TextArea showCount maxLength={100} onChange={onChange1} value={message} />
+          <Button type="primary" icon={<CheckOutlined />} onClick={mymessage}>
+            ok
+          </Button>
+          <br />
+          <br />
+          <p>birthday</p>
+          <DatePicker
+            onChange={onChange2}
+            defaultValue={dayjs(birth, dateFormat)}
+            format={dateFormat}
+          >
+            birthday
+          </DatePicker>
+          <Button type="primary" icon={<CheckOutlined />} onClick={mybirth}>
+            ok
+          </Button>
+          <p>Some contents...</p>
+        </Drawer>
+      </>
+      <Sider
+        style={{
+          height: '100vh',
+          position: 'fixed',
+
+          top: 120,
+          bottom: 0,
+        }}
+        width={300} // 幅を指定
+      >
+        <Menu
+          theme="dark"
+          mode="inline"
+          defaultSelectedKeys={['4']}
+          items={items}
+          onSelect={({ key }) => LookRoom(key)}
+          style={{ width: 300 }} // ここで幅を指定
+        />
+      </Sider>
       <Layout className="site-layout" style={{ marginLeft: 100 }}>
         <Header style={{ padding: 0, background: colorBgContainer }} />
         <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
@@ -315,7 +422,7 @@ const App: React.FC = () => {
         </Content>
         <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
       </Layout>
-      {/* <div style={{ position: 'relative' }}>
+      <div style={{ position: 'relative' }}>
         <AutoComplete
           style={{ position: 'fixed', width: 800, height: 600, top: 750, right: 330 }}
           // value={inputValue}
@@ -326,7 +433,7 @@ const App: React.FC = () => {
         />
         <br />
         <br />
-      </div> */}
+      </div>
       <Button
         icon={<SendOutlined />}
         style={{ position: 'fixed', top: 750, right: 300 }}
@@ -382,20 +489,6 @@ const App: React.FC = () => {
           style={{ position: 'fixed', top: 800, left: 75 }}
         />
       </Popconfirm>
-      {/* <>
-      <Upload
-        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-        listType="picture-circle"
-        fileList={fileList}
-        onPreview={handlePreview}
-        onChange={handleChange}
-      >
-        {fileList.length >= 8 ? null : uploadButton}
-      </Upload>
-      <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
-        <img alt="example" style={{ width: '100%' }} src={previewImage} />
-      </Modal>
-    </> */}
     </Layout>
   );
 };
