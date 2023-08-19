@@ -337,13 +337,77 @@ const App: React.FC = () => {
     setaComment(e.target.value);
   };
   const { TextArea } = Input;
-
+  const handleInfo = async (messageId: string) => {
+    try {
+      const infomessage = await apiClient.infomessage.$post({ body: { messageId } });
+      setInfoName(infomessage.sender_Id);
+      // console.log(infoname)
+      await LookMessage();
+    } catch (error) {
+      await LookMessage();
+    }
+  };
+  const handleDelete = async (messageId: string) => {
+    try {
+      await apiClient.deleteMessage.$post({ body: { messageId } });
+      await LookMessage();
+    } catch (error) {
+      await LookMessage();
+    }
+  };
+  const handleToggleForm = () => {
+    setShowForm(!showForm);
+  };
+  const handleEdit = (messageId: string, contentmess: string) => {
+    setEditingMessageId(messageId);
+    setEditedMessage(contentmess);
+    setContextMenuVisible(false);
+    setEditMenuVisible(true);
+    setComent(contentmess);
+  };
+  const handleSaveEdit = async () => {
+    setEditMenuVisible(false);
+    if (editingMessageId === null) {
+      console.log('id2なし');
+    }
+    {
+      await apiClient.edit.$post({ body: { editingMessageId, editedMessage } });
+      await LookMessage();
+      setEditingMessageId(null);
+      setEditedMessage('');
+    }
+  };
+  const handleRightClick =
+    (messageId: string, contentmess: string) =>
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.preventDefault();
+      setContextMenuVisible(true);
+      setSelectedMessageId(messageId);
+      setContextMenuPosition({ x: e.clientX, y: e.clientY });
+      setEditingMessageId(messageId);
+      setEditedMessage(contentmess);
+      setComent(contentmess);
+    };
   useEffect(() => {
     createUserdata();
     Roomlist();
   }, [Roomlist, createUserdata]);
   return (
     <Layout hasSider>
+      {/* <>
+        <Upload
+          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+          listType="picture-circle"
+          fileList={fileList}
+          onPreview={handlePreview}
+          onChange={handleChange}
+        >
+          {fileList.length >= 8 ? null : uploadButton}
+        </Upload>
+        <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
+          <img alt="example" style={{ width: '100%' }} src={previewImage} />
+        </Modal>
+      </> */}
       <div
         style={{
           width: 300,
@@ -489,6 +553,20 @@ const App: React.FC = () => {
           style={{ position: 'fixed', top: 800, left: 75 }}
         />
       </Popconfirm>
+      {/* <>
+      <Upload
+        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+        listType="picture-circle"
+        fileList={fileList}
+        onPreview={handlePreview}
+        onChange={handleChange}
+      >
+        {fileList.length >= 8 ? null : uploadButton}
+      </Upload>
+      <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
+        <img alt="example" style={{ width: '100%' }} src={previewImage} />
+      </Modal>
+    </> */}
     </Layout>
   );
 };
