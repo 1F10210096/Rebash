@@ -1,7 +1,29 @@
 import type { MessageModel } from '$/commonTypesWithClient/models';
-import { PlusOutlined, SearchOutlined, SendOutlined, UserOutlined } from '@ant-design/icons';
-import type { DatePickerProps } from 'antd';
-import { Avatar, Button, Divider, FloatButton, Input, Layout, Popconfirm, theme } from 'antd';
+import {
+  AppstoreOutlined,
+  CheckOutlined,
+  MailOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  SendOutlined,
+  SettingOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+import type { DatePickerProps, MenuProps } from 'antd';
+import {
+  AutoComplete,
+  Avatar,
+  Button,
+  DatePicker,
+  Divider,
+  Drawer,
+  FloatButton,
+  Input,
+  Layout,
+  Menu,
+  Popconfirm,
+  theme,
+} from 'antd';
 import type { RcFile } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
 import dayjs from 'dayjs';
@@ -30,6 +52,14 @@ const App: React.FC = () => {
   const mediaStreamRef = useRef<MediaStream | undefined>();
   const [showForm, setShowForm] = useState(false);
   const [searchRoomId, setSearchRoomId] = useState('');
+  const [coment, setComent] = useState('');
+  const [infoname, setInfoName] = useState('');
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [editedMessage, setEditedMessage] = useState('');
+  const [contextMenuVisible, setContextMenuVisible] = useState(false);
+  const [editMenuVisible, setEditMenuVisible] = useState(false);
+  const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
+  const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
   const [value, setValue] = useState('');
   const [options, setOptions] = useState('');
   const [birth, setBirth] = useState('2015/01/05');
@@ -58,6 +88,77 @@ const App: React.FC = () => {
       reader.onload = () => resolve(reader.result as string);
       reader.onerror = (error) => reject(error);
     });
+  const handleCancel = () => setPreviewOpen(false);
+  // const handlePreview = async (file: UploadFile) => {
+  //   if (file.url === null && file.preview === null) {
+  //     file.preview = await getBase64(file.originFileObj as RcFile);
+  //   }
+  //   const previewImageUrl = (file.url !== null) || file.preview;
+  //   if (previewImageUrl !== undefined) {
+  //     // ここを修正
+  //     setPreviewImage(previewImageUrl);
+  //     setPreviewOpen(true);
+  //     setPreviewTitle(
+  //       file.name || previewImageUrl.substring(previewImageUrl.lastIndexOf('/') + 1) || 'Untitled'
+  //     );
+  //   }
+  // };
+  const onChange2: DatePickerProps['onChange'] = (date, dateString) => {
+    // console.log(date, dateString);
+    setBirth(dateString);
+    console.log(dateString);
+  };
+
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
+  // const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>
+  //   setFileList(newFileList);
+  //   console.log(fileList)
+  type MenuItem = Required<MenuProps>['items'][number];
+  function getItem(
+    label: React.ReactNode,
+    key: React.Key,
+    icon?: React.ReactNode,
+    children?: MenuItem[],
+    type?: 'group'
+  ): MenuItem {
+    return {
+      key,
+      icon,
+      children,
+      label,
+      type,
+    } as MenuItem;
+  }
+  const items: MenuProps['items'] = [
+    getItem('Navigation One', 'sub1', <MailOutlined />, [
+      getItem('Item 1', 'g1', null, [getItem('Option 1', '1'), getItem('Option 2', '2')], 'group'),
+      getItem('Item 2', 'g2', null, [getItem('Option 3', '3'), getItem('Option 4', '4')], 'group'),
+    ]),
+    getItem('Navigation Two', 'sub2', <AppstoreOutlined />, [
+      getItem('Option 5', '5'),
+      getItem('Option 6', '6'),
+      getItem('Submenu', 'sub3', null, [getItem('Option 7', '7'), getItem('Option 8', '8')]),
+    ]),
+    { type: 'divider' },
+    getItem('Navigation Three', 'sub4', <SettingOutlined />, [
+      getItem('Option 9', '9'),
+      getItem('Option 10', '10'),
+      getItem('Option 11', '11'),
+      getItem('Option 12', '12'),
+    ]),
+    getItem(
+      'Group',
+      'grp',
+      null,
+      aroom.map((room) => getItem(room, room)),
+      'group'
+    ),
+  ];
   const onChange3 = (data: string) => {
     setValue(data);
   };
@@ -215,57 +316,57 @@ const App: React.FC = () => {
     }
   };
   const { TextArea } = Input;
-  // const handleInfo = async (messageId: string) => {
-  //   try {
-  //     const infomessage = await apiClient.infomessage.$post({ body: { messageId } });
-  //     setInfoName(infomessage.sender_Id);
-  //     // console.log(infoname)
-  //     await LookMessage();
-  //   } catch (error) {
-  //     await LookMessage();
-  //   }
-  // };
-  // const handleDelete = async (messageId: string) => {
-  //   try {
-  //     await apiClient.deleteMessage.$post({ body: { messageId } });
-  //     await LookMessage();
-  //   } catch (error) {
-  //     await LookMessage();
-  //   }
-  // };
-  // const handleToggleForm = () => {
-  //   setShowForm(!showForm);
-  // };
-  // const handleEdit = (messageId: string, contentmess: string) => {
-  //   setEditingMessageId(messageId);
-  //   setEditedMessage(contentmess);
-  //   setContextMenuVisible(false);
-  //   setEditMenuVisible(true);
-  //   setComent(contentmess);
-  // };
-  // const handleSaveEdit = async () => {
-  //   setEditMenuVisible(false);
-  //   if (editingMessageId === null) {
-  //     console.log('id2なし');
-  //   }
-  //   {
-  //     await apiClient.edit.$post({ body: { editingMessageId, editedMessage } });
-  //     await LookMessage();
-  //     setEditingMessageId(null);
-  //     setEditedMessage('');
-  //   }
-  // };
-  // const handleRightClick =
-  //   (messageId: string, contentmess: string) =>
-  //     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-  //       e.preventDefault();
-  //       setContextMenuVisible(true);
-  //       setSelectedMessageId(messageId);
-  //       setContextMenuPosition({ x: e.clientX, y: e.clientY });
-  //       setEditingMessageId(messageId);
-  //       setEditedMessage(contentmess);
-  //       setComent(contentmess);
-  //     };
+  const handleInfo = async (messageId: string) => {
+    try {
+      const infomessage = await apiClient.infomessage.$post({ body: { messageId } });
+      setInfoName(infomessage.sender_Id);
+      // console.log(infoname)
+      await LookMessage();
+    } catch (error) {
+      await LookMessage();
+    }
+  };
+  const handleDelete = async (messageId: string) => {
+    try {
+      await apiClient.deleteMessage.$post({ body: { messageId } });
+      await LookMessage();
+    } catch (error) {
+      await LookMessage();
+    }
+  };
+  const handleToggleForm = () => {
+    setShowForm(!showForm);
+  };
+  const handleEdit = (messageId: string, contentmess: string) => {
+    setEditingMessageId(messageId);
+    setEditedMessage(contentmess);
+    setContextMenuVisible(false);
+    setEditMenuVisible(true);
+    setComent(contentmess);
+  };
+  const handleSaveEdit = async () => {
+    setEditMenuVisible(false);
+    if (editingMessageId === null) {
+      console.log('id2なし');
+    }
+    {
+      await apiClient.edit.$post({ body: { editingMessageId, editedMessage } });
+      await LookMessage();
+      setEditingMessageId(null);
+      setEditedMessage('');
+    }
+  };
+  const handleRightClick =
+    (messageId: string, contentmess: string) =>
+      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.preventDefault();
+        setContextMenuVisible(true);
+        setSelectedMessageId(messageId);
+        setContextMenuPosition({ x: e.clientX, y: e.clientY });
+        setEditingMessageId(messageId);
+        setEditedMessage(contentmess);
+        setComent(contentmess);
+      };
   useEffect(() => {
     createUserdata();
     Roomlist();
@@ -296,7 +397,27 @@ const App: React.FC = () => {
       <div className={styles.box1} onClick={showDrawer} />
       <Avatar style={{ backgroundColor: '#87d068', right: 500, top: 40 }} icon={<UserOutlined />} />
       <div style={{ top: 800, fontSize: '16px', color: 'blue' }}>{user?.displayName}</div>
-      <></>
+      <>
+      </>
+      <Sider
+        style={{
+          height: '100vh',
+          position: 'fixed',
+
+          top: 120,
+          bottom: 0,
+        }}
+        width={300} // 幅を指定
+      >
+        <Menu
+          theme="dark"
+          mode="inline"
+          defaultSelectedKeys={['4']}
+          items={items}
+          onSelect={({ key }) => LookRoom(key)}
+          style={{ width: 300 }} // ここで幅を指定
+        />
+      </Sider>
       <Layout className="site-layout" style={{ marginLeft: 100 }}>
         <Header style={{ padding: 0, background: colorBgContainer }} />
         <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
@@ -321,6 +442,18 @@ const App: React.FC = () => {
         </Content>
         <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
       </Layout>
+      <div style={{ position: 'relative' }}>
+        <AutoComplete
+          style={{ position: 'fixed', width: 800, height: 600, top: 750, right: 330 }}
+          // value={inputValue}
+          // options={autoCompleteOptions}
+          onSelect={onSelect}
+          onSearch={onChange3}
+          placeholder="input here"
+        />
+        <br />
+        <br />
+      </div>
       <Button
         icon={<SendOutlined />}
         style={{ position: 'fixed', top: 750, right: 300 }}
