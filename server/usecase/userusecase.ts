@@ -76,7 +76,7 @@ export const userUsecase = {
     console.log(syouninfriend);
     const user = await userrepository.findFriend(syouninfriend);
     assert(user, 'userなし');
-    user.sender_id = user.sender_id.filter(id => id !== syouninfriend);
+    user.sender_id = user.sender_id.filter((id) => id !== syouninfriend);
     user.friend.push(userId);
     await userrepository.save(user);
     return user;

@@ -363,8 +363,8 @@ const App: React.FC = () => {
     }
   };
   const ninnsyou = async () => {
-    const a = ""
-    setSyouninFriend(a)
+    const a = '';
+    setSyouninFriend(a);
     if (!user) return;
     const userId = user.id;
     await apiClient.okfriend.$post({ body: { syouninfriend, userId } });
@@ -390,15 +390,15 @@ const App: React.FC = () => {
   };
   const handleRightClick =
     (messageId: string, contentmess: string) =>
-      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        e.preventDefault();
-        setContextMenuVisible(true);
-        setSelectedMessageId(messageId);
-        setContextMenuPosition({ x: e.clientX, y: e.clientY });
-        setEditingMessageId(messageId);
-        setEditedMessage(contentmess);
-        setComent(contentmess);
-      };
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.preventDefault();
+      setContextMenuVisible(true);
+      setSelectedMessageId(messageId);
+      setContextMenuPosition({ x: e.clientX, y: e.clientY });
+      setEditingMessageId(messageId);
+      setEditedMessage(contentmess);
+      setComent(contentmess);
+    };
 
   const send_friendId = async () => {
     if (!user) return;
@@ -492,8 +492,9 @@ const App: React.FC = () => {
                 <React.Fragment key={message.id2}>
                   {index !== 0 && <Divider orientation="left" plain />}
                   <div
-                    className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                      }`}
+                    className={`${styles.commentBubble} ${
+                      message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                    }`}
                   >
                     <div className={styles.username}>{message.username}</div>
                     <div className={styles.content}>{message.contentmess}</div>
