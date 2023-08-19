@@ -52,10 +52,9 @@ class Sample5 extends React.Component<Props, State> {
     console.log(this.socket);
     console.log('a');
     const room = 'foo' as string;
-    if (room !== '') {
-      console.log(`Asking to join room ${room}`);
-      this.socket.emit('create or join', room);
-    }
+    console.log(`Asking to join room ${room}`);
+    this.socket.emit('create or join', room);
+
     console.log('WDASDAd');
 
     this.socket.on('created', (room: string, clientId: string) => {

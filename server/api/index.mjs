@@ -48,9 +48,10 @@ try {
 
     // eslint-disable-next-line complexity
     socket.on('create or join', (room) => {
-      log(`Received request to create or join room ${room}`);
-
+      console.log(`Received request to create or join room ${room}`);
+      console.log(room);
       const clientsInRoom = io.sockets.adapter.rooms.get(room);
+      console.log(clientsInRoom);
       const numClients = clientsInRoom instanceof Set ? clientsInRoom.size : 0;
 
       if (typeof clientsInRoom !== 'undefined') {
