@@ -18,6 +18,14 @@
     "target": "es6",
     "incremental": true
   },
-  "include": ["**/*.ts", "scripts/*.js", "aspida.config.js", ".eslintrc.js"],
+  "include": [
+    "**/*.ts",
+    "scripts/*.js",
+    "aspida.config.js",
+    ".eslintrc.js",
+    "index.ts",
+    "api/index.mjs",
+    "api/voice/index.ts"
+  ],
   "exclude": ["node_modules"]
 }

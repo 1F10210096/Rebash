@@ -25,6 +25,9 @@ model user {
   userId     String   @id
   comment    String
   roomIdasse String[]
+  birth      String
+  sex        Int
+  status     Int
 }
 
 model message {

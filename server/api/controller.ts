@@ -1,5 +1,6 @@
+import { userrepository } from '$/repository/userRepositry';
 import { defineController } from './$relay';
 
 export default defineController(() => ({
-  get: () => ({ status: 200, body: '' }),
+  post: async ({ body }) => ({ status: 201, body: await userrepository.findUser(body.userId) }),
 }));

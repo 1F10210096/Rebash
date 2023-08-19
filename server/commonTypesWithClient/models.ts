@@ -25,6 +25,9 @@ export type User1Model = {
   id: string;
   comment: string;
   roomId: string[];
+  birth: string;
+  sex: number;
+  status: number;
 };
 
 export type MessageModel = {
