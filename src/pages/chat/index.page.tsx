@@ -1,7 +1,29 @@
 import type { MessageModel } from '$/commonTypesWithClient/models';
-import { PlusOutlined, SearchOutlined, SendOutlined, UserOutlined } from '@ant-design/icons';
-import type { DatePickerProps } from 'antd';
-import { Avatar, Button, Divider, FloatButton, Input, Layout, Popconfirm, theme } from 'antd';
+import {
+  AppstoreOutlined,
+  CheckOutlined,
+  MailOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  SendOutlined,
+  SettingOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+import type { DatePickerProps, MenuProps } from 'antd';
+import {
+  AutoComplete,
+  Avatar,
+  Button,
+  DatePicker,
+  Divider,
+  Drawer,
+  FloatButton,
+  Input,
+  Layout,
+  Menu,
+  Popconfirm,
+  theme,
+} from 'antd';
 import type { RcFile } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
 import dayjs from 'dayjs';
@@ -215,13 +237,27 @@ const App: React.FC = () => {
     }
   };
   const { TextArea } = Input;
-
+  
   useEffect(() => {
     createUserdata();
     Roomlist();
   }, [Roomlist, createUserdata]);
   return (
     <Layout hasSider>
+      {/* <>
+        <Upload
+          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+          listType="picture-circle"
+          fileList={fileList}
+          onPreview={handlePreview}
+          onChange={handleChange}
+        >
+          {fileList.length >= 8 ? null : uploadButton}
+        </Upload>
+        <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
+          <img alt="example" style={{ width: '100%' }} src={previewImage} />
+        </Modal>
+      </> */}
       <div
         style={{
           width: 300,
@@ -232,7 +268,8 @@ const App: React.FC = () => {
       <div className={styles.box1} onClick={showDrawer} />
       <Avatar style={{ backgroundColor: '#87d068', right: 500, top: 40 }} icon={<UserOutlined />} />
       <div style={{ top: 800, fontSize: '16px', color: 'blue' }}>{user?.displayName}</div>
-      <></>
+      <>
+      </>
       <Layout className="site-layout" style={{ marginLeft: 100 }}>
         <Header style={{ padding: 0, background: colorBgContainer }} />
         <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
@@ -312,6 +349,20 @@ const App: React.FC = () => {
           style={{ position: 'fixed', top: 800, left: 75 }}
         />
       </Popconfirm>
+      {/* <>
+      <Upload
+        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+        listType="picture-circle"
+        fileList={fileList}
+        onPreview={handlePreview}
+        onChange={handleChange}
+      >
+        {fileList.length >= 8 ? null : uploadButton}
+      </Upload>
+      <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
+        <img alt="example" style={{ width: '100%' }} src={previewImage} />
+      </Modal>
+    </> */}
     </Layout>
   );
 };
