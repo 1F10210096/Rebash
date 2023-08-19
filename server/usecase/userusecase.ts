@@ -72,4 +72,13 @@ export const userUsecase = {
     await userrepository.save(user);
     return user;
   },
+  okfriend: async (syouninfriend: string, userId: string): Promise<User1Model> => {
+    console.log(syouninfriend);
+    const user = await userrepository.findFriend(syouninfriend);
+    assert(user, 'userなし');
+    user.sender_id = user.sender_id.filter(id => id !== syouninfriend);
+    user.friend.push(userId);
+    await userrepository.save(user);
+    return user;
+  },
 };

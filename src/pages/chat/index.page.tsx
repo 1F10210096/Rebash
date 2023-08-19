@@ -86,7 +86,7 @@ const App: React.FC = () => {
   const [friend, setFriend] = useState<string[]>([]);
   const [sent_friend, setSend_friend] = useState('');
   const [receive_friend, setReceive_friend] = useState('');
-  const [options1, setOptions1] = useState('');
+  const [syouninfriend, setSyouninFriend] = useState('');
   const [searchfriend, setSearchFriend] = useState('');
 
   const getBase64 = (file: RcFile): Promise<string> =>
@@ -362,8 +362,12 @@ const App: React.FC = () => {
       await LookMessage();
     }
   };
-  const handleToggleForm = () => {
-    setShowForm(!showForm);
+  const ninnsyou = async () => {
+    const a = ""
+    setSyouninFriend(a)
+    if (!user) return;
+    const userId = user.id;
+    await apiClient.okfriend.$post({ body: { syouninfriend, userId } });
   };
   const handleEdit = (messageId: string, contentmess: string) => {
     setEditingMessageId(messageId);
@@ -399,7 +403,7 @@ const App: React.FC = () => {
   const send_friendId = async () => {
     if (!user) return;
     const userId = user.id;
-    const friend = await apiClient.friend.$post({ body: { searchfriend, userId } });
+    await apiClient.friend.$post({ body: { searchfriend, userId } });
   };
   useEffect(() => {
     createUserdata();
@@ -566,15 +570,13 @@ const App: React.FC = () => {
           type="primary"
           style={{ position: 'fixed', top: 800, left: 75 }}
         />
+        <Input
+          value={searchfriend}
+          onChange={(e) => setSearchFriend(e.target.value)}
+          onPressEnter={send_friendId}
+          placeholder="userIdを入力してください"
+        />
       </Popconfirm>
-      <Input
-        value={searchRoomId}
-        onChange={(e) => setSearchFriend(e.target.value)}
-        onPressEnter={send_friendId}
-        placeholder="RoomIdを入力してください"
-      />
-      <br />
-      <br />
       {/* <>
       <Upload
         action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
