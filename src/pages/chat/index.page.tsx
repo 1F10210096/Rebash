@@ -30,6 +30,14 @@ const App: React.FC = () => {
   const mediaStreamRef = useRef<MediaStream | undefined>();
   const [showForm, setShowForm] = useState(false);
   const [searchRoomId, setSearchRoomId] = useState('');
+  const [coment, setComent] = useState('');
+  const [infoname, setInfoName] = useState('');
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [editedMessage, setEditedMessage] = useState('');
+  const [contextMenuVisible, setContextMenuVisible] = useState(false);
+  const [editMenuVisible, setEditMenuVisible] = useState(false);
+  const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
+  const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
   const [value, setValue] = useState('');
   const [options, setOptions] = useState('');
   const [birth, setBirth] = useState('2015/01/05');
@@ -58,6 +66,33 @@ const App: React.FC = () => {
       reader.onload = () => resolve(reader.result as string);
       reader.onerror = (error) => reject(error);
     });
+  const handleCancel = () => setPreviewOpen(false);
+  // const handlePreview = async (file: UploadFile) => {
+  //   if (file.url === null && file.preview === null) {
+  //     file.preview = await getBase64(file.originFileObj as RcFile);
+  //   }
+  //   const previewImageUrl = (file.url !== null) || file.preview;
+  //   if (previewImageUrl !== undefined) {
+  //     // ここを修正
+  //     setPreviewImage(previewImageUrl);
+  //     setPreviewOpen(true);
+  //     setPreviewTitle(
+  //       file.name || previewImageUrl.substring(previewImageUrl.lastIndexOf('/') + 1) || 'Untitled'
+  //     );
+  //   }
+  // };
+  const onChange2: DatePickerProps['onChange'] = (date, dateString) => {
+    // console.log(date, dateString);
+    setBirth(dateString);
+    console.log(dateString);
+  };
+
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
   const onChange3 = (data: string) => {
     setValue(data);
   };
@@ -215,13 +250,36 @@ const App: React.FC = () => {
     }
   };
   const { TextArea } = Input;
-
+  const handleInfo = async (messageId: string) => {
+    try {
+      const infomessage = await apiClient.infomessage.$post({ body: { messageId } });
+      setInfoName(infomessage.sender_Id);
+      // console.log(infoname)
+      await LookMessage();
+    } catch (error) {
+      await LookMessage();
+    }
+  };
   useEffect(() => {
     createUserdata();
     Roomlist();
   }, [Roomlist, createUserdata]);
   return (
     <Layout hasSider>
+      {/* <>
+        <Upload
+          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+          listType="picture-circle"
+          fileList={fileList}
+          onPreview={handlePreview}
+          onChange={handleChange}
+        >
+          {fileList.length >= 8 ? null : uploadButton}
+        </Upload>
+        <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
+          <img alt="example" style={{ width: '100%' }} src={previewImage} />
+        </Modal>
+      </> */}
       <div
         style={{
           width: 300,
@@ -257,6 +315,18 @@ const App: React.FC = () => {
         </Content>
         <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
       </Layout>
+      {/* <div style={{ position: 'relative' }}>
+        <AutoComplete
+          style={{ position: 'fixed', width: 800, height: 600, top: 750, right: 330 }}
+          // value={inputValue}
+          // options={autoCompleteOptions}
+          onSelect={onSelect}
+          onSearch={onChange3}
+          placeholder="input here"
+        />
+        <br />
+        <br />
+      </div> */}
       <Button
         icon={<SendOutlined />}
         style={{ position: 'fixed', top: 750, right: 300 }}
@@ -312,6 +382,20 @@ const App: React.FC = () => {
           style={{ position: 'fixed', top: 800, left: 75 }}
         />
       </Popconfirm>
+      {/* <>
+      <Upload
+        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+        listType="picture-circle"
+        fileList={fileList}
+        onPreview={handlePreview}
+        onChange={handleChange}
+      >
+        {fileList.length >= 8 ? null : uploadButton}
+      </Upload>
+      <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
+        <img alt="example" style={{ width: '100%' }} src={previewImage} />
+      </Modal>
+    </> */}
     </Layout>
   );
 };
