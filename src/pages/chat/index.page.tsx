@@ -1,29 +1,7 @@
 import type { MessageModel } from '$/commonTypesWithClient/models';
-import {
-  AppstoreOutlined,
-  CheckOutlined,
-  MailOutlined,
-  PlusOutlined,
-  SearchOutlined,
-  SendOutlined,
-  SettingOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
-import type { DatePickerProps, MenuProps } from 'antd';
-import {
-  AutoComplete,
-  Avatar,
-  Button,
-  DatePicker,
-  Divider,
-  Drawer,
-  FloatButton,
-  Input,
-  Layout,
-  Menu,
-  Popconfirm,
-  theme,
-} from 'antd';
+import { PlusOutlined, SearchOutlined, SendOutlined, UserOutlined } from '@ant-design/icons';
+import type { DatePickerProps } from 'antd';
+import { Avatar, Button, Divider, FloatButton, Input, Layout, Popconfirm, theme } from 'antd';
 import type { RcFile } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
 import dayjs from 'dayjs';
@@ -237,7 +215,57 @@ const App: React.FC = () => {
     }
   };
   const { TextArea } = Input;
-  
+  // const handleInfo = async (messageId: string) => {
+  //   try {
+  //     const infomessage = await apiClient.infomessage.$post({ body: { messageId } });
+  //     setInfoName(infomessage.sender_Id);
+  //     // console.log(infoname)
+  //     await LookMessage();
+  //   } catch (error) {
+  //     await LookMessage();
+  //   }
+  // };
+  // const handleDelete = async (messageId: string) => {
+  //   try {
+  //     await apiClient.deleteMessage.$post({ body: { messageId } });
+  //     await LookMessage();
+  //   } catch (error) {
+  //     await LookMessage();
+  //   }
+  // };
+  // const handleToggleForm = () => {
+  //   setShowForm(!showForm);
+  // };
+  // const handleEdit = (messageId: string, contentmess: string) => {
+  //   setEditingMessageId(messageId);
+  //   setEditedMessage(contentmess);
+  //   setContextMenuVisible(false);
+  //   setEditMenuVisible(true);
+  //   setComent(contentmess);
+  // };
+  // const handleSaveEdit = async () => {
+  //   setEditMenuVisible(false);
+  //   if (editingMessageId === null) {
+  //     console.log('id2なし');
+  //   }
+  //   {
+  //     await apiClient.edit.$post({ body: { editingMessageId, editedMessage } });
+  //     await LookMessage();
+  //     setEditingMessageId(null);
+  //     setEditedMessage('');
+  //   }
+  // };
+  // const handleRightClick =
+  //   (messageId: string, contentmess: string) =>
+  //     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  //       e.preventDefault();
+  //       setContextMenuVisible(true);
+  //       setSelectedMessageId(messageId);
+  //       setContextMenuPosition({ x: e.clientX, y: e.clientY });
+  //       setEditingMessageId(messageId);
+  //       setEditedMessage(contentmess);
+  //       setComent(contentmess);
+  //     };
   useEffect(() => {
     createUserdata();
     Roomlist();
@@ -268,8 +296,7 @@ const App: React.FC = () => {
       <div className={styles.box1} onClick={showDrawer} />
       <Avatar style={{ backgroundColor: '#87d068', right: 500, top: 40 }} icon={<UserOutlined />} />
       <div style={{ top: 800, fontSize: '16px', color: 'blue' }}>{user?.displayName}</div>
-      <>
-      </>
+      <></>
       <Layout className="site-layout" style={{ marginLeft: 100 }}>
         <Header style={{ padding: 0, background: colorBgContainer }} />
         <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
