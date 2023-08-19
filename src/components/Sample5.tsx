@@ -22,9 +22,9 @@ const Sample5 = () => {
   const localStreamRef = useRef<MediaStream>();
   const remoteStreamRef = useRef<MediaStream>();
   const peerConnectionRef = useRef<RTCPeerConnection>();
-  const [isInitiator, setIsInitiator] = useState(true);
-  const [isStarted, setIsStarted] = useState(true);
-  const [isChannelReady, setIsChannelReady] = useState(true);
+  const [isInitiator, setIsInitiator] = useState(false);
+  const [isStarted, setIsStarted] = useState(false);
+  const [isChannelReady, setIsChannelReady] = useState(false);
   console.log(isChannelReady);
   const getSocket = () => {
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
