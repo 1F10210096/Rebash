@@ -94,6 +94,7 @@ const App: React.FC = () => {
   const [receive_friend, setReceive_friend] = useState('');
   const [syouninfriend, setSyouninFriend] = useState('');
   const [searchfriend, setSearchFriend] = useState('');
+  const [del_friend, setDel_Friend] = useState('');
 
   const getBase64 = (file: RcFile): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -425,6 +426,12 @@ const App: React.FC = () => {
     if (!user) return;
     const userId = user.id;
     await apiClient.friend.$post({ body: { searchfriend, userId } });
+  };
+
+  const delete_friendId = async () => {
+    if (!user) return;
+    const userId = user.id;
+    await apiClient.del_friend.$post({ body: { del_friend, userId } });
   };
   useEffect(() => {
     createUserdata();
