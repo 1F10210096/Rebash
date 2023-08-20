@@ -33,6 +33,7 @@ try {
 
   io.on('connection', (socket) => {
     // WebSocketの接続が確立したときの処理
+    console.log('popo');
     console.log(`[connect] ${socket.id}`);
     console.log(Array.from(io.sockets.sockets.keys()));
     // convenience function to log server messages on the client
@@ -42,6 +43,7 @@ try {
 
     socket.on('message', (message) => {
       log(`Client said: ${message}`);
+      console.log('pop');
       // for a real app, would be room-only (not broadcast)
       socket.broadcast.emit('message', message);
     });
