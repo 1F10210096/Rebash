@@ -4,6 +4,6 @@ import { defineController } from './$relay';
 export default defineController(() => ({
   post: async ({ body, user }) => ({
     status: 201,
-    body: await userUsecase.friend(body.searchfriend, user.id),
+    body: await userUsecase.okfriend(body.syouninfriend, user.id),
   }),
 }));

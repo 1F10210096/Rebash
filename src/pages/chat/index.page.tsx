@@ -1,13 +1,19 @@
 import type { MessageModel } from '$/commonTypesWithClient/models';
 import {
   AppstoreOutlined,
+  BarChartOutlined,
   CheckOutlined,
+  CloudOutlined,
   MailOutlined,
   PlusOutlined,
   SearchOutlined,
   SendOutlined,
   SettingOutlined,
+  ShopOutlined,
+  TeamOutlined,
+  UploadOutlined,
   UserOutlined,
+  VideoCameraOutlined,
 } from '@ant-design/icons';
 import type { DatePickerProps, MenuProps } from 'antd';
 import {
@@ -86,6 +92,9 @@ const App: React.FC = () => {
   const [friend, setFriend] = useState<string[]>([]);
   const [sent_friend, setSend_friend] = useState('');
   const [receive_friend, setReceive_friend] = useState('');
+  const [syouninfriend, setSyouninFriend] = useState('');
+  const [searchfriend, setSearchFriend] = useState('');
+
   const getBase64 = (file: RcFile): Promise<string> =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -139,6 +148,21 @@ const App: React.FC = () => {
       type,
     } as MenuItem;
   }
+
+  const friendMenu: MenuProps['items'] = [
+    UserOutlined,
+    VideoCameraOutlined,
+    UploadOutlined,
+    BarChartOutlined,
+    CloudOutlined,
+    AppstoreOutlined,
+    TeamOutlined,
+    ShopOutlined,
+  ].map((icon, index) => ({
+    key: String(index + 1),
+    icon: React.createElement(icon),
+    label: `nav ${index + 1}`,
+  }));
   const items: MenuProps['items'] = [
     getItem('Navigation One', 'sub1', <MailOutlined />, [
       getItem('Item 1', 'g1', null, [getItem('Option 1', '1'), getItem('Option 2', '2')], 'group'),
@@ -164,6 +188,7 @@ const App: React.FC = () => {
       'group'
     ),
   ];
+
   const getPanelValue = (searchText: string) =>
     !searchText ? [] : [mockVal(searchText), mockVal(searchText, 2), mockVal(searchText, 3)];
   const onSelect = (data: string) => {
@@ -358,8 +383,12 @@ const App: React.FC = () => {
       await LookMessage();
     }
   };
-  const handleToggleForm = () => {
-    setShowForm(!showForm);
+  const ninnsyou = async () => {
+    const a = '';
+    setSyouninFriend(a);
+    if (!user) return;
+    const userId = user.id;
+    await apiClient.okfriend.$post({ body: { syouninfriend, userId } });
   };
   const handleEdit = (messageId: string, contentmess: string) => {
     setEditingMessageId(messageId);
@@ -392,11 +421,10 @@ const App: React.FC = () => {
       setComent(contentmess);
     };
 
-  const send_friendId = async (Id: string) => {
-    setReceive_friend(Id);
+  const send_friendId = async () => {
     if (!user) return;
     const userId = user.id;
-    await apiClient.friend.$post({ body: { receive_friend, userId } });
+    await apiClient.friend.$post({ body: { searchfriend, userId } });
   };
   useEffect(() => {
     createUserdata();
@@ -404,6 +432,37 @@ const App: React.FC = () => {
   }, [Roomlist, createUserdata]);
   return (
     <Layout hasSider>
+      <Sider
+        style={{
+          overflow: 'auto',
+          height: '100vh',
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          bottom: 0,
+        }}
+      >
+        <div className="demo-logo-vertical" />
+        <Menu theme="dark" mode="inline" defaultSelectedKeys={['4']} items={items} />
+      </Sider>
+      <Layout className="site-layout" style={{ marginLeft: 200 }}>
+        <Header style={{ padding: 0, background: colorBgContainer }} />
+        <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
+          <div style={{ padding: 24, textAlign: 'center', background: colorBgContainer }}>
+            <p>long content</p>
+            {
+              // indicates very long content
+              Array.from({ length: 100 }, (_, index) => (
+                <React.Fragment key={index}>
+                  {index % 20 === 0 && index ? 'more' : '...'}
+                  <br />
+                </React.Fragment>
+              ))
+            }
+          </div>
+        </Content>
+        <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
+      </Layout>
       {/* <>
         <Upload
           action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
@@ -563,6 +622,12 @@ const App: React.FC = () => {
           icon={<SearchOutlined />}
           type="primary"
           style={{ position: 'fixed', top: 800, left: 75 }}
+        />
+        <Input
+          value={searchfriend}
+          onChange={(e) => setSearchFriend(e.target.value)}
+          onPressEnter={send_friendId}
+          placeholder="userIdを入力してください"
         />
       </Popconfirm>
       {/* <>
