@@ -94,6 +94,10 @@ const App: React.FC = () => {
   const [receive_friend, setReceive_friend] = useState('');
   const [syouninfriend, setSyouninFriend] = useState('');
   const [searchfriend, setSearchFriend] = useState('');
+  const [del_friend, setDel_Friend] = useState('');
+  const [sex, setSex] = useState(0);
+  const [sex_str, setSex_str] = useState('');
+  const [look_friend, setLookFriend] = useState<string[]>([]);
 
   const getBase64 = (file: RcFile): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -426,43 +430,83 @@ const App: React.FC = () => {
     const userId = user.id;
     await apiClient.friend.$post({ body: { searchfriend, userId } });
   };
+
+  const delete_friendId = async () => {
+    if (!user) return;
+    const userId = user.id;
+    await apiClient.del_friend.$post({ body: { del_friend, userId } });
+  };
+  const LookFriend = async () => {
+    if (!user) return;
+    const userId = user.id;
+    const userlist = await apiClient.Look_friend.$post({ body: { userId } });
+    setLookFriend(userlist.friend);
+  };
+
+  const select_sex = async () => {
+    if (!user) return;
+    const userId = user.id;
+    const sexes = await apiClient.sex.$post({ body: { sex, userId } });
+    const sexString = sexes.sex === 1 ? '男' : sexes.sex === 2 ? '女' : '';
+    setSex_str(sexString);
+    return sexString;
+  };
+  const Reselect_sex = async () => {
+    if (!user) return;
+    const userId = user.id;
+    if (sex_str === '男') {
+      setSex(1);
+    } else if (sex_str === '女') {
+      setSex(2);
+    }
+    const sexes = await apiClient.sex.$post({ body: { sex, userId } });
+    const sexString = sexes.sex === 1 ? '男' : sexes.sex === 2 ? '女' : '';
+    setSex_str(sexString);
+    return sexString;
+  };
   useEffect(() => {
     createUserdata();
     Roomlist();
   }, [Roomlist, createUserdata]);
   return (
     <Layout hasSider>
+      <div
+        style={{
+          width: 300,
+          height: 120,
+          background: backgroundColor,
+          position: 'fixed',
+        }}
+      >
+        <div className={styles.box1} onClick={showDrawer} />
+        <Avatar
+          style={{ backgroundColor: '#87d068', right: 1850, top: 40, position: 'fixed' }}
+          icon={<UserOutlined />}
+        />
+        <div style={{ top: 800 }} className="fuchidori">
+          {user?.displayName}
+        </div>
+      </div>
       <Sider
         style={{
           overflow: 'auto',
           height: '100vh',
           position: 'fixed',
-          left: 0,
+          left: 1700,
           top: 0,
           bottom: 0,
         }}
       >
         <div className="demo-logo-vertical" />
-        <Menu theme="dark" mode="inline" defaultSelectedKeys={['4']} items={items} />
+        <Menu
+          theme="dark"
+          mode="inline"
+          defaultSelectedKeys={['0']}
+          items={items}
+          onSelect={({ key }) => LookRoom(key)}
+          style={{ width: 300 }} // ここで幅を指定
+        />
       </Sider>
-      <Layout className="site-layout" style={{ marginLeft: 200 }}>
-        <Header style={{ padding: 0, background: colorBgContainer }} />
-        <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-          <div style={{ padding: 24, textAlign: 'center', background: colorBgContainer }}>
-            <p>long content</p>
-            {
-              // indicates very long content
-              Array.from({ length: 100 }, (_, index) => (
-                <React.Fragment key={index}>
-                  {index % 20 === 0 && index ? 'more' : '...'}
-                  <br />
-                </React.Fragment>
-              ))
-            }
-          </div>
-        </Content>
-        <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
-      </Layout>
       {/* <>
         <Upload
           action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
@@ -477,18 +521,6 @@ const App: React.FC = () => {
           <img alt="example" style={{ width: '100%' }} src={previewImage} />
         </Modal>
       </> */}
-      <div
-        style={{
-          width: 300,
-          height: 120,
-          background: backgroundColor,
-        }}
-      />
-      <div className={styles.box1} onClick={showDrawer} />
-      <Avatar style={{ backgroundColor: '#87d068', right: 230, top: 40 }} icon={<UserOutlined />} />
-      <div style={{ top: 800 }} className="fuchidori">
-        {user?.displayName}
-      </div>
       <>
         <Drawer title="your profile" placement="right" onClose={onClose} open={open} width={800}>
           <p>{user?.displayName}</p>

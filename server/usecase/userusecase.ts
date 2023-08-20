@@ -81,4 +81,37 @@ export const userUsecase = {
     await userrepository.save(user);
     return user;
   },
+  del_friend: async (del_friend: string, userId: string): Promise<User1Model> => {
+    console.log(del_friend);
+    const user = await userrepository.findUser(userId);
+    assert(user, 'userなし');
+    console.log('a');
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    if (user.friend && user.friend.includes(del_friend)) {
+      user.friend = user.friend.filter((friendId) => friendId !== del_friend);
+    }
+
+    console.log('a');
+    // ユーザー情報を保存
+    await userrepository.save(user);
+
+    return user;
+  },
+  sex: async (sex: number, userId: string): Promise<User1Model> => {
+    console.log(sex);
+    const user = await userrepository.findUser(userId);
+    assert(user, 'userなし');
+    console.log('a');
+    user.sex = sex;
+    await userrepository.save(user);
+
+    return user;
+  },
+  Look_friend: async (userId: string): Promise<User1Model> => {
+    const user = await userrepository.findUser(userId);
+    assert(user, 'userなし');
+    console.log('a');
+
+    return user;
+  },
 };
