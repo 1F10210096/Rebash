@@ -79,15 +79,19 @@ class Sample5 extends React.Component<Props, State> {
 
     this.socket.on('joined', (room: string, clientId: string) => {
       console.log(room, clientId);
+      console.log('awdasd');
       this.setState({ isChannelReady: true });
     });
 
     this.socket.on('log', (text: string) => {
       console.log(text);
     });
+    console.log('23132');
 
     const messageEventTarget = new EventTarget();
+    console.log('AWDASD');
     messageEventTarget.addEventListener('got user media', () => {
+      console.log('2345');
       this.initiatorStart();
     });
     messageEventTarget.addEventListener('bye', () => {
@@ -218,6 +222,7 @@ class Sample5 extends React.Component<Props, State> {
   };
 
   private initiatorStart = async () => {
+    console.log('TYOBE-');
     const { isStarted, isChannelReady } = this.state;
     console.log('>>>>>>> initiatorStart() ', isStarted, isChannelReady);
     if (!isStarted && isChannelReady) {

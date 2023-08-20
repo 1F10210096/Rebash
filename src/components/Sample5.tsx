@@ -26,6 +26,7 @@ const Sample5 = () => {
   const [isStarted, setIsStarted] = useState(false);
   const [isChannelReady, setIsChannelReady] = useState(false);
   console.log(isChannelReady);
+  console.log('lol');
   const getSocket = () => {
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     if (!socketRef.current) {
@@ -124,6 +125,13 @@ const Sample5 = () => {
     getSocket().on('created', (room: string, clientId: string) => {
       console.log(room, clientId);
       setIsInitiator(true);
+      console.log(isInitiator);
+      console.log('adwdasdoffff');
+    });
+
+    getSocket().on('log', (text: string) => {
+      console.log(text);
+      console.log('uiui');
     });
 
     getSocket().on('full', (room: string) => {
@@ -145,9 +153,6 @@ const Sample5 = () => {
       setIsChannelReady(true);
     });
 
-    getSocket().on('log', (text: string) => {
-      console.log(text);
-    });
     const byeCallback = () => {
       console.log('Session terminated.');
       if (peerConnectionRef.current) peerConnectionRef.current.close();
@@ -192,11 +197,11 @@ const Sample5 = () => {
       // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       if (getSocket()) getSocket().close();
     };
-  }, [sendMessage]);
+  }, [isChannelReady, isInitiator, sendMessage]);
 
   useEffect(() => {
     const callback = () => {
-      console.log('got user media');
+      console.log('koki');
       if (isInitiator) initiatorStart();
     };
     getMessageEventTarget().addEventListener('got user media', callback);
@@ -223,6 +228,7 @@ const Sample5 = () => {
 
   useEffect(() => {
     const callback = async (e: any) => {
+      console.log(e);
       const message = e.detail;
       if (!isInitiator && !isStarted) {
         await receiverStart();
