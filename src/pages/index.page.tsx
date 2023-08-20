@@ -58,7 +58,7 @@ class Sample5 extends React.Component<Props, State> {
     console.log('WDASDAd');
 
     this.socket.on('created', (room: string, clientId: string) => {
-      console.log('dawdasda');
+      console.log(room);
       console.log(room, clientId);
       this.setState({ isInitiator: true });
     });

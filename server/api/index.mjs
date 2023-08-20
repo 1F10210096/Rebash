@@ -53,14 +53,16 @@ try {
       const clientsInRoom = io.sockets.adapter.rooms.get(room);
       console.log(clientsInRoom);
       const numClients = clientsInRoom instanceof Set ? clientsInRoom.size : 0;
+      console.log(numClients);
 
       if (typeof clientsInRoom !== 'undefined') {
-        log(`Room ${room} now has ${numClients} client(s)`);
+        console.log(`Room ${room} now has ${numClients} client(s)`);
       } else {
-        log(`Room ${room} does not exist`);
+        console.log(`Room ${room} does not exist`);
       }
 
       if (clientsInRoom instanceof Set) {
+        console.log('DSA');
         // Set<string> の場合の条件を追加
         if (numClients === 0) {
           socket.join(room);
@@ -68,7 +70,7 @@ try {
           socket.emit('created', room, socket.id);
         } else if (numClients === 1) {
           log(`Client ID ${socket.id} joined room ${room}`);
-          io.to(room).emit('join', room);
+          io.to(room).emit('join', room);0
           socket.join(room);
           socket.emit('joined', room, socket.id);
           io.to(room).emit('ready');
