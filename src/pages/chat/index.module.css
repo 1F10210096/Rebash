@@ -88,14 +88,15 @@
 }
 
 .box1 {
+
   padding: 15px;
   width: 250px;
   height: 70px;
   margin-top: 25px;
-  margin-left: -280px;
+  margin-left:0px;
   border-radius: 10px; /* 角を丸くする */
   background-color: rgb(103, 106, 131);
-  position: 'fixed';
+  position:'fixed'
 }
 .demo {
   width: 200px;
@@ -114,6 +115,8 @@
 
 .fuchidori {
   color: #000;
-  text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff, 0px 1px 0 #fff,
-    0-1px 0 #fff, -1px 0 0 #fff, 1px 0 0 #fff;
+  text-shadow:1px 1px 0 #FFF, -1px -1px 0 #FFF,
+              -1px 1px 0 #FFF, 1px -1px 0 #FFF,
+              0px 1px 0 #FFF,  0-1px 0 #FFF,
+              -1px 0 0 #FFF, 1px 0 0 #FFF;
 }
