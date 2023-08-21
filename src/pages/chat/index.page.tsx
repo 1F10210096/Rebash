@@ -126,6 +126,7 @@ const App: React.FC = () => {
 
   const showModal1 = () => {
     setOpen1(true);
+    console.log(look_friend)
   };
 
   const handleOk = (e: React.MouseEvent<HTMLElement>) => {
@@ -137,7 +138,6 @@ const App: React.FC = () => {
     console.log(e);
     setOpen1(false);
   };
-
 
   const onChange2: DatePickerProps['onChange'] = (date, dateString) => {
     // console.log(date, dateString);
@@ -439,13 +439,13 @@ const App: React.FC = () => {
     if (!user) return;
     const userId = user.id;
     const friend_asse = await apiClient.friend.$post({ body: { searchfriend, userId } });
-    setReceive_friend(friend_asse.receive_id)
+    setReceive_friend(friend_asse.receive_id);
   };
   const look_receive_friendId = async () => {
     if (!user) return;
     const userId = user.id;
     const friend_asse = await apiClient.friend.$post({ body: { searchfriend, userId } });
-    setReceive_friend(friend_asse.receive_id)
+    setReceive_friend(friend_asse.receive_id);
   };
 
   const delete_friendId = async () => {
@@ -457,9 +457,8 @@ const App: React.FC = () => {
     if (!user) return;
     const userId = user.id;
     const userlist = await apiClient.Look_friend.$post({ body: { userId } });
-    setLookFriend(userlist.friend);
-  },[user]
-  );
+    setLookFriend(userlist.receive_id);
+  }, [user]);
 
   const select_sex = async () => {
     if (!user) return;
@@ -633,7 +632,7 @@ const App: React.FC = () => {
           okButtonProps={{ disabled: true }}
           cancelButtonProps={{ disabled: true }}
         >
-          {friend.map((friendName, index) => (
+          {look_friend.map((friendName, index) => (
             <p key={index}>{friendName}</p>
           ))}
           <p>Some contents...</p>

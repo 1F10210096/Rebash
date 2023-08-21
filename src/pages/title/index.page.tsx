@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './index.module.scss'; // モジュール化されたスタイルをインポート
 
 const TitlePage = () => {
