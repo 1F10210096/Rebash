@@ -1,36 +1,22 @@
-import type { FC } from 'react';
-import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
-import Sample5 from '../index.page';
+import React from 'react';
 import './index.module.css';
 
-const App: FC = () => (
-  <BrowserRouter>
-    <header style={{ textAlign: 'center', padding: '20px' }}>
-      <Link to="/" style={{ textDecoration: 'none', color: 'black', fontSize: '24px' }}>
-        Rebash
-      </Link>
-    </header>
-    <main style={{ textAlign: 'center', padding: '20px' }}>
-      <Link to="/sample5" style={{ textDecoration: 'none' }}>
-        <button
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#007bff',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            fontSize: '18px',
-            cursor: 'pointer',
-          }}
-        >
-          Start
-        </button>
-      </Link>
-    </main>
-    <Routes>
-      <Route path="/sample5" element={<Sample5 />} />
-    </Routes>
-  </BrowserRouter>
-);
+const TitlePage = () => {
+  return (
+    <div><div className="menu">
+      <div className="btn trigger">
+        <span className="line" />
+      </div>
+      <div className="icons">
+        <div className="rotater">
+          <div className="btn btn-icon">
+            <i className="fa fa-codepen" />
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  );
+};
 
-export default App;
+export default TitlePage;
