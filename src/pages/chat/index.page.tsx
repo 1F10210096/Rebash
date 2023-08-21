@@ -91,7 +91,7 @@ const App: React.FC = () => {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [friend, setFriend] = useState<string[]>([]);
   const [sent_friend, setSend_friend] = useState('');
-  const [receive_friend, setReceive_friend] = useState('');
+  const [receive_friend, setReceive_friend] = useState<string[]>([]);
   const [syouninfriend, setSyouninFriend] = useState('');
   const [searchfriend, setSearchFriend] = useState('');
   const [del_friend, setDel_Friend] = useState('');
@@ -460,7 +460,15 @@ const App: React.FC = () => {
     if (!user) return;
     const userId = user.id;
     const friend_info = await apiClient.Lookfriend_info.$post({ body: { friend, userId } });
-    return friend_info
+    return friend_info;
+  };
+  const receive_friend1 = async () => {
+    if (!user) return;
+    const userId = user.id;
+    const friend_info = await apiClient.receive_friend.$post({ body: { userId } });
+    const receive_friend = friend_info.receive_id
+    setReceive_friend(receive_friend)
+    return friend_info;
   };
   useEffect(() => {
     createUserdata();

@@ -126,4 +126,11 @@ export const userUsecase = {
 
     return results;
   },
+  receive_friend: async (userId: string): Promise<User1Model> => {
+    const user = await userrepository.findUser(userId);
+    assert(user, 'userなし');
+    console.log('a');
+
+    return user;
+  },
 };

@@ -6,7 +6,7 @@ import './index.module.css'; // スタイルファイルをインポート
 const App: FC = () => (
   <BrowserRouter>
     <Link to="/" style={{ textDecoration: 'none', color: 'black' }}>
-      <h1>React WebRTC </h1>
+      <h1>Rebash</h1>
     </Link>
     <span className="msr_btn12">
       <Link to="/sample5" className="ribbon2">
