@@ -514,6 +514,12 @@ const App: React.FC = () => {
     setReceive_friend(receive_friend);
     return friend_info;
   };
+  const LookF = async (key:string) => {
+    if (!user) return;
+    const userId1 = user.id;
+    const userId = key;
+    const userinfo = await apiClient.userinfo.$post({ body: { userId} });
+  };
   useEffect(() => {
     createUserdata();
     Roomlist();
@@ -558,7 +564,7 @@ const App: React.FC = () => {
           mode="inline"
           defaultSelectedKeys={['0']}
           items={items1}
-          onSelect={({ key }) => LookRoom(key)}
+          onSelect={({ key }) => LookF(key)}
           style={{ width: 300 }} // ここで幅を指定
         >
           <div style={{ left: 40 }}>{myId}</div>
@@ -608,7 +614,6 @@ const App: React.FC = () => {
         style={{
           height: '100vh',
           position: 'fixed',
-
           top: 120,
           bottom: 0,
         }}
