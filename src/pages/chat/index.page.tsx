@@ -350,6 +350,11 @@ const App: React.FC = () => {
     console.log('a');
     console.log(roomId3);
     setRoomId(roomId3);
+    if (!user) return;
+    const userId = user.id;
+    const userlist = await apiClient.Look_friend.$post({ body: { userId } });
+    console.log(friend)
+    setFriend(userlist.friend)
     await apiClient.room.post({ body: { roomId3 } });
     if (user === null) {
       console.log('error');
@@ -366,7 +371,7 @@ const App: React.FC = () => {
       console.log('messagesがありません');
     } else {
       setMessages(messages);
-      setmyId(user?.id || '');
+      setmyId(user?.id);
     }
   };
   const LookMessage = async () => {
@@ -428,15 +433,15 @@ const App: React.FC = () => {
   };
   const handleRightClick =
     (messageId: string, contentmess: string) =>
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      e.preventDefault();
-      setContextMenuVisible(true);
-      setSelectedMessageId(messageId);
-      setContextMenuPosition({ x: e.clientX, y: e.clientY });
-      setEditingMessageId(messageId);
-      setEditedMessage(contentmess);
-      setComent(contentmess);
-    };
+      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.preventDefault();
+        setContextMenuVisible(true);
+        setSelectedMessageId(messageId);
+        setContextMenuPosition({ x: e.clientX, y: e.clientY });
+        setEditingMessageId(messageId);
+        setEditedMessage(contentmess);
+        setComent(contentmess);
+      };
 
   const send_friendId = async () => {
     if (!user) return;
@@ -445,6 +450,13 @@ const App: React.FC = () => {
     setReceive_friend(friend_asse.receive_id);
   };
   const look_receive_friendId = async () => {
+    if (!user) return;
+    const userId = user.id;
+    const friend_asse = await apiClient.friend.$post({ body: { searchfriend, userId } });
+    setReceive_friend(friend_asse.receive_id);
+  };
+
+  const look_friendroom = async () => {
     if (!user) return;
     const userId = user.id;
     const friend_asse = await apiClient.friend.$post({ body: { searchfriend, userId } });
@@ -462,7 +474,10 @@ const App: React.FC = () => {
     setmyId(userId);
     const userlist = await apiClient.Look_friend.$post({ body: { userId } });
     setLookFriend(userlist.receive_id);
-  }, [user]);
+    console.log(friend)
+    setFriend(userlist.friend)
+    console.log("345")
+  }, [friend, user,]);
 
   const select_sex = async () => {
     if (!user) return;
@@ -502,8 +517,11 @@ const App: React.FC = () => {
   useEffect(() => {
     createUserdata();
     Roomlist();
-    LookFriend();
-  }, [LookFriend, Roomlist, createUserdata]);
+    if (user) {
+      LookFriend();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [Roomlist, createUserdata, user]);
   return (
     <Layout hasSider>
       <div
@@ -616,9 +634,8 @@ const App: React.FC = () => {
                 <React.Fragment key={message.id2}>
                   {index !== 0 && <Divider orientation="left" plain />}
                   <div
-                    className={`${styles.commentBubble} ${
-                      message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                    }`}
+                    className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                      }`}
                   >
                     <div className={styles.username}>{message.username}</div>
                     <div className={styles.content}>{message.contentmess}</div>
