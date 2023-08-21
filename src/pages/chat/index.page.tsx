@@ -403,6 +403,7 @@ const App: React.FC = () => {
   };
   const ninnsyou = async (syouninfriend: string) => {
     if (!user) return;
+    console.log(syouninfriend);
     const userId = user.id;
     await apiClient.okfriend.$post({ body: { syouninfriend, userId } });
   };
@@ -458,6 +459,7 @@ const App: React.FC = () => {
   const LookFriend = useCallback(async () => {
     if (!user) return;
     const userId = user.id;
+    setmyId(userId);
     const userlist = await apiClient.Look_friend.$post({ body: { userId } });
     setLookFriend(userlist.receive_id);
   }, [user]);
@@ -513,6 +515,7 @@ const App: React.FC = () => {
         }}
       >
         <div className={styles.box1} onClick={showDrawer} />
+        <div style={{ left: 480 }}>{myId}</div>
         <Avatar
           style={{ backgroundColor: '#87d068', right: 1850, top: 40, position: 'fixed' }}
           icon={<UserOutlined />}
@@ -539,7 +542,9 @@ const App: React.FC = () => {
           items={items1}
           onSelect={({ key }) => LookRoom(key)}
           style={{ width: 300 }} // ここで幅を指定
-        />
+        >
+          <div style={{ left: 40 }}>{myId}</div>
+        </Menu>
       </Sider>
       {/* <>
         <Upload
@@ -577,6 +582,7 @@ const App: React.FC = () => {
           <Button type="primary" icon={<CheckOutlined />} onClick={mybirth}>
             ok
           </Button>
+          <div style={{ left: 40 }}>{myId}</div>
           <p>Some contents...</p>
         </Drawer>
       </>
