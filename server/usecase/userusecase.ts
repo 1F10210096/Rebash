@@ -114,7 +114,7 @@ export const userUsecase = {
 
     return user;
   },
-  Lookfriend_info: async (friends: string[], userId: string): Promise<User1Model> => {
+  Lookfriend_info: async (friends: string[], userId: string): Promise<User1Model[]> => {
     const results: User1Model[] = [];
   
     for (const friend of friends) {
