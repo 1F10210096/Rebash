@@ -114,4 +114,16 @@ export const userUsecase = {
 
     return user;
   },
+  Lookfriend_info: async (friends: string[], userId: string): Promise<User1Model> => {
+    const results: User1Model[] = [];
+  
+    for (const friend of friends) {
+      const user = await userrepository.friend_info(friend);
+      assert(user, 'userなし');
+      results.push(user);
+      console.log('a');
+    }
+  
+    return results;
+  },
 };

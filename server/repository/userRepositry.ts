@@ -60,4 +60,10 @@ export const userrepository = {
     const users = userlist.find((user) => user.receive_id.includes(syouninfriend));
     return users && toUser1Model(users);
   },
+  friend_info: async (friend: string | undefined): Promise<User1Model | undefined> => {
+    // console.log(roomId);
+    const friendlist = await prismaClient.user.findMany();
+    const users = friendlist.find((user) => user.userId === friend);
+    return users && toUser1Model(users);
+  },
 };
