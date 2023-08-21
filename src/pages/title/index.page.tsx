@@ -1,22 +1,23 @@
-import styles from './index.module.scss'; // モジュール化されたスタイルをインポート
+// import React, { useEffect } from 'react';
+// import './App.css'; // CSSファイルをインポート
+// import particleText from './particleText'; // JavaScriptコードをインポート
 
-const TitlePage = () => {
-  return (
-    <div className={styles.menu}>
-      <div className={`${styles.btn} ${styles.trigger}`}>
-        <span className={styles.line} />
-      </div>
-      <div className={styles.icons}>
-        {/* 以下、他の rotater ブロックも同様に修正 */}
-        <div className={styles.rotater}>
-          <div className={`${styles.btn} ${styles.btnIcon}`}>
-            <i className="fa fa-codepen" />
-          </div>
-        </div>
-        {/* 他の rotater ブロックも同様に修正 */}
-      </div>
-    </div>
-  );
-};
+// function App() {
+//   useEffect(() => {
+//     particleText(); // テキストパーティクルエフェクトを初期化
+//   }, []);
 
-export default TitlePage;
+//   return (
+//     <div className="App">
+//       <div id="wrapper">
+//         <canvas id="particle" />
+//       </div>
+
+//       <div id="main-area">
+//         <p>ここから次のコンテンツスタート<br /><a href="https://github.com/55Kaerukun/particleText.js" target="_blank">https://github.com/55Kaerukun/particleText.js</a></p>
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default App;
