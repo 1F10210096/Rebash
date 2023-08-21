@@ -514,6 +514,15 @@ const App: React.FC = () => {
     setReceive_friend(receive_friend);
     return friend_info;
   };
+  const confirm = (e: React.MouseEvent<HTMLElement>) => {
+    console.log(e);
+    message.success('Click on Yes');
+  };
+  
+  const cancel = (e: React.MouseEvent<HTMLElement>) => {
+    console.log(e);
+    message.error('Click on No');
+  };
   const LookF = async (key:string) => {
     if (!user) return;
     const userId1 = user.id;
@@ -683,6 +692,16 @@ const App: React.FC = () => {
                 style={{ marginLeft: '10px' }}
                 onClick={() => ninnsyou(friendName)}
               />
+              <Popconfirm
+    title="Delete the task"
+    description="Are you sure to delete this task?"
+    onConfirm={confirm}
+    onCancel={cancel}
+    okText="Yes"
+    cancelText="No"
+  >
+    <Button danger>Delete</Button>
+  </Popconfirm>
             </div>
           ))}
           <p>Some contents...</p>
