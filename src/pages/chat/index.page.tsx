@@ -1,4 +1,4 @@
-import type { MessageModel } from '$/commonTypesWithClient/models';
+import type { MessageModel, User1Model } from '$/commonTypesWithClient/models';
 import {
   AppstoreOutlined,
   BarChartOutlined,
@@ -34,6 +34,7 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
+import type { ChangeEvent } from 'react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from 'src/utils/apiClient';
@@ -48,6 +49,7 @@ const App: React.FC = () => {
   const [myId, setmyId] = useState<string>('');
   const [userasse, setuserasse] = useState<string[]>([]);
   const [messages, setMessages] = useState<MessageModel[]>([]);
+  const [friendinfo, setFrieniunfo] = useState<User1Model[]>([]);
   const [myMessages, setMyMessages] = useState<string[]>([]);
   const [otherMessages, setOtherMessages] = useState<string[]>([]);
   const router = useRouter(); // Next.js のルーターを取得
@@ -89,7 +91,7 @@ const App: React.FC = () => {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [friend, setFriend] = useState<string[]>([]);
   const [sent_friend, setSend_friend] = useState('');
-  const [receive_friend, setReceive_friend] = useState('');
+  const [receive_friend, setReceive_friend] = useState<string[]>([]);
   const [syouninfriend, setSyouninFriend] = useState('');
   const [searchfriend, setSearchFriend] = useState('');
   const [del_friend, setDel_Friend] = useState('');
@@ -174,7 +176,15 @@ const App: React.FC = () => {
       'group'
     ),
   ];
-
+  const items1: MenuProps['items'] = [
+    getItem(
+      'Group',
+      'grp',
+      null,
+      friend.map((friend) => getItem(friend, friend)),
+      'group'
+    ),
+  ];
   const getPanelValue = (searchText: string) =>
     !searchText ? [] : [mockVal(searchText), mockVal(searchText, 2), mockVal(searchText, 3)];
   const onSelect = (data: string) => {
@@ -237,15 +247,15 @@ const App: React.FC = () => {
       }
     }
   }, [user]);
-  // const inputRoomId = (e: ChangeEvent<HTMLInputElement>) => {
-  //   setRoomId(e.target.value);
-  // };
-  // const serchRoomId = (e: ChangeEvent<HTMLInputElement>) => {
-  //   setSearchRoomId(e.target.value);
-  // };
-  // const inputComment = (e: ChangeEvent<HTMLInputElement>) => {
-  //   setaComment(e.target.value);
-  // };
+  const inputRoomId = (e: ChangeEvent<HTMLInputElement>) => {
+    setRoomId(e.target.value);
+  };
+  const serchRoomId = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchRoomId(e.target.value);
+  };
+  const inputComment = (e: ChangeEvent<HTMLInputElement>) => {
+    setaComment(e.target.value);
+  };
   const handleConfirm = async () => {
     setRoomId(inputValue);
     console.log('User input:', inputValue);
@@ -446,6 +456,20 @@ const App: React.FC = () => {
     setSex_str(sexString);
     return sexString;
   };
+  const Look_friend = async () => {
+    if (!user) return;
+    const userId = user.id;
+    const friend_info = await apiClient.Lookfriend_info.$post({ body: { friend, userId } });
+    return friend_info;
+  };
+  const receive_friend1 = async () => {
+    if (!user) return;
+    const userId = user.id;
+    const friend_info = await apiClient.receive_friend.$post({ body: { userId } });
+    const receive_friend = friend_info.receive_id;
+    setReceive_friend(receive_friend);
+    return friend_info;
+  };
   useEffect(() => {
     createUserdata();
     Roomlist();
@@ -484,7 +508,7 @@ const App: React.FC = () => {
           theme="dark"
           mode="inline"
           defaultSelectedKeys={['0']}
-          items={items}
+          items={items1}
           onSelect={({ key }) => LookRoom(key)}
           style={{ width: 300 }} // ここで幅を指定
         />
@@ -642,6 +666,7 @@ const App: React.FC = () => {
           onChange={(e) => setSearchFriend(e.target.value)}
           onPressEnter={send_friendId}
           placeholder="userIdを入力してください"
+          style={{ top: 650 }}
         />
       </Popconfirm>
       {/* <>
