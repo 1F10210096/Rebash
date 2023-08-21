@@ -353,8 +353,8 @@ const App: React.FC = () => {
     if (!user) return;
     const userId = user.id;
     const userlist = await apiClient.Look_friend.$post({ body: { userId } });
-    console.log(friend)
-    setFriend(userlist.friend)
+    console.log(friend);
+    setFriend(userlist.friend);
     await apiClient.room.post({ body: { roomId3 } });
     if (user === null) {
       console.log('error');
@@ -433,15 +433,15 @@ const App: React.FC = () => {
   };
   const handleRightClick =
     (messageId: string, contentmess: string) =>
-      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        e.preventDefault();
-        setContextMenuVisible(true);
-        setSelectedMessageId(messageId);
-        setContextMenuPosition({ x: e.clientX, y: e.clientY });
-        setEditingMessageId(messageId);
-        setEditedMessage(contentmess);
-        setComent(contentmess);
-      };
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.preventDefault();
+      setContextMenuVisible(true);
+      setSelectedMessageId(messageId);
+      setContextMenuPosition({ x: e.clientX, y: e.clientY });
+      setEditingMessageId(messageId);
+      setEditedMessage(contentmess);
+      setComent(contentmess);
+    };
 
   const send_friendId = async () => {
     if (!user) return;
@@ -474,10 +474,10 @@ const App: React.FC = () => {
     setmyId(userId);
     const userlist = await apiClient.Look_friend.$post({ body: { userId } });
     setLookFriend(userlist.receive_id);
-    console.log(friend)
-    setFriend(userlist.friend)
-    console.log("345")
-  }, [friend, user,]);
+    console.log(friend);
+    setFriend(userlist.friend);
+    console.log('345');
+  }, [friend, user]);
 
   const select_sex = async () => {
     if (!user) return;
@@ -520,7 +520,7 @@ const App: React.FC = () => {
     if (user) {
       LookFriend();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Roomlist, createUserdata, user]);
   return (
     <Layout hasSider>
@@ -634,8 +634,9 @@ const App: React.FC = () => {
                 <React.Fragment key={message.id2}>
                   {index !== 0 && <Divider orientation="left" plain />}
                   <div
-                    className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                      }`}
+                    className={`${styles.commentBubble} ${
+                      message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                    }`}
                   >
                     <div className={styles.username}>{message.username}</div>
                     <div className={styles.content}>{message.contentmess}</div>
