@@ -1,4 +1,4 @@
-import type { MessageModel } from '$/commonTypesWithClient/models';
+import type { MessageModel, User1Model } from '$/commonTypesWithClient/models';
 import {
   AppstoreOutlined,
   BarChartOutlined,
@@ -34,6 +34,7 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
+import type { ChangeEvent } from 'react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from 'src/utils/apiClient';
@@ -48,6 +49,7 @@ const App: React.FC = () => {
   const [myId, setmyId] = useState<string>('');
   const [userasse, setuserasse] = useState<string[]>([]);
   const [messages, setMessages] = useState<MessageModel[]>([]);
+  const [friendinfo, setFrieniunfo] = useState<User1Model[]>([]);
   const [myMessages, setMyMessages] = useState<string[]>([]);
   const [otherMessages, setOtherMessages] = useState<string[]>([]);
   const router = useRouter(); // Next.js のルーターを取得
@@ -174,7 +176,15 @@ const App: React.FC = () => {
       'group'
     ),
   ];
-
+  const items1: MenuProps['items'] = [
+    getItem(
+      'Group',
+      'grp',
+      null,
+      friend.map((friend) => getItem(friend, friend)),
+      'group'
+    ),
+  ];
   const getPanelValue = (searchText: string) =>
     !searchText ? [] : [mockVal(searchText), mockVal(searchText, 2), mockVal(searchText, 3)];
   const onSelect = (data: string) => {
@@ -237,15 +247,15 @@ const App: React.FC = () => {
       }
     }
   }, [user]);
-  // const inputRoomId = (e: ChangeEvent<HTMLInputElement>) => {
-  //   setRoomId(e.target.value);
-  // };
-  // const serchRoomId = (e: ChangeEvent<HTMLInputElement>) => {
-  //   setSearchRoomId(e.target.value);
-  // };
-  // const inputComment = (e: ChangeEvent<HTMLInputElement>) => {
-  //   setaComment(e.target.value);
-  // };
+  const inputRoomId = (e: ChangeEvent<HTMLInputElement>) => {
+    setRoomId(e.target.value);
+  };
+  const serchRoomId = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchRoomId(e.target.value);
+  };
+  const inputComment = (e: ChangeEvent<HTMLInputElement>) => {
+    setaComment(e.target.value);
+  };
   const handleConfirm = async () => {
     setRoomId(inputValue);
     console.log('User input:', inputValue);
@@ -397,15 +407,15 @@ const App: React.FC = () => {
   };
   const handleRightClick =
     (messageId: string, contentmess: string) =>
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      e.preventDefault();
-      setContextMenuVisible(true);
-      setSelectedMessageId(messageId);
-      setContextMenuPosition({ x: e.clientX, y: e.clientY });
-      setEditingMessageId(messageId);
-      setEditedMessage(contentmess);
-      setComent(contentmess);
-    };
+      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.preventDefault();
+        setContextMenuVisible(true);
+        setSelectedMessageId(messageId);
+        setContextMenuPosition({ x: e.clientX, y: e.clientY });
+        setEditingMessageId(messageId);
+        setEditedMessage(contentmess);
+        setComent(contentmess);
+      };
 
   const send_friendId = async () => {
     if (!user) return;
@@ -446,6 +456,12 @@ const App: React.FC = () => {
     setSex_str(sexString);
     return sexString;
   };
+  const Look_friend = async () => {
+    if (!user) return;
+    const userId = user.id;
+    const friend_info = await apiClient.Lookfriend_info.$post({ body: { friend, userId } });
+    return friend_info
+  };
   useEffect(() => {
     createUserdata();
     Roomlist();
@@ -484,7 +500,7 @@ const App: React.FC = () => {
           theme="dark"
           mode="inline"
           defaultSelectedKeys={['0']}
-          items={items}
+          items={items1}
           onSelect={({ key }) => LookRoom(key)}
           style={{ width: 300 }} // ここで幅を指定
         />
@@ -558,9 +574,8 @@ const App: React.FC = () => {
                 <React.Fragment key={message.id2}>
                   {index !== 0 && <Divider orientation="left" plain />}
                   <div
-                    className={`${styles.commentBubble} ${
-                      message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                    }`}
+                    className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                      }`}
                   >
                     <div className={styles.username}>{message.username}</div>
                     <div className={styles.content}>{message.contentmess}</div>
@@ -642,6 +657,7 @@ const App: React.FC = () => {
           onChange={(e) => setSearchFriend(e.target.value)}
           onPressEnter={send_friendId}
           placeholder="userIdを入力してください"
+          style={{ top: 650 }}
         />
       </Popconfirm>
       {/* <>
