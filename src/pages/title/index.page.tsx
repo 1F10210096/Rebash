@@ -1,19 +1,35 @@
 import type { FC } from 'react';
-import { BrowserRouter, Link, Route } from 'react-router-dom';
+import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 import Sample5 from '../index.page';
-import './index.module.css'; // スタイルファイルをインポート
+import './index.module.css';
 
 const App: FC = () => (
   <BrowserRouter>
-    <Link to="/" style={{ textDecoration: 'none', color: 'black' }}>
-      <h1>Rebash</h1>
-    </Link>
-    <span className="msr_btn12">
-      <Link to="/sample5" className="ribbon2">
-        Start
+    <header style={{ textAlign: 'center', padding: '20px' }}>
+      <Link to="/" style={{ textDecoration: 'none', color: 'black', fontSize: '24px' }}>
+        Rebash
       </Link>
-    </span>
-    <Route path="/sample5" Component={Sample5} />
+    </header>
+    <main style={{ textAlign: 'center', padding: '20px' }}>
+      <Link to="/sample5" style={{ textDecoration: 'none' }}>
+        <button
+          style={{
+            padding: '10px 20px',
+            backgroundColor: '#007bff',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            fontSize: '18px',
+            cursor: 'pointer',
+          }}
+        >
+          Start
+        </button>
+      </Link>
+    </main>
+    <Routes>
+      <Route path="/sample5" element={<Sample5 />} />
+    </Routes>
   </BrowserRouter>
 );
 
