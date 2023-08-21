@@ -12,6 +12,7 @@ import {
   UploadOutlined,
   UserOutlined,
   VideoCameraOutlined,
+  CloseOutlined,
 } from '@ant-design/icons';
 import type { DatePickerProps, MenuProps } from 'antd';
 import {
@@ -40,6 +41,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from 'src/utils/apiClient';
 import styles from './index.module.css';
+import type { SizeType } from 'antd/es/config-provider/SizeContext';
 dayjs.extend(customParseFormat);
 const App: React.FC = () => {
   const [user] = useAtom(userAtom);
@@ -50,6 +52,8 @@ const App: React.FC = () => {
   const [myId, setmyId] = useState<string>('');
   const [userasse, setuserasse] = useState<string[]>([]);
   const [messages, setMessages] = useState<MessageModel[]>([]);
+  const [size, setSize] = useState<SizeType>('large'); // default is 'middle'
+
   const [friendinfo, setFrieniunfo] = useState<User1Model[]>([]);
   const [myMessages, setMyMessages] = useState<string[]>([]);
   const [otherMessages, setOtherMessages] = useState<string[]>([]);
@@ -397,9 +401,7 @@ const App: React.FC = () => {
       await LookMessage();
     }
   };
-  const ninnsyou = async () => {
-    const a = '';
-    setSyouninFriend(a);
+  const ninnsyou = async (syouninfriend: string) => {
     if (!user) return;
     const userId = user.id;
     await apiClient.okfriend.$post({ body: { syouninfriend, userId } });
@@ -633,7 +635,25 @@ const App: React.FC = () => {
           cancelButtonProps={{ disabled: true }}
         >
           {look_friend.map((friendName, index) => (
-            <p key={index}>{friendName}</p>
+            <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
+              <p>{friendName}</p>
+              <Button
+                type="primary"
+                shape="circle"
+                icon={<CheckOutlined />}
+                size={size}
+                style={{ marginLeft: '10px' }}
+                onClick={() => ninnsyou(friendName)}
+              />
+              <Button
+                type="primary"
+                shape="circle"
+                icon={<CloseOutlined />}
+                size={size}
+                style={{ marginLeft: '10px' }}
+                onClick={() => ninnsyou(friendName)}
+              />
+            </div>
           ))}
           <p>Some contents...</p>
           <p>Some contents...</p>
