@@ -3,6 +3,7 @@ import {
   AppstoreOutlined,
   BarChartOutlined,
   CheckOutlined,
+  CloseOutlined,
   CloudOutlined,
   PlusOutlined,
   SearchOutlined,
@@ -12,7 +13,6 @@ import {
   UploadOutlined,
   UserOutlined,
   VideoCameraOutlined,
-  CloseOutlined,
 } from '@ant-design/icons';
 import type { DatePickerProps, MenuProps } from 'antd';
 import {
@@ -30,6 +30,7 @@ import {
   Popconfirm,
   theme,
 } from 'antd';
+import type { SizeType } from 'antd/es/config-provider/SizeContext';
 import type { RcFile } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
 import dayjs from 'dayjs';
@@ -41,7 +42,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from 'src/utils/apiClient';
 import styles from './index.module.css';
-import type { SizeType } from 'antd/es/config-provider/SizeContext';
 dayjs.extend(customParseFormat);
 const App: React.FC = () => {
   const [user] = useAtom(userAtom);
@@ -130,7 +130,7 @@ const App: React.FC = () => {
 
   const showModal1 = () => {
     setOpen1(true);
-    console.log(look_friend)
+    console.log(look_friend);
   };
 
   const handleOk = (e: React.MouseEvent<HTMLElement>) => {
@@ -427,15 +427,15 @@ const App: React.FC = () => {
   };
   const handleRightClick =
     (messageId: string, contentmess: string) =>
-      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        e.preventDefault();
-        setContextMenuVisible(true);
-        setSelectedMessageId(messageId);
-        setContextMenuPosition({ x: e.clientX, y: e.clientY });
-        setEditingMessageId(messageId);
-        setEditedMessage(contentmess);
-        setComent(contentmess);
-      };
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.preventDefault();
+      setContextMenuVisible(true);
+      setSelectedMessageId(messageId);
+      setContextMenuPosition({ x: e.clientX, y: e.clientY });
+      setEditingMessageId(messageId);
+      setEditedMessage(contentmess);
+      setComent(contentmess);
+    };
 
   const send_friendId = async () => {
     if (!user) return;
@@ -610,8 +610,9 @@ const App: React.FC = () => {
                 <React.Fragment key={message.id2}>
                   {index !== 0 && <Divider orientation="left" plain />}
                   <div
-                    className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                      }`}
+                    className={`${styles.commentBubble} ${
+                      message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                    }`}
                   >
                     <div className={styles.username}>{message.username}</div>
                     <div className={styles.content}>{message.contentmess}</div>
