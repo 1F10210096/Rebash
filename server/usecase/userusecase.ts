@@ -64,9 +64,9 @@ export const userUsecase = {
   },
   friend: async (receive_friend: string, userId: string): Promise<User1Model> => {
     console.log(receive_friend);
-    const user = await userrepository.findUser(userId);
+    const user = await userrepository.findUser(receive_friend);
     assert(user, 'userなし');
-    console.log('a');
+    console.log(user);
     user.receive_id.push(receive_friend);
     user.sender_id.push(userId);
     await userrepository.save(user);

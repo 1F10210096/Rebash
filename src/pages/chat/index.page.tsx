@@ -25,6 +25,7 @@ import {
   Input,
   Layout,
   Menu,
+  Modal,
   Popconfirm,
   theme,
 } from 'antd';
@@ -52,6 +53,7 @@ const App: React.FC = () => {
   const [friendinfo, setFrieniunfo] = useState<User1Model[]>([]);
   const [myMessages, setMyMessages] = useState<string[]>([]);
   const [otherMessages, setOtherMessages] = useState<string[]>([]);
+  const [open1, setOpen1] = useState(false);
   const router = useRouter(); // Next.js のルーターを取得
   const [roomId1, setRoomId1] = useState(''); // 状態変数 roomId を宣言
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -121,6 +123,22 @@ const App: React.FC = () => {
   //     );
   //   }
   // };
+
+  const showModal1 = () => {
+    setOpen1(true);
+  };
+
+  const handleOk = (e: React.MouseEvent<HTMLElement>) => {
+    console.log(e);
+    setOpen1(false);
+  };
+
+  const handleCancel1 = (e: React.MouseEvent<HTMLElement>) => {
+    console.log(e);
+    setOpen1(false);
+  };
+
+
   const onChange2: DatePickerProps['onChange'] = (date, dateString) => {
     // console.log(date, dateString);
     setBirth(dateString);
@@ -178,7 +196,7 @@ const App: React.FC = () => {
   ];
   const items1: MenuProps['items'] = [
     getItem(
-      'Group',
+      'Friend',
       'grp',
       null,
       friend.map((friend) => getItem(friend, friend)),
@@ -407,20 +425,27 @@ const App: React.FC = () => {
   };
   const handleRightClick =
     (messageId: string, contentmess: string) =>
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      e.preventDefault();
-      setContextMenuVisible(true);
-      setSelectedMessageId(messageId);
-      setContextMenuPosition({ x: e.clientX, y: e.clientY });
-      setEditingMessageId(messageId);
-      setEditedMessage(contentmess);
-      setComent(contentmess);
-    };
+      (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.preventDefault();
+        setContextMenuVisible(true);
+        setSelectedMessageId(messageId);
+        setContextMenuPosition({ x: e.clientX, y: e.clientY });
+        setEditingMessageId(messageId);
+        setEditedMessage(contentmess);
+        setComent(contentmess);
+      };
 
   const send_friendId = async () => {
     if (!user) return;
     const userId = user.id;
-    await apiClient.friend.$post({ body: { searchfriend, userId } });
+    const friend_asse = await apiClient.friend.$post({ body: { searchfriend, userId } });
+    setReceive_friend(friend_asse.receive_id)
+  };
+  const look_receive_friendId = async () => {
+    if (!user) return;
+    const userId = user.id;
+    const friend_asse = await apiClient.friend.$post({ body: { searchfriend, userId } });
+    setReceive_friend(friend_asse.receive_id)
   };
 
   const delete_friendId = async () => {
@@ -428,12 +453,13 @@ const App: React.FC = () => {
     const userId = user.id;
     await apiClient.del_friend.$post({ body: { del_friend, userId } });
   };
-  const LookFriend = async () => {
+  const LookFriend = useCallback(async () => {
     if (!user) return;
     const userId = user.id;
     const userlist = await apiClient.Look_friend.$post({ body: { userId } });
     setLookFriend(userlist.friend);
-  };
+  },[user]
+  );
 
   const select_sex = async () => {
     if (!user) return;
@@ -473,7 +499,8 @@ const App: React.FC = () => {
   useEffect(() => {
     createUserdata();
     Roomlist();
-  }, [Roomlist, createUserdata]);
+    LookFriend();
+  }, [LookFriend, Roomlist, createUserdata]);
   return (
     <Layout hasSider>
       <div
@@ -582,9 +609,8 @@ const App: React.FC = () => {
                 <React.Fragment key={message.id2}>
                   {index !== 0 && <Divider orientation="left" plain />}
                   <div
-                    className={`${styles.commentBubble} ${
-                      message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                    }`}
+                    className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                      }`}
                   >
                     <div className={styles.username}>{message.username}</div>
                     <div className={styles.content}>{message.contentmess}</div>
@@ -596,6 +622,23 @@ const App: React.FC = () => {
         <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
       </Layout>
       <div style={{ position: 'relative' }}>
+        <Button type="primary" onClick={showModal1}>
+          Open Modal with customized button props
+        </Button>
+        <Modal
+          title="Basic Modal"
+          open={open1}
+          onOk={handleOk}
+          onCancel={handleCancel1}
+          okButtonProps={{ disabled: true }}
+          cancelButtonProps={{ disabled: true }}
+        >
+          {friend.map((friendName, index) => (
+            <p key={index}>{friendName}</p>
+          ))}
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+        </Modal>
         <AutoComplete
           style={{ position: 'fixed', width: 800, height: 600, top: 750, right: 330 }}
           // value={inputValue}

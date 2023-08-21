@@ -42,11 +42,11 @@ export const userrepository = {
       },
     });
   },
-  findUser: async (userId: string | undefined): Promise<User1Model | undefined> => {
-    console.log(userId);
+  findUser: async (receive_friend: string | undefined): Promise<User1Model | undefined> => {
+    console.log(receive_friend);
     const userlist = await prismaClient.user.findMany();
     console.log('ads2');
-    const users = userlist.find((user) => user.userId === userId);
+    const users = userlist.find((user) => user.userId === receive_friend);
     console.log(users);
     return users && toUser1Model(users);
   },
