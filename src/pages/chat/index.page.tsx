@@ -33,6 +33,7 @@ import {
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 import type { RcFile } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
+import assert from 'assert';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useAtom } from 'jotai';
@@ -41,6 +42,8 @@ import type { ChangeEvent } from 'react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from 'src/utils/apiClient';
+import { useSendFriendId } from 'src/utils/friend';
+import { useLookmystatus, useMybirth, useMymessage } from 'src/utils/myinfo';
 import styles from './index.module.css';
 dayjs.extend(customParseFormat);
 const App: React.FC = () => {
@@ -48,7 +51,7 @@ const App: React.FC = () => {
   const [roomId, setRoomId] = useState('');
   const [roomId2, setRoomId2] = useState('');
   const [aroom, setARoomId] = useState<string[]>([]);
-  const [message, setaComment] = useState('');
+  const [message, setMessage] = useState('');
   const [myId, setmyId] = useState<string>('');
   const [userasse, setuserasse] = useState<string[]>([]);
   const [messages, setMessages] = useState<MessageModel[]>([]);
@@ -207,8 +210,7 @@ const App: React.FC = () => {
       'group'
     ),
   ];
-  const getPanelValue = (searchText: string) =>
-    !searchText ? [] : [mockVal(searchText), mockVal(searchText, 2), mockVal(searchText, 3)];
+
   const onSelect = (data: string) => {
     console.log('onSelect', data);
   };
@@ -223,31 +225,11 @@ const App: React.FC = () => {
   } = theme.useToken();
   const showDrawer = () => {
     setOpen(true);
-    lookmystatus();
+    MyStatus();
   };
   const onClose = () => {
     setOpen(false);
   };
-  useEffect(() => {
-    const initializeVideo = async () => {
-      mediaStreamRef.current = await navigator.mediaDevices.getUserMedia({
-        video: true,
-      });
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStreamRef.current;
-      }
-    };
-    const cleanupMediaStream = () => {
-      if (mediaStreamRef.current) {
-        mediaStreamRef.current.getTracks()[0].stop();
-      }
-    };
-
-    initializeVideo();
-    return () => {
-      cleanupMediaStream();
-    };
-  }, []);
   const Roomlist = useCallback(async () => {
     const roomlist = await apiClient.roomlist.$post();
     console.log(roomlist);
@@ -275,9 +257,6 @@ const App: React.FC = () => {
   const serchRoomId = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchRoomId(e.target.value);
   };
-  const inputComment = (e: ChangeEvent<HTMLInputElement>) => {
-    setaComment(e.target.value);
-  };
   const handleConfirm = async () => {
     setRoomId(inputValue);
     console.log('User input:', inputValue);
@@ -301,37 +280,32 @@ const App: React.FC = () => {
     setuserasse(a.body.user);
     await Roomlist();
   };
-  const mymessage = async () => {
-    if (!user) return;
-    const userId = user.id;
-    const comment = message;
-    console.log(comment);
-    const usermessage = await apiClient.createcomment.$post({ body: { userId, comment } });
-    setaComment(usermessage.comment);
+
+  const mymessage = useMymessage();
+  //自分のコメント設定
+  const MyMesse = async () => {
+    const userMessa = await mymessage(message);
+    assert(userMessa, 'messeなし');
+    setMessage(userMessa);
   };
-  const lookmystatus = async () => {
-    if (!user) return;
-    console.log('234');
-    const userId = user.id;
-    const usermessage = await apiClient.usercheck.$post({ body: { userId } });
-    if (usermessage === undefined) {
-      console.log('usernasi');
-    } else {
-      console.log(usermessage.comment);
-      setaComment(usermessage.comment);
-      console.log(usermessage.birth);
-      console.log('asdaw');
-      setBirth(usermessage.birth);
-      console.log(birth);
-    }
+
+  const lookmystatus = useLookmystatus();
+  //自分のステータス確認
+  const MyStatus = async () => {
+    const userStatus = await lookmystatus();
+    assert(userStatus, 'myStatusなし');
+    setMessage(userStatus.comment);
+    setBirth(userStatus.birth);
   };
-  const mybirth = async () => {
-    if (!user) return;
-    const userId = user.id;
-    const birthday = birth;
-    const usermessage = await apiClient.birth.$post({ body: { userId, birthday } });
-    setBirth(usermessage.birth);
+
+  const mybirth = useMybirth();
+  //誕生日設定
+  const MyBirth = async () => {
+    const userBirth = await mybirth(birth);
+    assert(userBirth, '誕生日なし');
+    setBirth(userBirth);
   };
+
   const inputcomment = async () => {
     if (!user) return;
     console.log(user.photoURL);
@@ -385,7 +359,7 @@ const App: React.FC = () => {
   };
   const onChange1 = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     console.log('Change:', e.target.value);
-    setaComment(e.target.value);
+    setMessage(e.target.value);
   };
   const { TextArea } = Input;
   const handleInfo = async (messageId: string) => {
@@ -443,12 +417,14 @@ const App: React.FC = () => {
       setComent(contentmess);
     };
 
-  const send_friendId = async () => {
-    if (!user) return;
-    const userId = user.id;
-    const friend_asse = await apiClient.friend.$post({ body: { searchfriend, userId } });
-    setReceive_friend(friend_asse.receive_id);
+  const sendFriendId = useSendFriendId();
+  //自分のステータス確認
+  const SendFriend = async () => {
+    const userSendFriend = await sendFriendId(searchfriend);
+    assert(userSendFriend, 'myStatusなし');
+    setReceive_friend(userSendFriend);
   };
+
   const look_receive_friendId = async () => {
     if (!user) return;
     const userId = user.id;
@@ -599,7 +575,7 @@ const App: React.FC = () => {
           <br />
           <p>message</p>
           <TextArea showCount maxLength={100} onChange={onChange1} value={message} />
-          <Button type="primary" icon={<CheckOutlined />} onClick={mymessage}>
+          <Button type="primary" icon={<CheckOutlined />} onClick={MyMesse}>
             ok
           </Button>
           <br />
@@ -612,7 +588,7 @@ const App: React.FC = () => {
           >
             birthday
           </DatePicker>
-          <Button type="primary" icon={<CheckOutlined />} onClick={mybirth}>
+          <Button type="primary" icon={<CheckOutlined />} onClick={MyBirth}>
             ok
           </Button>
           <div style={{ left: 40 }}>{myId}</div>
@@ -775,25 +751,11 @@ const App: React.FC = () => {
         <Input
           value={searchfriend}
           onChange={(e) => setSearchFriend(e.target.value)}
-          onPressEnter={send_friendId}
+          onPressEnter={SendFriend}
           placeholder="userIdを入力してください"
           style={{ top: 650 }}
         />
       </Popconfirm>
-      {/* <>
-      <Upload
-        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-        listType="picture-circle"
-        fileList={fileList}
-        onPreview={handlePreview}
-        onChange={handleChange}
-      >
-        {fileList.length >= 8 ? null : uploadButton}
-      </Upload>
-      <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
-        <img alt="example" style={{ width: '100%' }} src={previewImage} />
-      </Modal>
-    </> */}
     </Layout>
   );
 };
