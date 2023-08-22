@@ -31,7 +31,6 @@ import {
   theme,
 } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
-import type { RcFile } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
 import assert from 'assert';
 import dayjs from 'dayjs';
@@ -44,6 +43,7 @@ import { apiClient } from 'src/utils/apiClient';
 import { useAuth, useSendFriendId } from 'src/utils/friend';
 import { useLookmystatus, useMybirth, useMymessage } from 'src/utils/myinfo';
 import styles from './index.module.css';
+import { useInputComment } from 'src/utils/message';
 dayjs.extend(customParseFormat);
 const App: React.FC = () => {
   const [user] = useAtom(userAtom);
@@ -56,24 +56,24 @@ const App: React.FC = () => {
   const [messages, setMessages] = useState<MessageModel[]>([]);
   const [size, setSize] = useState<SizeType>('large'); // default is 'middle'
 
-  const [friendinfo, setFrieniunfo] = useState<User1Model[]>([]);
-  const [myMessages, setMyMessages] = useState<string[]>([]);
-  const [otherMessages, setOtherMessages] = useState<string[]>([]);
+  // const [friendinfo, setFrieniunfo] = useState<User1Model[]>([]);
+  // const [myMessages, setMyMessages] = useState<string[]>([]);
+  // const [otherMessages, setOtherMessages] = useState<string[]>([]);
   const [open1, setOpen1] = useState(false);
   const router = useRouter(); // Next.js のルーターを取得
   const [roomId1, setRoomId1] = useState(''); // 状態変数 roomId を宣言
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaStreamRef = useRef<MediaStream | undefined>();
-  const [showForm, setShowForm] = useState(false);
+  // const [showForm, setShowForm] = useState(false);
   const [searchRoomId, setSearchRoomId] = useState('');
-  const [coment, setComent] = useState('');
-  const [infoname, setInfoName] = useState('');
-  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
-  const [editedMessage, setEditedMessage] = useState('');
-  const [contextMenuVisible, setContextMenuVisible] = useState(false);
-  const [editMenuVisible, setEditMenuVisible] = useState(false);
-  const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
-  const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+  // const [coment, setComent] = useState('');
+  // const [infoname, setInfoName] = useState('');
+  // const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  // const [editedMessage, setEditedMessage] = useState('');
+  // const [contextMenuVisible, setContextMenuVisible] = useState(false);
+  // const [editMenuVisible, setEditMenuVisible] = useState(false);
+  // const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
+  // const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
   const [value, setValue] = useState('');
   const [options, setOptions] = useState('');
   const [birth, setBirth] = useState('2015/01/05');
@@ -85,36 +85,36 @@ const App: React.FC = () => {
   const backgroundColor = '#02021e';
   const { Header, Content, Footer, Sider } = Layout;
   const roomNames = aroom;
-  const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-    console.log(date, dateString);
-  };
+  // const onChange: DatePickerProps['onChange'] = (date, dateString) => {
+  //   console.log(date, dateString);
+  // };
   const dateFormat = 'YYYY/MM/DD';
 
   const customFormat: DatePickerProps['format'] = (value) =>
     `custom format: ${value.format(dateFormat)}`;
 
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState('');
-  const [previewTitle, setPreviewTitle] = useState('');
+  // const [previewOpen, setPreviewOpen] = useState(false);
+  // const [previewImage, setPreviewImage] = useState('');
+  // const [previewTitle, setPreviewTitle] = useState('');
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [friend, setFriend] = useState<string[]>([]);
-  const [sent_friend, setSend_friend] = useState('');
+  // const [sent_friend, setSend_friend] = useState('');
   const [receive_friend, setReceive_friend] = useState<string[]>([]);
-  const [syouninfriend, setSyouninFriend] = useState('');
+  // const [syouninfriend, setSyouninFriend] = useState('');
   const [searchfriend, setSearchFriend] = useState('');
-  const [del_friend, setDel_Friend] = useState('');
-  const [sex, setSex] = useState(0);
-  const [sex_str, setSex_str] = useState('');
+  // const [del_friend, setDel_Friend] = useState('');
+  // const [sex, setSex] = useState(0);
+  // const [sex_str, setSex_str] = useState('');
   const [look_friend, setLookFriend] = useState<string[]>([]);
 
-  const getBase64 = (file: RcFile): Promise<string> =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
-    });
-  const handleCancel = () => setPreviewOpen(false);
+  // const getBase64 = (file: RcFile): Promise<string> =>
+  //   new Promise((resolve, reject) => {
+  //     const reader = new FileReader();
+  //     reader.readAsDataURL(file);
+  //     reader.onload = () => resolve(reader.result as string);
+  //     reader.onerror = (error) => reject(error);
+  //   });
+  // const handleCancel = () => setPreviewOpen(false);
 
   const showModal1 = () => {
     setOpen1(true);
@@ -154,20 +154,20 @@ const App: React.FC = () => {
     } as MenuItem;
   }
 
-  const friendMenu: MenuProps['items'] = [
-    UserOutlined,
-    VideoCameraOutlined,
-    UploadOutlined,
-    BarChartOutlined,
-    CloudOutlined,
-    AppstoreOutlined,
-    TeamOutlined,
-    ShopOutlined,
-  ].map((icon, index) => ({
-    key: String(index + 1),
-    icon: React.createElement(icon),
-    label: `nav ${index + 1}`,
-  }));
+  // const friendMenu: MenuProps['items'] = [
+  //   UserOutlined,
+  //   VideoCameraOutlined,
+  //   UploadOutlined,
+  //   BarChartOutlined,
+  //   CloudOutlined,
+  //   AppstoreOutlined,
+  //   TeamOutlined,
+  //   ShopOutlined,
+  // ].map((icon, index) => ({
+  //   key: String(index + 1),
+  //   icon: React.createElement(icon),
+  //   label: `nav ${index + 1}`,
+  // }));
   const items: MenuProps['items'] = [
     getItem(
       'Group',
@@ -275,48 +275,42 @@ const App: React.FC = () => {
     setBirth(userBirth);
   };
 
+  const inputComment = useInputComment();
+  //メッセージ送信
   const inputcomment = async () => {
-    if (!user) return;
-    console.log(user.photoURL);
-    console.log(value);
-    const sender_id = user.id;
-    const content = value;
-    const name = user.displayName;
-    if (name === undefined) {
-      console.log('usernameなし');
-    } else {
-      const a = await apiClient.message.post({ body: { roomId, sender_id, content, name } });
-    }
-    await LookMessage();
+    const InputComment = await inputComment(roomId, value);
+    assert(InputComment, 'コメントなし');
   };
-  const LookRoom = async (roomId3: string) => {
-    console.log('a');
-    console.log(roomId3);
-    setRoomId(roomId3);
-    if (!user) return;
-    const userId = user.id;
-    const userlist = await apiClient.Look_friend.$post({ body: { userId } });
-    console.log(friend);
-    setFriend(userlist.friend);
-    await apiClient.room.post({ body: { roomId3 } });
-    if (user === null) {
-      console.log('error');
-    } else {
-      const userId = user.id;
-      console.log(userId);
-      const a = await apiClient.roomuser.post({ body: { roomId3 } });
-      console.log(a.body.user);
-      setuserasse(a.body.user);
-    }
-    const messages = await apiClient.message_get2.$post({ body: { roomId3 } });
-    console.log(messages);
-    if (messages === undefined) {
-      console.log('messagesがありません');
-    } else {
-      setMessages(messages);
-      setmyId(user?.id);
-    }
-  };
+
+  // const LookRoom = async (roomId3: string) => {
+  //   console.log('a');
+  //   console.log(roomId3);
+  //   setRoomId(roomId3);
+  //   if (!user) return;
+  //   const userId = user.id;
+  //   const userlist = await apiClient.Look_friend.$post({ body: { userId } });
+  //   console.log(friend);
+  //   setFriend(userlist.friend);
+  //   await apiClient.room.post({ body: { roomId3 } });
+  //   if (user === null) {
+  //     console.log('error');
+  //   } else {
+  //     const userId = user.id;
+  //     console.log(userId);
+  //     const a = await apiClient.roomuser.post({ body: { roomId3 } });
+  //     console.log(a.body.user);
+  //     setuserasse(a.body.user);
+  //   }
+  //   const messages = await apiClient.message_get2.$post({ body: { roomId3 } });
+  //   console.log(messages);
+  //   if (messages === undefined) {
+  //     console.log('messagesがありません');
+  //   } else {
+  //     setMessages(messages);
+  //     setmyId(user?.id);
+  //   }
+  // };
+  
   const LookMessage = async () => {
     const messages = await apiClient.message_get.$post({ body: { roomId } });
     if (messages === undefined) {
@@ -591,9 +585,8 @@ const App: React.FC = () => {
                 <React.Fragment key={message.id2}>
                   {index !== 0 && <Divider orientation="left" plain />}
                   <div
-                    className={`${styles.commentBubble} ${
-                      message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                    }`}
+                    className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                      }`}
                   >
                     <div className={styles.username}>{message.username}</div>
                     <div className={styles.content}>{message.contentmess}</div>
