@@ -5,6 +5,6 @@ export default defineController(() => ({
   get: () => ({ status: 200, body: 'Hello' }),
   post: async ({ body, user }) => ({
     status: 201,
-    body: await userUsecase.Friend_info( user.id),
+    body: await userUsecase.Friend_info(user.id),
   }),
 }));

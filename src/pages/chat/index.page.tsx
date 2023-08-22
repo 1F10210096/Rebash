@@ -518,16 +518,16 @@ const App: React.FC = () => {
     console.log(e);
     message.success('Click on Yes');
   };
-  
+
   const cancel = (e: React.MouseEvent<HTMLElement>) => {
     console.log(e);
     message.error('Click on No');
   };
-  const LookF = async (key:string) => {
+  const LookF = async (key: string) => {
     if (!user) return;
     const userId1 = user.id;
     const userId = key;
-    const userinfo = await apiClient.userinfo.$post({ body: { userId} });
+    const userinfo = await apiClient.userinfo.$post({ body: { userId } });
   };
   useEffect(() => {
     createUserdata();
@@ -693,15 +693,15 @@ const App: React.FC = () => {
                 onClick={() => ninnsyou(friendName)}
               />
               <Popconfirm
-    title="Delete the task"
-    description="Are you sure to delete this task?"
-    onConfirm={confirm}
-    onCancel={cancel}
-    okText="Yes"
-    cancelText="No"
-  >
-    <Button danger>Delete</Button>
-  </Popconfirm>
+                title="Delete the task"
+                description="Are you sure to delete this task?"
+                onConfirm={confirm}
+                onCancel={cancel}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button danger>Delete</Button>
+              </Popconfirm>
             </div>
           ))}
           <p>Some contents...</p>
