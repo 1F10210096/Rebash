@@ -3,6 +3,7 @@ import {
   AppstoreOutlined,
   BarChartOutlined,
   CheckOutlined,
+  CloseOutlined,
   CloudOutlined,
   PlusOutlined,
   SearchOutlined,
@@ -25,9 +26,11 @@ import {
   Input,
   Layout,
   Menu,
+  Modal,
   Popconfirm,
   theme,
 } from 'antd';
+import type { SizeType } from 'antd/es/config-provider/SizeContext';
 import type { RcFile } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
 import dayjs from 'dayjs';
@@ -49,9 +52,12 @@ const App: React.FC = () => {
   const [myId, setmyId] = useState<string>('');
   const [userasse, setuserasse] = useState<string[]>([]);
   const [messages, setMessages] = useState<MessageModel[]>([]);
+  const [size, setSize] = useState<SizeType>('large'); // default is 'middle'
+
   const [friendinfo, setFrieniunfo] = useState<User1Model[]>([]);
   const [myMessages, setMyMessages] = useState<string[]>([]);
   const [otherMessages, setOtherMessages] = useState<string[]>([]);
+  const [open1, setOpen1] = useState(false);
   const router = useRouter(); // Next.js のルーターを取得
   const [roomId1, setRoomId1] = useState(''); // 状態変数 roomId を宣言
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -121,6 +127,22 @@ const App: React.FC = () => {
   //     );
   //   }
   // };
+
+  const showModal1 = () => {
+    setOpen1(true);
+    console.log(look_friend);
+  };
+
+  const handleOk = (e: React.MouseEvent<HTMLElement>) => {
+    console.log(e);
+    setOpen1(false);
+  };
+
+  const handleCancel1 = (e: React.MouseEvent<HTMLElement>) => {
+    console.log(e);
+    setOpen1(false);
+  };
+
   const onChange2: DatePickerProps['onChange'] = (date, dateString) => {
     // console.log(date, dateString);
     setBirth(dateString);
@@ -178,7 +200,7 @@ const App: React.FC = () => {
   ];
   const items1: MenuProps['items'] = [
     getItem(
-      'Group',
+      'Friend',
       'grp',
       null,
       friend.map((friend) => getItem(friend, friend)),
@@ -328,6 +350,11 @@ const App: React.FC = () => {
     console.log('a');
     console.log(roomId3);
     setRoomId(roomId3);
+    if (!user) return;
+    const userId = user.id;
+    const userlist = await apiClient.Look_friend.$post({ body: { userId } });
+    console.log(friend);
+    setFriend(userlist.friend);
     await apiClient.room.post({ body: { roomId3 } });
     if (user === null) {
       console.log('error');
@@ -344,7 +371,7 @@ const App: React.FC = () => {
       console.log('messagesがありません');
     } else {
       setMessages(messages);
-      setmyId(user?.id || '');
+      setmyId(user?.id);
     }
   };
   const LookMessage = async () => {
@@ -379,10 +406,9 @@ const App: React.FC = () => {
       await LookMessage();
     }
   };
-  const ninnsyou = async () => {
-    const a = '';
-    setSyouninFriend(a);
+  const ninnsyou = async (syouninfriend: string) => {
     if (!user) return;
+    console.log(syouninfriend);
     const userId = user.id;
     await apiClient.okfriend.$post({ body: { syouninfriend, userId } });
   };
@@ -420,7 +446,21 @@ const App: React.FC = () => {
   const send_friendId = async () => {
     if (!user) return;
     const userId = user.id;
-    await apiClient.friend.$post({ body: { searchfriend, userId } });
+    const friend_asse = await apiClient.friend.$post({ body: { searchfriend, userId } });
+    setReceive_friend(friend_asse.receive_id);
+  };
+  const look_receive_friendId = async () => {
+    if (!user) return;
+    const userId = user.id;
+    const friend_asse = await apiClient.friend.$post({ body: { searchfriend, userId } });
+    setReceive_friend(friend_asse.receive_id);
+  };
+
+  const look_friendroom = async () => {
+    if (!user) return;
+    const userId = user.id;
+    const friend_asse = await apiClient.friend.$post({ body: { searchfriend, userId } });
+    setReceive_friend(friend_asse.receive_id);
   };
 
   const delete_friendId = async () => {
@@ -428,12 +468,16 @@ const App: React.FC = () => {
     const userId = user.id;
     await apiClient.del_friend.$post({ body: { del_friend, userId } });
   };
-  const LookFriend = async () => {
+  const LookFriend = useCallback(async () => {
     if (!user) return;
     const userId = user.id;
+    setmyId(userId);
     const userlist = await apiClient.Look_friend.$post({ body: { userId } });
-    setLookFriend(userlist.friend);
-  };
+    setLookFriend(userlist.receive_id);
+    console.log(friend);
+    setFriend(userlist.friend);
+    console.log('345');
+  }, [friend, user]);
 
   const select_sex = async () => {
     if (!user) return;
@@ -473,7 +517,11 @@ const App: React.FC = () => {
   useEffect(() => {
     createUserdata();
     Roomlist();
-  }, [Roomlist, createUserdata]);
+    if (user) {
+      LookFriend();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [Roomlist, createUserdata, user]);
   return (
     <Layout hasSider>
       <div
@@ -485,6 +533,7 @@ const App: React.FC = () => {
         }}
       >
         <div className={styles.box1} onClick={showDrawer} />
+        <div style={{ left: 480 }}>{myId}</div>
         <Avatar
           style={{ backgroundColor: '#87d068', right: 1850, top: 40, position: 'fixed' }}
           icon={<UserOutlined />}
@@ -511,7 +560,9 @@ const App: React.FC = () => {
           items={items1}
           onSelect={({ key }) => LookRoom(key)}
           style={{ width: 300 }} // ここで幅を指定
-        />
+        >
+          <div style={{ left: 40 }}>{myId}</div>
+        </Menu>
       </Sider>
       {/* <>
         <Upload
@@ -549,6 +600,7 @@ const App: React.FC = () => {
           <Button type="primary" icon={<CheckOutlined />} onClick={mybirth}>
             ok
           </Button>
+          <div style={{ left: 40 }}>{myId}</div>
           <p>Some contents...</p>
         </Drawer>
       </>
@@ -596,6 +648,41 @@ const App: React.FC = () => {
         <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
       </Layout>
       <div style={{ position: 'relative' }}>
+        <Button type="primary" onClick={showModal1}>
+          Open Modal with customized button props
+        </Button>
+        <Modal
+          title="Basic Modal"
+          open={open1}
+          onOk={handleOk}
+          onCancel={handleCancel1}
+          okButtonProps={{ disabled: true }}
+          cancelButtonProps={{ disabled: true }}
+        >
+          {look_friend.map((friendName, index) => (
+            <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
+              <p>{friendName}</p>
+              <Button
+                type="primary"
+                shape="circle"
+                icon={<CheckOutlined />}
+                size={size}
+                style={{ marginLeft: '10px' }}
+                onClick={() => ninnsyou(friendName)}
+              />
+              <Button
+                type="primary"
+                shape="circle"
+                icon={<CloseOutlined />}
+                size={size}
+                style={{ marginLeft: '10px' }}
+                onClick={() => ninnsyou(friendName)}
+              />
+            </div>
+          ))}
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+        </Modal>
         <AutoComplete
           style={{ position: 'fixed', width: 800, height: 600, top: 750, right: 330 }}
           // value={inputValue}

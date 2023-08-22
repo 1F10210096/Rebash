@@ -64,21 +64,33 @@ export const userUsecase = {
   },
   friend: async (receive_friend: string, userId: string): Promise<User1Model> => {
     console.log(receive_friend);
-    const user = await userrepository.findUser(userId);
+    const user = await userrepository.findUser(receive_friend);
     assert(user, 'userなし');
-    console.log('a');
-    user.receive_id.push(receive_friend);
-    user.sender_id.push(userId);
+    console.log(user);
+    user.receive_id.push(userId);
+    user.sender_id.push(receive_friend);
     await userrepository.save(user);
     return user;
   },
   okfriend: async (syouninfriend: string, userId: string): Promise<User1Model> => {
     console.log(syouninfriend);
+    console.log('dawdad');
     const user = await userrepository.findFriend(syouninfriend);
+    const userlist = await userrepository.findFriend(userId);
     assert(user, 'userなし');
+    assert(userlist, 'userなし');
+    console.log(user);
     user.sender_id = user.sender_id.filter((id) => id !== syouninfriend);
+    userlist.sender_id = userlist.sender_id.filter((id) => id !== userId);
     user.friend.push(userId);
+    userlist.friend.push(syouninfriend);
+    console.log(userlist.receive_id);
+    console.log(syouninfriend);
+    console.log('DAWDAS');
+    userlist.receive_id = userlist.receive_id.filter((id) => id !== syouninfriend);
+    userlist.sender_id = userlist.sender_id.filter((id) => id !== userId);
     await userrepository.save(user);
+    await userrepository.save(userlist);
     return user;
   },
   del_friend: async (del_friend: string, userId: string): Promise<User1Model> => {

@@ -1,17 +1,19 @@
-@import "compass/css3";
+@import 'compass/css3';
 
-*, *:before, *:after {
+*,
+*:before,
+*:after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
-html, body {
+html,
+body {
   height: 100%;
   overflow: hidden;
 }
 body {
-  background:
-    linear-gradient(45deg, hsla(352, 96%, 45%, 1) 0%, hsla(352, 96%, 45%, 0) 70%),
+  background: linear-gradient(45deg, hsla(352, 96%, 45%, 1) 0%, hsla(352, 96%, 45%, 0) 70%),
     linear-gradient(135deg, hsla(253, 95%, 42%, 1) 10%, hsla(253, 95%, 42%, 0) 80%),
     linear-gradient(225deg, hsla(179, 91%, 45%, 1) 10%, hsla(179, 91%, 45%, 0) 80%),
     linear-gradient(315deg, hsla(119, 96%, 49%, 1) 100%, hsla(119, 96%, 49%, 0) 70%);
@@ -34,7 +36,7 @@ body {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background: rgba(255,255,255, 0.15);
+    background: rgba(255, 255, 255, 0.15);
     opacity: 0;
     z-index: -10;
     cursor: pointer;
@@ -46,9 +48,9 @@ body {
       font-size: 3em;
       transition: color 0.3s;
     }
-    
+
     &:hover .fa {
-      color: rgba(255,255,255, 0.7);
+      color: rgba(255, 255, 255, 0.7);
     }
 
     &.trigger {
@@ -56,15 +58,16 @@ body {
       z-index: 100;
       cursor: pointer;
       transition: transform 0.3s;
-      
+
       &:hover {
         transform: scale(1.2);
-        
+
         .line {
-          background-color: rgba(255,255,255, 0.7);
-          
-          &:before, &:after {
-            background-color: rgba(255,255,255, 0.7);
+          background-color: rgba(255, 255, 255, 0.7);
+
+          &:before,
+          &:after {
+            background-color: rgba(255, 255, 255, 0.7);
           }
         }
       }
@@ -77,8 +80,9 @@ body {
         border-radius: 6px;
         transition: background-color 0.3s, height 0.3s, top 0.3s;
 
-        &:before, &:after {
-          content: "";
+        &:before,
+        &:after {
+          content: '';
           display: block;
           position: absolute;
           left: 0;
@@ -110,25 +114,23 @@ body {
   }
 
   &.active {
-    
     .btn-icon {
       opacity: 1;
       z-index: 50;
     }
-    
+
     .trigger {
-      
       .line {
         height: 0px;
         top: 45%;
-        
+
         &:before {
           transform: rotate(45deg);
           width: 110%;
         }
         &:after {
           transform: rotate(-45deg);
-          width: 110%; 
+          width: 110%;
         }
       }
     }
@@ -145,7 +147,7 @@ $numOfElems: 8;
 
   .menu.active {
     .rotater:nth-child(#{$i}) .btn-icon {
-      transform: translateY(-10em) rotate($deg/2 - $deg * ($i - 1)); 
+      transform: translateY(-10em) rotate($deg/2 - $deg * ($i - 1));
     }
   }
 }
