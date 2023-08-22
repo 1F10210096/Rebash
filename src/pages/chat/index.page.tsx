@@ -514,21 +514,21 @@ const App: React.FC = () => {
     setReceive_friend(receive_friend);
     return friend_info;
   };
-  const confirm = (e: React.MouseEvent<HTMLElement>) => {
-    console.log(e);
-    message.success('Click on Yes');
-  };
+  // const confirm = (e: React.MouseEvent<HTMLElement>) => {
+  //   console.log(e);
+  //   message.success('Click on Yes');
+  // };
 
-  const cancel = (e: React.MouseEvent<HTMLElement>) => {
-    console.log(e);
-    message.error('Click on No');
-  };
-  const LookF = async (key: string) => {
-    if (!user) return;
-    const userId1 = user.id;
-    const userId = key;
-    const userinfo = await apiClient.userinfo.$post({ body: { userId } });
-  };
+  // const cancel = (e: React.MouseEvent<HTMLElement>) => {
+  //   console.log(e);
+  //   message.error('Click on No');
+  // };
+  // const LookF = async (key: string) => {
+  //   if (!user) return;
+  //   const userId1 = user.id;
+  //   const userId = key;
+  //   const userinfo = await apiClient.userinfo.$post({ body: { userId } });
+  // };
   useEffect(() => {
     createUserdata();
     Roomlist();
@@ -573,7 +573,7 @@ const App: React.FC = () => {
           mode="inline"
           defaultSelectedKeys={['0']}
           items={items1}
-          onSelect={({ key }) => LookF(key)}
+          // onSelect={({ key }) => LookF(key)}
           style={{ width: 300 }} // ここで幅を指定
         >
           <div style={{ left: 40 }}>{myId}</div>
@@ -692,7 +692,7 @@ const App: React.FC = () => {
                 style={{ marginLeft: '10px' }}
                 onClick={() => ninnsyou(friendName)}
               />
-              <Popconfirm
+              {/* <Popconfirm
                 title="Delete the task"
                 description="Are you sure to delete this task?"
                 onConfirm={confirm}
@@ -701,7 +701,7 @@ const App: React.FC = () => {
                 cancelText="No"
               >
                 <Button danger>Delete</Button>
-              </Popconfirm>
+              </Popconfirm> */}
             </div>
           ))}
           <p>Some contents...</p>
