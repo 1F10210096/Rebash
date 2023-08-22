@@ -1,18 +1,11 @@
-import type { MessageModel, User1Model } from '$/commonTypesWithClient/models';
+import type { MessageModel } from '$/commonTypesWithClient/models';
 import {
-  AppstoreOutlined,
-  BarChartOutlined,
   CheckOutlined,
   CloseOutlined,
-  CloudOutlined,
   PlusOutlined,
   SearchOutlined,
   SendOutlined,
-  ShopOutlined,
-  TeamOutlined,
-  UploadOutlined,
   UserOutlined,
-  VideoCameraOutlined,
 } from '@ant-design/icons';
 import type { DatePickerProps, MenuProps } from 'antd';
 import {
@@ -41,9 +34,9 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from 'src/utils/apiClient';
 import { useAuth, useSendFriendId } from 'src/utils/friend';
+import { useInputComment, useLookRoom } from 'src/utils/message';
 import { useLookmystatus, useMybirth, useMymessage } from 'src/utils/myinfo';
 import styles from './index.module.css';
-import { useInputComment, useLookRoom } from 'src/utils/message';
 dayjs.extend(customParseFormat);
 const App: React.FC = () => {
   const [user] = useAtom(userAtom);
@@ -311,7 +304,7 @@ const App: React.FC = () => {
   //   }
   // };
 
-  const  lookRoom= useLookRoom();
+  const lookRoom = useLookRoom();
   //メッセージ送信
   const Lookroom = async () => {
     if (!user) return;
@@ -319,10 +312,9 @@ const App: React.FC = () => {
     const userLookroom = await lookRoom(roomId);
     assert(userLookroom, 'コメントなし');
 
-    setMessages(userLookroom)
+    setMessages(userLookroom);
     setmyId(userId);
   };
-
 
   const LookMessage = async () => {
     const messages = await apiClient.message_get.$post({ body: { roomId } });
@@ -598,8 +590,9 @@ const App: React.FC = () => {
                 <React.Fragment key={message.id2}>
                   {index !== 0 && <Divider orientation="left" plain />}
                   <div
-                    className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                      }`}
+                    className={`${styles.commentBubble} ${
+                      message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                    }`}
                   >
                     <div className={styles.username}>{message.username}</div>
                     <div className={styles.content}>{message.contentmess}</div>
