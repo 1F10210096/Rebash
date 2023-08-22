@@ -38,7 +38,6 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
-import type { ChangeEvent } from 'react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from 'src/utils/apiClient';
@@ -350,7 +349,6 @@ const App: React.FC = () => {
   //     await LookMessage();
   //   }
   // };
-
 
   //フレンド認証
   const Friendauth = useAuth();
