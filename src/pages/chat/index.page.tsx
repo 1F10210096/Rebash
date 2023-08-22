@@ -41,6 +41,7 @@ import type { ChangeEvent } from 'react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from 'src/utils/apiClient';
+import { myFunction } from 'src/utils/message';
 import styles from './index.module.css';
 dayjs.extend(customParseFormat);
 const App: React.FC = () => {
@@ -311,6 +312,7 @@ const App: React.FC = () => {
   };
   const lookmystatus = async () => {
     if (!user) return;
+    myFunction();
     console.log('234');
     const userId = user.id;
     const usermessage = await apiClient.usercheck.$post({ body: { userId } });
@@ -780,20 +782,6 @@ const App: React.FC = () => {
           style={{ top: 650 }}
         />
       </Popconfirm>
-      {/* <>
-      <Upload
-        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-        listType="picture-circle"
-        fileList={fileList}
-        onPreview={handlePreview}
-        onChange={handleChange}
-      >
-        {fileList.length >= 8 ? null : uploadButton}
-      </Upload>
-      <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
-        <img alt="example" style={{ width: '100%' }} src={previewImage} />
-      </Modal>
-    </> */}
     </Layout>
   );
 };
