@@ -21,37 +21,13 @@ export function useInputComment() {
   return inputComment;
 }
 
-// export function useLookRoom() {
-//   const [user] = useAtom(userAtom);
+export function useLookRoom() {
+  const [user] = useAtom(userAtom);
 
-//   async function lookRoom(roomId3: string) {
-//     if (!user) return;
+  async function lookRoom(roomId3: string) {
+    if (!user) return;
+    await apiClient.message_get2.$post({ body: { roomId3 } });
+  }
 
-//     const userId = user.id;
-//     const userlist = await apiClient.Look_friend.$post({ body: { userId } });
-//     setFriend(userlist.friend);
-
-//     await apiClient.room.post({ body: { roomId3 } });
-
-//     if (user === null) {
-//       console.log('error');
-//     } else {
-//       const userId = user.id;
-//       console.log(userId);
-//       const a = await apiClient.roomuser.post({ body: { roomId3 } });
-//       console.log(a.body.user);
-//       setuserasse(a.body.user);
-//     }
-
-//     const messages = await apiClient.message_get2.$post({ body: { roomId3 } });
-//     console.log(messages);
-//     if (messages === undefined) {
-//       console.log('messagesがありません');
-//     } else {
-//       setMessages(messages);
-//       setmyId(user?.id);
-//     }
-//   }
-
-//   return lookRoom;
-// }
+  return lookRoom;
+}

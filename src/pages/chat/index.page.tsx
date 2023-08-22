@@ -43,7 +43,7 @@ import { apiClient } from 'src/utils/apiClient';
 import { useAuth, useSendFriendId } from 'src/utils/friend';
 import { useLookmystatus, useMybirth, useMymessage } from 'src/utils/myinfo';
 import styles from './index.module.css';
-import { useInputComment } from 'src/utils/message';
+import { useInputComment, useLookRoom } from 'src/utils/message';
 dayjs.extend(customParseFormat);
 const App: React.FC = () => {
   const [user] = useAtom(userAtom);
@@ -310,7 +310,20 @@ const App: React.FC = () => {
   //     setmyId(user?.id);
   //   }
   // };
-  
+
+  const  lookRoom= useLookRoom();
+  //メッセージ送信
+  const Lookroom = async () => {
+    if (!user) return;
+    const userId = user.id;
+    const userLookroom = await lookRoom(roomId);
+    assert(userLookroom, 'コメントなし');
+
+    setMessages(userLookroom)
+    setmyId(userId);
+  };
+
+
   const LookMessage = async () => {
     const messages = await apiClient.message_get.$post({ body: { roomId } });
     if (messages === undefined) {
@@ -570,7 +583,7 @@ const App: React.FC = () => {
           mode="inline"
           defaultSelectedKeys={['4']}
           items={items}
-          onSelect={({ key }) => LookRoom(key)}
+          onSelect={({ key }) => lookRoom(key)}
           style={{ width: 300 }} // ここで幅を指定
         />
       </Sider>
