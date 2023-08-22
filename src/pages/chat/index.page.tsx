@@ -42,7 +42,7 @@ import type { ChangeEvent } from 'react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from 'src/utils/apiClient';
-import { useSendFriendId } from 'src/utils/friend';
+import { useAuth, useSendFriendId } from 'src/utils/friend';
 import { useLookmystatus, useMybirth, useMymessage } from 'src/utils/myinfo';
 import styles from './index.module.css';
 dayjs.extend(customParseFormat);
@@ -116,20 +116,6 @@ const App: React.FC = () => {
       reader.onerror = (error) => reject(error);
     });
   const handleCancel = () => setPreviewOpen(false);
-  // const handlePreview = async (file: UploadFile) => {
-  //   if (file.url === null && file.preview === null) {
-  //     file.preview = await getBase64(file.originFileObj as RcFile);
-  //   }
-  //   const previewImageUrl = (file.url !== null) || file.preview;
-  //   if (previewImageUrl !== undefined) {
-  //     // ここを修正
-  //     setPreviewImage(previewImageUrl);
-  //     setPreviewOpen(true);
-  //     setPreviewTitle(
-  //       file.name || previewImageUrl.substring(previewImageUrl.lastIndexOf('/') + 1) || 'Untitled'
-  //     );
-  //   }
-  // };
 
   const showModal1 = () => {
     setOpen1(true);
@@ -152,15 +138,6 @@ const App: React.FC = () => {
     console.log(dateString);
   };
 
-  const uploadButton = (
-    <div>
-      <PlusOutlined />
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </div>
-  );
-  // const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>
-  //   setFileList(newFileList);
-  //   console.log(fileList)
   type MenuItem = Required<MenuProps>['items'][number];
   function getItem(
     label: React.ReactNode,
@@ -217,9 +194,7 @@ const App: React.FC = () => {
   const onChange3 = (data: string) => {
     setValue(data);
   };
-  const mockVal = (str: string, repeat = 1) => ({
-    value: str.repeat(repeat),
-  });
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -251,12 +226,7 @@ const App: React.FC = () => {
       }
     }
   }, [user]);
-  const inputRoomId = (e: ChangeEvent<HTMLInputElement>) => {
-    setRoomId(e.target.value);
-  };
-  const serchRoomId = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchRoomId(e.target.value);
-  };
+
   const handleConfirm = async () => {
     setRoomId(inputValue);
     console.log('User input:', inputValue);
@@ -362,88 +332,87 @@ const App: React.FC = () => {
     setMessage(e.target.value);
   };
   const { TextArea } = Input;
-  const handleInfo = async (messageId: string) => {
-    try {
-      const infomessage = await apiClient.infomessage.$post({ body: { messageId } });
-      setInfoName(infomessage.sender_Id);
-      // console.log(infoname)
-      await LookMessage();
-    } catch (error) {
-      await LookMessage();
-    }
-  };
-  const handleDelete = async (messageId: string) => {
-    try {
-      await apiClient.deleteMessage.$post({ body: { messageId } });
-      await LookMessage();
-    } catch (error) {
-      await LookMessage();
-    }
-  };
-  const ninnsyou = async (syouninfriend: string) => {
-    if (!user) return;
-    console.log(syouninfriend);
-    const userId = user.id;
-    await apiClient.okfriend.$post({ body: { syouninfriend, userId } });
-  };
-  const handleEdit = (messageId: string, contentmess: string) => {
-    setEditingMessageId(messageId);
-    setEditedMessage(contentmess);
-    setContextMenuVisible(false);
-    setEditMenuVisible(true);
-    setComent(contentmess);
-  };
-  const handleSaveEdit = async () => {
-    setEditMenuVisible(false);
-    if (editingMessageId === null) {
-      console.log('id2なし');
-    }
-    {
-      await apiClient.edit.$post({ body: { editingMessageId, editedMessage } });
-      await LookMessage();
-      setEditingMessageId(null);
-      setEditedMessage('');
-    }
-  };
-  const handleRightClick =
-    (messageId: string, contentmess: string) =>
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      e.preventDefault();
-      setContextMenuVisible(true);
-      setSelectedMessageId(messageId);
-      setContextMenuPosition({ x: e.clientX, y: e.clientY });
-      setEditingMessageId(messageId);
-      setEditedMessage(contentmess);
-      setComent(contentmess);
-    };
+  // const handleInfo = async (messageId: string) => {
+  //   try {
+  //     const infomessage = await apiClient.infomessage.$post({ body: { messageId } });
+  //     setInfoName(infomessage.sender_Id);
+  //     // console.log(infoname)
+  //     await LookMessage();
+  //   } catch (error) {
+  //     await LookMessage();
+  //   }
+  // };
+  // const handleDelete = async (messageId: string) => {
+  //   try {
+  //     await apiClient.deleteMessage.$post({ body: { messageId } });
+  //     await LookMessage();
+  //   } catch (error) {
+  //     await LookMessage();
+  //   }
+  // };
+
+
+  //フレンド認証
+  const Friendauth = useAuth();
+
+  // const handleEdit = (messageId: string, contentmess: string) => {
+  //   setEditingMessageId(messageId);
+  //   setEditedMessage(contentmess);
+  //   setContextMenuVisible(false);
+  //   setEditMenuVisible(true);
+  //   setComent(contentmess);
+  // };
+  // const handleSaveEdit = async () => {
+  //   setEditMenuVisible(false);
+  //   if (editingMessageId === null) {
+  //     console.log('id2なし');
+  //   }
+  //   {
+  //     await apiClient.edit.$post({ body: { editingMessageId, editedMessage } });
+  //     await LookMessage();
+  //     setEditingMessageId(null);
+  //     setEditedMessage('');
+  //   }
+  // };
+  // const handleRightClick =
+  //   (messageId: string, contentmess: string) =>
+  //   (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  //     e.preventDefault();
+  //     setContextMenuVisible(true);
+  //     setSelectedMessageId(messageId);
+  //     setContextMenuPosition({ x: e.clientX, y: e.clientY });
+  //     setEditingMessageId(messageId);
+  //     setEditedMessage(contentmess);
+  //     setComent(contentmess);
+  //   };
 
   const sendFriendId = useSendFriendId();
-  //自分のステータス確認
+  //フレンド送信
   const SendFriend = async () => {
     const userSendFriend = await sendFriendId(searchfriend);
     assert(userSendFriend, 'myStatusなし');
     setReceive_friend(userSendFriend);
   };
 
-  const look_receive_friendId = async () => {
-    if (!user) return;
-    const userId = user.id;
-    const friend_asse = await apiClient.friend.$post({ body: { searchfriend, userId } });
-    setReceive_friend(friend_asse.receive_id);
-  };
+  // const look_receive_friendId = async () => {
+  //   if (!user) return;
+  //   const userId = user.id;
+  //   const friend_asse = await apiClient.friend.$post({ body: { searchfriend, userId } });
+  //   setReceive_friend(friend_asse.receive_id);
+  // };
 
-  const look_friendroom = async () => {
-    if (!user) return;
-    const userId = user.id;
-    const friend_asse = await apiClient.friend.$post({ body: { searchfriend, userId } });
-    setReceive_friend(friend_asse.receive_id);
-  };
+  // const look_friendroom = async () => {
+  //   if (!user) return;
+  //   const userId = user.id;
+  //   const friend_asse = await apiClient.friend.$post({ body: { searchfriend, userId } });
+  //   setReceive_friend(friend_asse.receive_id);
+  // };
 
-  const delete_friendId = async () => {
-    if (!user) return;
-    const userId = user.id;
-    await apiClient.del_friend.$post({ body: { del_friend, userId } });
-  };
+  // const delete_friendId = async () => {
+  //   if (!user) return;
+  //   const userId = user.id;
+  //   await apiClient.del_friend.$post({ body: { del_friend, userId } });
+  // };
   const LookFriend = useCallback(async () => {
     if (!user) return;
     const userId = user.id;
@@ -455,41 +424,41 @@ const App: React.FC = () => {
     console.log('345');
   }, [friend, user]);
 
-  const select_sex = async () => {
-    if (!user) return;
-    const userId = user.id;
-    const sexes = await apiClient.sex.$post({ body: { sex, userId } });
-    const sexString = sexes.sex === 1 ? '男' : sexes.sex === 2 ? '女' : '';
-    setSex_str(sexString);
-    return sexString;
-  };
-  const Reselect_sex = async () => {
-    if (!user) return;
-    const userId = user.id;
-    if (sex_str === '男') {
-      setSex(1);
-    } else if (sex_str === '女') {
-      setSex(2);
-    }
-    const sexes = await apiClient.sex.$post({ body: { sex, userId } });
-    const sexString = sexes.sex === 1 ? '男' : sexes.sex === 2 ? '女' : '';
-    setSex_str(sexString);
-    return sexString;
-  };
-  const Look_friend = async () => {
-    if (!user) return;
-    const userId = user.id;
-    const friend_info = await apiClient.Lookfriend_info.$post({ body: { friend, userId } });
-    return friend_info;
-  };
-  const receive_friend1 = async () => {
-    if (!user) return;
-    const userId = user.id;
-    const friend_info = await apiClient.receive_friend.$post({ body: { userId } });
-    const receive_friend = friend_info.receive_id;
-    setReceive_friend(receive_friend);
-    return friend_info;
-  };
+  // const select_sex = async () => {
+  //   if (!user) return;
+  //   const userId = user.id;
+  //   const sexes = await apiClient.sex.$post({ body: { sex, userId } });
+  //   const sexString = sexes.sex === 1 ? '男' : sexes.sex === 2 ? '女' : '';
+  //   setSex_str(sexString);
+  //   return sexString;
+  // };
+  // const Reselect_sex = async () => {
+  //   if (!user) return;
+  //   const userId = user.id;
+  //   if (sex_str === '男') {
+  //     setSex(1);
+  //   } else if (sex_str === '女') {
+  //     setSex(2);
+  //   }
+  //   const sexes = await apiClient.sex.$post({ body: { sex, userId } });
+  //   const sexString = sexes.sex === 1 ? '男' : sexes.sex === 2 ? '女' : '';
+  //   setSex_str(sexString);
+  //   return sexString;
+  // };
+  // const Look_friend = async () => {
+  //   if (!user) return;
+  //   const userId = user.id;
+  //   const friend_info = await apiClient.Lookfriend_info.$post({ body: { friend, userId } });
+  //   return friend_info;
+  // };
+  // const receive_friend1 = async () => {
+  //   if (!user) return;
+  //   const userId = user.id;
+  //   const friend_info = await apiClient.receive_friend.$post({ body: { userId } });
+  //   const receive_friend = friend_info.receive_id;
+  //   setReceive_friend(receive_friend);
+  //   return friend_info;
+  // };
   // const confirm = (e: React.MouseEvent<HTMLElement>) => {
   //   console.log(e);
   //   message.success('Click on Yes');
@@ -658,7 +627,7 @@ const App: React.FC = () => {
                 icon={<CheckOutlined />}
                 size={size}
                 style={{ marginLeft: '10px' }}
-                onClick={() => ninnsyou(friendName)}
+                onClick={() => Friendauth(friendName)}
               />
               <Button
                 type="primary"
@@ -666,7 +635,6 @@ const App: React.FC = () => {
                 icon={<CloseOutlined />}
                 size={size}
                 style={{ marginLeft: '10px' }}
-                onClick={() => ninnsyou(friendName)}
               />
               {/* <Popconfirm
                 title="Delete the task"
