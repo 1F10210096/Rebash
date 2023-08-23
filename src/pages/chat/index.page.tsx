@@ -34,8 +34,9 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from 'src/utils/apiClient';
 import { useAuth, useSendFriendId } from 'src/utils/friend';
-import { useInputComment, useLookRoom } from 'src/utils/message';
+import { useInputComment, useLookMessage, useLookRoom } from 'src/utils/message';
 import { useLookmystatus, useMybirth, useMymessage } from 'src/utils/myinfo';
+import { useHandleConfirm, useSearchId } from 'src/utils/room';
 import styles from './index.module.css';
 dayjs.extend(customParseFormat);
 const App: React.FC = () => {
@@ -219,28 +220,17 @@ const App: React.FC = () => {
     }
   }, [user]);
 
-  const handleConfirm = async () => {
-    setRoomId(inputValue);
-    console.log('User input:', inputValue);
-    if (!user) return;
-    const userId = user.id;
-    const a = await apiClient.user.post({ body: { roomId, userId } });
-    const b = await apiClient.roomcreate.post({ body: { roomId, userId } });
-    console.log(roomId);
-    setARoomId(a.body.roomId);
+  const handleConfirm = useHandleConfirm();
+
+  const Confirm = async () => {
+    const confirm = await handleConfirm(inputValue);
+    assert(confirm, 'roomなし');
   };
-  const serchId = async () => {
-    if (!user) return;
-    const userId = user.id;
-    console.log(searchRoomId);
-    const a = await apiClient.serchroom.post({ body: { searchRoomId, userId } });
-    await apiClient.userroomcreate.post({ body: { searchRoomId, userId } });
-    console.log(a.body.user);
-    // const userasse = a.user
-    console.log(roomId);
-    setRoomId2(a.body.roomid);
-    setuserasse(a.body.user);
-    await Roomlist();
+
+  const searchId = useSearchId();
+  //room検索
+  const SearchId = async () => {
+    await searchId(searchRoomId);
   };
 
   const mymessage = useMymessage();
@@ -271,38 +261,11 @@ const App: React.FC = () => {
   const inputComment = useInputComment();
   //メッセージ送信
   const inputcomment = async () => {
+    console.log(value);
+    console.log(roomId);
     const InputComment = await inputComment(roomId, value);
     assert(InputComment, 'コメントなし');
   };
-
-  // const LookRoom = async (roomId3: string) => {
-  //   console.log('a');
-  //   console.log(roomId3);
-  //   setRoomId(roomId3);
-  //   if (!user) return;
-  //   const userId = user.id;
-  //   const userlist = await apiClient.Look_friend.$post({ body: { userId } });
-  //   console.log(friend);
-  //   setFriend(userlist.friend);
-  //   await apiClient.room.post({ body: { roomId3 } });
-  //   if (user === null) {
-  //     console.log('error');
-  //   } else {
-  //     const userId = user.id;
-  //     console.log(userId);
-  //     const a = await apiClient.roomuser.post({ body: { roomId3 } });
-  //     console.log(a.body.user);
-  //     setuserasse(a.body.user);
-  //   }
-  //   const messages = await apiClient.message_get2.$post({ body: { roomId3 } });
-  //   console.log(messages);
-  //   if (messages === undefined) {
-  //     console.log('messagesがありません');
-  //   } else {
-  //     setMessages(messages);
-  //     setmyId(user?.id);
-  //   }
-  // };
 
   const lookRoom = useLookRoom();
   //メッセージ送信
@@ -310,21 +273,24 @@ const App: React.FC = () => {
     if (!user) return;
     const userId = user.id;
     const userLookroom = await lookRoom(roomId);
-    assert(userLookroom, 'コメントなし');
+    assert(userLookroom, 'Roomなし');
 
     setMessages(userLookroom);
     setmyId(userId);
   };
 
+  const lookMessage = useLookMessage();
+  //メッセージを映す
   const LookMessage = async () => {
-    const messages = await apiClient.message_get.$post({ body: { roomId } });
-    if (messages === undefined) {
-      console.log('messagesがありません');
-    } else {
-      setMessages(messages);
-      setmyId(user?.id || '');
-    }
+    if (!user) return;
+    const userId = user.id;
+    const userLooKmessage = await lookMessage(roomId);
+    assert(userLooKmessage, 'Roomなし');
+
+    setMessages(userLooKmessage);
+    setmyId(userId);
   };
+
   const onChange1 = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     console.log('Change:', e.target.value);
     setMessage(e.target.value);
@@ -654,7 +620,7 @@ const App: React.FC = () => {
           // options={autoCompleteOptions}
           onSelect={onSelect}
           onSearch={onChange3}
-          placeholder="input here"
+          placeholder="input her"
         />
         <br />
         <br />
@@ -671,13 +637,13 @@ const App: React.FC = () => {
           <Input
             value={roomId}
             onChange={(e) => setRoomId(e.target.value)}
-            onPressEnter={handleConfirm}
+            onPressEnter={Confirm}
             placeholder="RoomIdを入力してください"
           />
         }
         visible={popconfirmVisible}
         onVisibleChange={(visible) => setPopconfirmVisible(visible)}
-        onConfirm={handleConfirm}
+        onConfirm={Confirm}
         onCancel={() => setPopconfirmVisible(false)}
         okText="Add"
         cancelText="Cancel"
@@ -690,13 +656,13 @@ const App: React.FC = () => {
           <Input
             value={searchRoomId}
             onChange={(e) => setSearchRoomId(e.target.value)}
-            onPressEnter={serchId}
+            onPressEnter={SearchId}
             placeholder="RoomIdを入力してください"
           />
         }
         visible={popconfirmVisible}
         onVisibleChange={(visible) => setsearchVisible(visible)}
-        onConfirm={serchId}
+        onConfirm={SearchId}
         onCancel={() => setsearchVisible(false)}
         okText="Search"
         cancelText="Cancel"
