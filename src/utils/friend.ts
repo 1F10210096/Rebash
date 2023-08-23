@@ -16,15 +16,15 @@ export function useSendFriendId() {
   return sendFriendId;
 }
 
-export function useNinnsyou() {
+export function useAuth() {
   const [user] = useAtom(userAtom);
 
-  async function ninnsyou(syouninfriend: string) {
+  async function auth(syouninfriend: string) {
     if (!user) return;
     console.log(syouninfriend);
     const userId = user.id;
     await apiClient.okfriend.$post({ body: { syouninfriend, userId } });
   }
 
-  return ninnsyou;
+  return auth;
 }
