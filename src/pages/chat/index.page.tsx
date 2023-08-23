@@ -7,7 +7,7 @@ import {
   SendOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import type { DatePickerProps, MenuProps } from 'antd';
+import type { DatePickerProps, DrawerProps, MenuProps, RadioChangeEvent } from 'antd';
 import {
   AutoComplete,
   Avatar,
@@ -21,6 +21,8 @@ import {
   Menu,
   Modal,
   Popconfirm,
+  Radio,
+  Space,
   theme,
 } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
@@ -33,7 +35,7 @@ import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from 'src/utils/apiClient';
-import { useAuth, useSendFriendId } from 'src/utils/friend';
+import { useAuth, useDeleteFriendId, useLookFriendRoom, useSendFriendId } from 'src/utils/friend';
 import { useInputComment, useLookMessage, useLookRoom } from 'src/utils/message';
 import { useLookmystatus, useMybirth, useMymessage } from 'src/utils/myinfo';
 import { useHandleConfirm, useSearchId } from 'src/utils/room';
@@ -49,25 +51,12 @@ const App: React.FC = () => {
   const [userasse, setuserasse] = useState<string[]>([]);
   const [messages, setMessages] = useState<MessageModel[]>([]);
   const [size, setSize] = useState<SizeType>('large'); // default is 'middle'
-
-  // const [friendinfo, setFrieniunfo] = useState<User1Model[]>([]);
-  // const [myMessages, setMyMessages] = useState<string[]>([]);
-  // const [otherMessages, setOtherMessages] = useState<string[]>([]);
   const [open1, setOpen1] = useState(false);
   const router = useRouter(); // Next.js のルーターを取得
   const [roomId1, setRoomId1] = useState(''); // 状態変数 roomId を宣言
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaStreamRef = useRef<MediaStream | undefined>();
-  // const [showForm, setShowForm] = useState(false);
   const [searchRoomId, setSearchRoomId] = useState('');
-  // const [coment, setComent] = useState('');
-  // const [infoname, setInfoName] = useState('');
-  // const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
-  // const [editedMessage, setEditedMessage] = useState('');
-  // const [contextMenuVisible, setContextMenuVisible] = useState(false);
-  // const [editMenuVisible, setEditMenuVisible] = useState(false);
-  // const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
-  // const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
   const [value, setValue] = useState('');
   const [options, setOptions] = useState('');
   const [birth, setBirth] = useState('2015/01/05');
@@ -79,37 +68,29 @@ const App: React.FC = () => {
   const backgroundColor = '#02021e';
   const { Header, Content, Footer, Sider } = Layout;
   const roomNames = aroom;
-  // const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-  //   console.log(date, dateString);
-  // };
   const dateFormat = 'YYYY/MM/DD';
-
   const customFormat: DatePickerProps['format'] = (value) =>
     `custom format: ${value.format(dateFormat)}`;
-
-  // const [previewOpen, setPreviewOpen] = useState(false);
-  // const [previewImage, setPreviewImage] = useState('');
-  // const [previewTitle, setPreviewTitle] = useState('');
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [friend, setFriend] = useState<string[]>([]);
-  // const [sent_friend, setSend_friend] = useState('');
   const [receive_friend, setReceive_friend] = useState<string[]>([]);
-  // const [syouninfriend, setSyouninFriend] = useState('');
   const [searchfriend, setSearchFriend] = useState('');
-  // const [del_friend, setDel_Friend] = useState('');
-  // const [sex, setSex] = useState(0);
-  // const [sex_str, setSex_str] = useState('');
+  const [del_friend, setDel_Friend] = useState('');
   const [look_friend, setLookFriend] = useState<string[]>([]);
+  const [open2, setOpen2] = useState(false);
+  const [placement, setPlacement] = useState<DrawerProps['placement']>('left');
 
-  // const getBase64 = (file: RcFile): Promise<string> =>
-  //   new Promise((resolve, reject) => {
-  //     const reader = new FileReader();
-  //     reader.readAsDataURL(file);
-  //     reader.onload = () => resolve(reader.result as string);
-  //     reader.onerror = (error) => reject(error);
-  //   });
-  // const handleCancel = () => setPreviewOpen(false);
+  const showDrawer1 = () => {
+    setOpen(true);
+  };
 
+  const onClose1 = () => {
+    setOpen(false);
+  };
+
+  const onChange = (e: RadioChangeEvent) => {
+    setPlacement(e.target.value);
+  };
   const showModal1 = () => {
     setOpen1(true);
     console.log(look_friend);
@@ -220,8 +201,14 @@ const App: React.FC = () => {
     }
   }, [user]);
 
-  const handleConfirm = useHandleConfirm();
+  const onChange1 = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    console.log('Change:', e.target.value);
+    setMessage(e.target.value);
+  };
+  const { TextArea } = Input;
 
+  const handleConfirm = useHandleConfirm();
+  //確認ボタン
   const Confirm = async () => {
     const confirm = await handleConfirm(inputValue);
     assert(confirm, 'roomなし');
@@ -291,63 +278,8 @@ const App: React.FC = () => {
     setmyId(userId);
   };
 
-  const onChange1 = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    console.log('Change:', e.target.value);
-    setMessage(e.target.value);
-  };
-  const { TextArea } = Input;
-  // const handleInfo = async (messageId: string) => {
-  //   try {
-  //     const infomessage = await apiClient.infomessage.$post({ body: { messageId } });
-  //     setInfoName(infomessage.sender_Id);
-  //     // console.log(infoname)
-  //     await LookMessage();
-  //   } catch (error) {
-  //     await LookMessage();
-  //   }
-  // };
-  // const handleDelete = async (messageId: string) => {
-  //   try {
-  //     await apiClient.deleteMessage.$post({ body: { messageId } });
-  //     await LookMessage();
-  //   } catch (error) {
-  //     await LookMessage();
-  //   }
-  // };
-
   //フレンド認証
   const Friendauth = useAuth();
-
-  // const handleEdit = (messageId: string, contentmess: string) => {
-  //   setEditingMessageId(messageId);
-  //   setEditedMessage(contentmess);
-  //   setContextMenuVisible(false);
-  //   setEditMenuVisible(true);
-  //   setComent(contentmess);
-  // };
-  // const handleSaveEdit = async () => {
-  //   setEditMenuVisible(false);
-  //   if (editingMessageId === null) {
-  //     console.log('id2なし');
-  //   }
-  //   {
-  //     await apiClient.edit.$post({ body: { editingMessageId, editedMessage } });
-  //     await LookMessage();
-  //     setEditingMessageId(null);
-  //     setEditedMessage('');
-  //   }
-  // };
-  // const handleRightClick =
-  //   (messageId: string, contentmess: string) =>
-  //   (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-  //     e.preventDefault();
-  //     setContextMenuVisible(true);
-  //     setSelectedMessageId(messageId);
-  //     setContextMenuPosition({ x: e.clientX, y: e.clientY });
-  //     setEditingMessageId(messageId);
-  //     setEditedMessage(contentmess);
-  //     setComent(contentmess);
-  //   };
 
   const sendFriendId = useSendFriendId();
   //フレンド送信
@@ -357,92 +289,23 @@ const App: React.FC = () => {
     setReceive_friend(userSendFriend);
   };
 
-  // const look_receive_friendId = async () => {
-  //   if (!user) return;
-  //   const userId = user.id;
-  //   const friend_asse = await apiClient.friend.$post({ body: { searchfriend, userId } });
-  //   setReceive_friend(friend_asse.receive_id);
-  // };
+  const lookFriendRoom = useLookFriendRoom();
+  //フレンド一覧
+  const LookFriendRoom = async () => {
+    const friendasse = await lookFriendRoom();
+    assert(friendasse, 'friendなし');
+    setReceive_friend(friendasse.friend);
+  };
 
-  // const look_friendroom = async () => {
-  //   if (!user) return;
-  //   const userId = user.id;
-  //   const friend_asse = await apiClient.friend.$post({ body: { searchfriend, userId } });
-  //   setReceive_friend(friend_asse.receive_id);
-  // };
+  const deleteFriendId = useDeleteFriendId();
+  //フレンド削除
+  const handleDeleteFriendId = async () => {
+    await deleteFriendId(del_friend); // del_friendを適切な値に置き換える必要があります
+  };
 
-  // const delete_friendId = async () => {
-  //   if (!user) return;
-  //   const userId = user.id;
-  //   await apiClient.del_friend.$post({ body: { del_friend, userId } });
-  // };
-  const LookFriend = useCallback(async () => {
-    if (!user) return;
-    const userId = user.id;
-    setmyId(userId);
-    const userlist = await apiClient.Look_friend.$post({ body: { userId } });
-    setLookFriend(userlist.receive_id);
-    console.log(friend);
-    setFriend(userlist.friend);
-    console.log('345');
-  }, [friend, user]);
-
-  // const select_sex = async () => {
-  //   if (!user) return;
-  //   const userId = user.id;
-  //   const sexes = await apiClient.sex.$post({ body: { sex, userId } });
-  //   const sexString = sexes.sex === 1 ? '男' : sexes.sex === 2 ? '女' : '';
-  //   setSex_str(sexString);
-  //   return sexString;
-  // };
-  // const Reselect_sex = async () => {
-  //   if (!user) return;
-  //   const userId = user.id;
-  //   if (sex_str === '男') {
-  //     setSex(1);
-  //   } else if (sex_str === '女') {
-  //     setSex(2);
-  //   }
-  //   const sexes = await apiClient.sex.$post({ body: { sex, userId } });
-  //   const sexString = sexes.sex === 1 ? '男' : sexes.sex === 2 ? '女' : '';
-  //   setSex_str(sexString);
-  //   return sexString;
-  // };
-  // const Look_friend = async () => {
-  //   if (!user) return;
-  //   const userId = user.id;
-  //   const friend_info = await apiClient.Lookfriend_info.$post({ body: { friend, userId } });
-  //   return friend_info;
-  // };
-  // const receive_friend1 = async () => {
-  //   if (!user) return;
-  //   const userId = user.id;
-  //   const friend_info = await apiClient.receive_friend.$post({ body: { userId } });
-  //   const receive_friend = friend_info.receive_id;
-  //   setReceive_friend(receive_friend);
-  //   return friend_info;
-  // };
-  // const confirm = (e: React.MouseEvent<HTMLElement>) => {
-  //   console.log(e);
-  //   message.success('Click on Yes');
-  // };
-
-  // const cancel = (e: React.MouseEvent<HTMLElement>) => {
-  //   console.log(e);
-  //   message.error('Click on No');
-  // };
-  // const LookF = async (key: string) => {
-  //   if (!user) return;
-  //   const userId1 = user.id;
-  //   const userId = key;
-  //   const userinfo = await apiClient.userinfo.$post({ body: { userId } });
-  // };
   useEffect(() => {
     createUserdata();
     Roomlist();
-    if (user) {
-      LookFriend();
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Roomlist, createUserdata, user]);
   return (
@@ -487,20 +350,33 @@ const App: React.FC = () => {
           <div style={{ left: 40 }}>{myId}</div>
         </Menu>
       </Sider>
-      {/* <>
-        <Upload
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-          listType="picture-circle"
-          fileList={fileList}
-          onPreview={handlePreview}
-          onChange={handleChange}
-        >
-          {fileList.length >= 8 ? null : uploadButton}
-        </Upload>
-        <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
-          <img alt="example" style={{ width: '100%' }} src={previewImage} />
-        </Modal>
-      </> */}
+      <Space>
+        <Radio.Group value={placement} onChange={onChange}>
+          <Radio value="top">top</Radio>
+          <Radio value="right">right</Radio>
+          <Radio value="bottom">bottom</Radio>
+          <Radio value="left">left</Radio>
+        </Radio.Group>
+        <Button type="primary" onClick={showDrawer1}>
+          Open
+        </Button>
+      </Space>
+      <Drawer
+        title="Basic Drawer"
+        placement={placement}
+        closable={false}
+        onClose={onClose1}
+        open={open2}
+        onClick={LookFriendRoom}
+        key={placement}
+      >
+        <p>Friend List:</p>
+        <ul>
+          {friend.map((friendName, index) => (
+            <li key={index}>{friendName}</li>
+          ))}
+        </ul>
+      </Drawer>
       <>
         <Drawer title="your profile" placement="right" onClose={onClose} open={open} width={800}>
           <p>{user?.displayName}</p>
