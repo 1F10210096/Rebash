@@ -7,7 +7,7 @@ import {
   SendOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import type { DatePickerProps, MenuProps } from 'antd';
+import type { DatePickerProps, DrawerProps, MenuProps, RadioChangeEvent } from 'antd';
 import {
   AutoComplete,
   Avatar,
@@ -21,6 +21,8 @@ import {
   Menu,
   Modal,
   Popconfirm,
+  Radio,
+  Space,
   theme,
 } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
@@ -33,7 +35,7 @@ import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from 'src/utils/apiClient';
-import { useAuth, useSendFriendId } from 'src/utils/friend';
+import { useAuth, useLookFriendRoom, useSendFriendId } from 'src/utils/friend';
 import { useInputComment, useLookMessage, useLookRoom } from 'src/utils/message';
 import { useLookmystatus, useMybirth, useMymessage } from 'src/utils/myinfo';
 import { useHandleConfirm, useSearchId } from 'src/utils/room';
@@ -100,6 +102,20 @@ const App: React.FC = () => {
   // const [sex, setSex] = useState(0);
   // const [sex_str, setSex_str] = useState('');
   const [look_friend, setLookFriend] = useState<string[]>([]);
+  const [open2, setOpen2] = useState(false);
+  const [placement, setPlacement] = useState<DrawerProps['placement']>('left');
+
+  const showDrawer1 = () => {
+    setOpen(true);
+  };
+
+  const onClose1 = () => {
+    setOpen(false);
+  };
+
+  const onChange = (e: RadioChangeEvent) => {
+    setPlacement(e.target.value);
+  };
   const showModal1 = () => {
     setOpen1(true);
     console.log(look_friend);
@@ -298,22 +314,17 @@ const App: React.FC = () => {
     setReceive_friend(userSendFriend);
   };
 
-  const LookFriend = useCallback(async () => {
-    if (!user) return;
-    const userId = user.id;
-    setmyId(userId);
-    const userlist = await apiClient.Look_friend.$post({ body: { userId } });
-    setLookFriend(userlist.receive_id);
-    console.log(friend);
-    setFriend(userlist.friend);
-    console.log('345');
-  }, [friend, user]);
+  const lookFriendRoom = useLookFriendRoom();
+  //フレンド一覧
+  const LookFriendRoom = async () => {
+    const friendasse = await lookFriendRoom();
+    assert(friendasse, 'friendなし');
+    setReceive_friend(friendasse.friend);
+  };
+
   useEffect(() => {
     createUserdata();
     Roomlist();
-    if (user) {
-      LookFriend();
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Roomlist, createUserdata, user]);
   return (
@@ -358,6 +369,33 @@ const App: React.FC = () => {
           <div style={{ left: 40 }}>{myId}</div>
         </Menu>
       </Sider>
+      <Space>
+        <Radio.Group value={placement} onChange={onChange}>
+          <Radio value="top">top</Radio>
+          <Radio value="right">right</Radio>
+          <Radio value="bottom">bottom</Radio>
+          <Radio value="left">left</Radio>
+        </Radio.Group>
+        <Button type="primary" onClick={showDrawer1}>
+          Open
+        </Button>
+      </Space>
+      <Drawer
+        title="Basic Drawer"
+        placement={placement}
+        closable={false}
+        onClose={onClose1}
+        open={open2}
+        onClick={LookFriendRoom}
+        key={placement}
+      >
+        <p>Friend List:</p>
+        <ul>
+          {friend.map((friendName, index) => (
+            <li key={index}>{friendName}</li>
+          ))}
+        </ul>
+      </Drawer>
       <>
         <Drawer title="your profile" placement="right" onClose={onClose} open={open} width={800}>
           <p>{user?.displayName}</p>

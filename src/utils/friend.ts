@@ -28,7 +28,19 @@ export function useAuth() {
 
   return auth;
 }
+export function useLookFriendRoom() {
+  const [user] = useAtom(userAtom);
 
+  async function lookFriendRoom() {
+    if (!user) return;
+
+    const userId = user.id;
+    const friend_asse = await apiClient.receive_friend.$post({ body: { userId } });
+    return friend_asse;
+  }
+
+  return lookFriendRoom;
+}
 // const look_friendroom = async () => {
 //   if (!user) return;
 //   const userId = user.id;
