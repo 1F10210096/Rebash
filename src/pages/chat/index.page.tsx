@@ -271,6 +271,8 @@ const App: React.FC = () => {
   const inputComment = useInputComment();
   //メッセージ送信
   const inputcomment = async () => {
+    console.log(value);
+    console.log(roomId);
     const InputComment = await inputComment(roomId, value);
     assert(InputComment, 'コメントなし');
   };
@@ -310,7 +312,7 @@ const App: React.FC = () => {
     if (!user) return;
     const userId = user.id;
     const userLookroom = await lookRoom(roomId);
-    assert(userLookroom, 'コメントなし');
+    assert(userLookroom, 'Roomなし');
 
     setMessages(userLookroom);
     setmyId(userId);
@@ -654,7 +656,7 @@ const App: React.FC = () => {
           // options={autoCompleteOptions}
           onSelect={onSelect}
           onSearch={onChange3}
-          placeholder="input here"
+          placeholder="input her"
         />
         <br />
         <br />
