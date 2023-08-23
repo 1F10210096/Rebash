@@ -68,9 +68,16 @@ export function useDeleteFriendId() {
 //   const userinfo = await apiClient.userinfo.$post({ body: { userId } });
 // };
 
-// const Look_friend = async () => {
-//   if (!user) return;
-//   const userId = user.id;
-//   const friend_info = await apiClient.Lookfriend_info.$post({ body: { friend, userId } });
-//   return friend_info;
-// };
+export function useLookFriend() {
+  const [user] = useAtom(userAtom);
+
+  async function lookFriend(friend: string[]) {
+    if (!user) return null;
+
+    const userId = user.id;
+    const friend_info = await apiClient.Lookfriend_info.$post({ body: { friend, userId } });
+    return friend_info;
+  }
+
+  return lookFriend;
+}
