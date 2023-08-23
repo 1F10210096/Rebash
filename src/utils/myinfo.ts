@@ -46,3 +46,25 @@ export function useMymessage() {
 
   return mymessage;
 }
+
+  // const select_sex = async () => {
+  //   if (!user) return;
+  //   const userId = user.id;
+  //   const sexes = await apiClient.sex.$post({ body: { sex, userId } });
+  //   const sexString = sexes.sex === 1 ? '男' : sexes.sex === 2 ? '女' : '';
+  //   setSex_str(sexString);
+  //   return sexString;
+  // };
+  // const Reselect_sex = async () => {
+  //   if (!user) return;
+  //   const userId = user.id;
+  //   if (sex_str === '男') {
+  //     setSex(1);
+  //   } else if (sex_str === '女') {
+  //     setSex(2);
+  //   }
+  //   const sexes = await apiClient.sex.$post({ body: { sex, userId } });
+  //   const sexString = sexes.sex === 1 ? '男' : sexes.sex === 2 ? '女' : '';
+  //   setSex_str(sexString);
+  //   return sexString;
+  // };

@@ -28,3 +28,30 @@ export function useAuth() {
 
   return auth;
 }
+
+
+  // const look_friendroom = async () => {
+  //   if (!user) return;
+  //   const userId = user.id;
+  //   const friend_asse = await apiClient.friend.$post({ body: { searchfriend, userId } });
+  //   setReceive_friend(friend_asse.receive_id);
+  // };
+
+  // const delete_friendId = async () => {
+  //   if (!user) return;
+  //   const userId = user.id;
+  //   await apiClient.del_friend.$post({ body: { del_friend, userId } });
+  // };
+    // const LookF = async (key: string) => {
+  //   if (!user) return;
+  //   const userId1 = user.id;
+  //   const userId = key;
+  //   const userinfo = await apiClient.userinfo.$post({ body: { userId } });
+  // };
+  
+  // const Look_friend = async () => {
+  //   if (!user) return;
+  //   const userId = user.id;
+  //   const friend_info = await apiClient.Lookfriend_info.$post({ body: { friend, userId } });
+  //   return friend_info;
+  // };
