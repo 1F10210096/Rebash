@@ -34,7 +34,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from 'src/utils/apiClient';
 import { useAuth, useSendFriendId } from 'src/utils/friend';
-import { useInputComment, useLookRoom } from 'src/utils/message';
+import { useInputComment, useLookMessage, useLookRoom } from 'src/utils/message';
 import { useLookmystatus, useMybirth, useMymessage } from 'src/utils/myinfo';
 import styles from './index.module.css';
 import { useHandleConfirm, useSearchId } from 'src/utils/room';
@@ -231,8 +231,7 @@ const App: React.FC = () => {
   const searchId = useSearchId();
   //room検索
   const SearchId = async () => {
-    const roomId = await searchId(searchRoomId);
-    assert(roomId, 'roomなし');
+    await searchId(searchRoomId);
   };
 
 
@@ -282,14 +281,16 @@ const App: React.FC = () => {
     setmyId(userId);
   };
 
+  const lookMessage = useLookMessage();
+  //メッセージを映す
   const LookMessage = async () => {
-    const messages = await apiClient.message_get.$post({ body: { roomId } });
-    if (messages === undefined) {
-      console.log('messagesがありません');
-    } else {
-      setMessages(messages);
-      setmyId(user?.id || '');
-    }
+    if (!user) return;
+    const userId = user.id;
+    const userLooKmessage = await lookMessage(roomId);
+    assert(userLooKmessage, 'Roomなし');
+
+    setMessages(userLooKmessage);
+    setmyId(userId);
   };
 
   const onChange1 = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
