@@ -43,7 +43,7 @@ import styles from './index.module.css';
 dayjs.extend(customParseFormat);
 const App: React.FC = () => {
   const [user] = useAtom(userAtom);
-  const [roomId, setRoomId] = useState('');
+  const [roomId_select, setRoomId] = useState('');
   const [roomId2, setRoomId2] = useState('');
   const [aroom, setARoomId] = useState<string[]>([]);
   const [message, setMessage] = useState('');
@@ -65,6 +65,7 @@ const App: React.FC = () => {
   const [popconfirmVisible, setPopconfirmVisible] = useState(false);
   const [popsearchVisible, setsearchVisible] = useState(false);
   const [open, setOpen] = useState(false);
+  const [open3, setOpen3] = useState(false);
   const backgroundColor = '#02021e';
   const { Header, Content, Footer, Sider } = Layout;
   const roomNames = aroom;
@@ -79,17 +80,18 @@ const App: React.FC = () => {
   const [look_friend, setLookFriend] = useState<string[]>([]);
   const [open2, setOpen2] = useState(false);
   const [placement, setPlacement] = useState<DrawerProps['placement']>('left');
+  const [placement2, setPlacement2] = useState<DrawerProps['placement']>('left');
 
   const showDrawer1 = () => {
-    setOpen(true);
+    setOpen3(true);
   };
 
   const onClose1 = () => {
-    setOpen(false);
+    setOpen3(false);
   };
 
-  const onChange = (e: RadioChangeEvent) => {
-    setPlacement(e.target.value);
+  const onChange4 = (e: RadioChangeEvent) => {
+    setPlacement2(e.target.value);
   };
   const showModal1 = () => {
     setOpen1(true);
@@ -208,10 +210,9 @@ const App: React.FC = () => {
   const { TextArea } = Input;
 
   const handleConfirm = useHandleConfirm();
-  //確認ボタン
+  //ルーム追加
   const Confirm = async () => {
-    const confirm = await handleConfirm(inputValue);
-    assert(confirm, 'roomなし');
+    await handleConfirm(roomId2);
   };
 
   const searchId = useSearchId();
@@ -235,6 +236,7 @@ const App: React.FC = () => {
     assert(userStatus, 'myStatusなし');
     setMessage(userStatus.comment);
     setBirth(userStatus.birth);
+    setARoomId(userStatus.roomId)
   };
 
   const mybirth = useMybirth();
@@ -249,21 +251,17 @@ const App: React.FC = () => {
   //メッセージ送信
   const inputcomment = async () => {
     console.log(value);
-    console.log(roomId);
-    const InputComment = await inputComment(roomId, value);
+    console.log(roomId_select);
+    const InputComment = await inputComment(roomId_select, value);
     assert(InputComment, 'コメントなし');
   };
 
   const lookRoom = useLookRoom();
-  //メッセージ送信
-  const Lookroom = async () => {
-    if (!user) return;
-    const userId = user.id;
-    const userLookroom = await lookRoom(roomId);
-    assert(userLookroom, 'Roomなし');
-
-    setMessages(userLookroom);
-    setmyId(userId);
+  //ルーム選択
+  const Lookroom = async (key: string) => {
+    setRoomId(key)
+    console.log(key)
+    console.log(roomId_select)
   };
 
   const lookMessage = useLookMessage();
@@ -271,7 +269,7 @@ const App: React.FC = () => {
   const LookMessage = async () => {
     if (!user) return;
     const userId = user.id;
-    const userLooKmessage = await lookMessage(roomId);
+    const userLooKmessage = await lookMessage(roomId_select);
     assert(userLooKmessage, 'Roomなし');
 
     setMessages(userLooKmessage);
@@ -351,7 +349,7 @@ const App: React.FC = () => {
         </Menu>
       </Sider>
       <Space>
-        <Radio.Group value={placement} onChange={onChange}>
+        <Radio.Group value={placement2} onChange={onChange4}>
           <Radio value="top">top</Radio>
           <Radio value="right">right</Radio>
           <Radio value="bottom">bottom</Radio>
@@ -416,8 +414,8 @@ const App: React.FC = () => {
           theme="dark"
           mode="inline"
           defaultSelectedKeys={['4']}
-          items={items}
-          onSelect={({ key }) => lookRoom(key)}
+          items={items}       //room選び
+          onSelect={({ key }) => Lookroom(key)}
           style={{ width: 300 }} // ここで幅を指定
         />
       </Sider>
@@ -432,9 +430,8 @@ const App: React.FC = () => {
                 <React.Fragment key={message.id2}>
                   {index !== 0 && <Divider orientation="left" plain />}
                   <div
-                    className={`${styles.commentBubble} ${
-                      message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                    }`}
+                    className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                      }`}
                   >
                     <div className={styles.username}>{message.username}</div>
                     <div className={styles.content}>{message.contentmess}</div>
@@ -446,7 +443,7 @@ const App: React.FC = () => {
         <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
       </Layout>
       <div style={{ position: 'relative' }}>
-        <Button type="primary" onClick={showModal1}>
+        <Button type="primary" onClick={LookMessage}>
           Open Modal with customized button props
         </Button>
         <Modal
@@ -511,8 +508,8 @@ const App: React.FC = () => {
       <Popconfirm
         title={
           <Input
-            value={roomId}
-            onChange={(e) => setRoomId(e.target.value)}
+            value={roomId2}
+            onChange={(e) => setRoomId2(e.target.value)}
             onPressEnter={Confirm}
             placeholder="RoomIdを入力してください"
           />
