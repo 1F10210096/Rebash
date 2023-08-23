@@ -41,18 +41,26 @@ export function useLookFriendRoom() {
 
   return lookFriendRoom;
 }
-// const look_friendroom = async () => {
-//   if (!user) return;
-//   const userId = user.id;
-//   const friend_asse = await apiClient.friend.$post({ body: { searchfriend, userId } });
-//   setReceive_friend(friend_asse.receive_id);
-// };
 
 // const delete_friendId = async () => {
 //   if (!user) return;
 //   const userId = user.id;
 //   await apiClient.del_friend.$post({ body: { del_friend, userId } });
 // };
+
+export function useDeleteFriendId() {
+  const [user] = useAtom(userAtom);
+
+  async function deleteFriendId(del_friend: string) {
+    if (!user) return;
+
+    const userId = user.id;
+    await apiClient.del_friend.$post({ body: { del_friend, userId } });
+  }
+
+  return deleteFriendId;
+}
+
 // const LookF = async (key: string) => {
 //   if (!user) return;
 //   const userId1 = user.id;

@@ -35,7 +35,7 @@ import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from 'src/utils/apiClient';
-import { useAuth, useLookFriendRoom, useSendFriendId } from 'src/utils/friend';
+import { useAuth, useDeleteFriendId, useLookFriendRoom, useSendFriendId } from 'src/utils/friend';
 import { useInputComment, useLookMessage, useLookRoom } from 'src/utils/message';
 import { useLookmystatus, useMybirth, useMymessage } from 'src/utils/myinfo';
 import { useHandleConfirm, useSearchId } from 'src/utils/room';
@@ -51,25 +51,12 @@ const App: React.FC = () => {
   const [userasse, setuserasse] = useState<string[]>([]);
   const [messages, setMessages] = useState<MessageModel[]>([]);
   const [size, setSize] = useState<SizeType>('large'); // default is 'middle'
-
-  // const [friendinfo, setFrieniunfo] = useState<User1Model[]>([]);
-  // const [myMessages, setMyMessages] = useState<string[]>([]);
-  // const [otherMessages, setOtherMessages] = useState<string[]>([]);
   const [open1, setOpen1] = useState(false);
   const router = useRouter(); // Next.js のルーターを取得
   const [roomId1, setRoomId1] = useState(''); // 状態変数 roomId を宣言
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaStreamRef = useRef<MediaStream | undefined>();
-  // const [showForm, setShowForm] = useState(false);
   const [searchRoomId, setSearchRoomId] = useState('');
-  // const [coment, setComent] = useState('');
-  // const [infoname, setInfoName] = useState('');
-  // const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
-  // const [editedMessage, setEditedMessage] = useState('');
-  // const [contextMenuVisible, setContextMenuVisible] = useState(false);
-  // const [editMenuVisible, setEditMenuVisible] = useState(false);
-  // const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
-  // const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
   const [value, setValue] = useState('');
   const [options, setOptions] = useState('');
   const [birth, setBirth] = useState('2015/01/05');
@@ -81,26 +68,14 @@ const App: React.FC = () => {
   const backgroundColor = '#02021e';
   const { Header, Content, Footer, Sider } = Layout;
   const roomNames = aroom;
-  // const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-  //   console.log(date, dateString);
-  // };
   const dateFormat = 'YYYY/MM/DD';
-
   const customFormat: DatePickerProps['format'] = (value) =>
     `custom format: ${value.format(dateFormat)}`;
-
-  // const [previewOpen, setPreviewOpen] = useState(false);
-  // const [previewImage, setPreviewImage] = useState('');
-  // const [previewTitle, setPreviewTitle] = useState('');
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [friend, setFriend] = useState<string[]>([]);
-  // const [sent_friend, setSend_friend] = useState('');
   const [receive_friend, setReceive_friend] = useState<string[]>([]);
-  // const [syouninfriend, setSyouninFriend] = useState('');
   const [searchfriend, setSearchFriend] = useState('');
-  // const [del_friend, setDel_Friend] = useState('');
-  // const [sex, setSex] = useState(0);
-  // const [sex_str, setSex_str] = useState('');
+  const [del_friend, setDel_Friend] = useState('');
   const [look_friend, setLookFriend] = useState<string[]>([]);
   const [open2, setOpen2] = useState(false);
   const [placement, setPlacement] = useState<DrawerProps['placement']>('left');
@@ -226,8 +201,14 @@ const App: React.FC = () => {
     }
   }, [user]);
 
-  const handleConfirm = useHandleConfirm();
+  const onChange1 = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    console.log('Change:', e.target.value);
+    setMessage(e.target.value);
+  };
+  const { TextArea } = Input;
 
+  const handleConfirm = useHandleConfirm();
+  //確認ボタン
   const Confirm = async () => {
     const confirm = await handleConfirm(inputValue);
     assert(confirm, 'roomなし');
@@ -297,12 +278,6 @@ const App: React.FC = () => {
     setmyId(userId);
   };
 
-  const onChange1 = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    console.log('Change:', e.target.value);
-    setMessage(e.target.value);
-  };
-  const { TextArea } = Input;
-
   //フレンド認証
   const Friendauth = useAuth();
 
@@ -320,6 +295,12 @@ const App: React.FC = () => {
     const friendasse = await lookFriendRoom();
     assert(friendasse, 'friendなし');
     setReceive_friend(friendasse.friend);
+  };
+
+  const deleteFriendId = useDeleteFriendId();
+  //フレンド削除
+  const handleDeleteFriendId = async () => {
+    await deleteFriendId(del_friend); // del_friendを適切な値に置き換える必要があります
   };
 
   useEffect(() => {
