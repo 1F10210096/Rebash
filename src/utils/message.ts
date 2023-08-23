@@ -46,52 +46,52 @@ export function useLookMessage() {
   return lookMessage;
 }
 
- // const handleInfo = async (messageId: string) => {
-  //   try {
-  //     const infomessage = await apiClient.infomessage.$post({ body: { messageId } });
-  //     setInfoName(infomessage.sender_Id);
-  //     // console.log(infoname)
-  //     await LookMessage();
-  //   } catch (error) {
-  //     await LookMessage();
-  //   }
-  // };
-  // const handleDelete = async (messageId: string) => {
-  //   try {
-  //     await apiClient.deleteMessage.$post({ body: { messageId } });
-  //     await LookMessage();
-  //   } catch (error) {
-  //     await LookMessage();
-  //   }
-  // };
+// const handleInfo = async (messageId: string) => {
+//   try {
+//     const infomessage = await apiClient.infomessage.$post({ body: { messageId } });
+//     setInfoName(infomessage.sender_Id);
+//     // console.log(infoname)
+//     await LookMessage();
+//   } catch (error) {
+//     await LookMessage();
+//   }
+// };
+// const handleDelete = async (messageId: string) => {
+//   try {
+//     await apiClient.deleteMessage.$post({ body: { messageId } });
+//     await LookMessage();
+//   } catch (error) {
+//     await LookMessage();
+//   }
+// };
 
-    // const handleEdit = (messageId: string, contentmess: string) => {
-  //   setEditingMessageId(messageId);
-  //   setEditedMessage(contentmess);
-  //   setContextMenuVisible(false);
-  //   setEditMenuVisible(true);
-  //   setComent(contentmess);
-  // };
-  // const handleSaveEdit = async () => {
-  //   setEditMenuVisible(false);
-  //   if (editingMessageId === null) {
-  //     console.log('id2なし');
-  //   }
-  //   {
-  //     await apiClient.edit.$post({ body: { editingMessageId, editedMessage } });
-  //     await LookMessage();
-  //     setEditingMessageId(null);
-  //     setEditedMessage('');
-  //   }
-  // };
-  // const handleRightClick =
-  //   (messageId: string, contentmess: string) =>
-  //   (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-  //     e.preventDefault();
-  //     setContextMenuVisible(true);
-  //     setSelectedMessageId(messageId);
-  //     setContextMenuPosition({ x: e.clientX, y: e.clientY });
-  //     setEditingMessageId(messageId);
-  //     setEditedMessage(contentmess);
-  //     setComent(contentmess);
-  //   };
+// const handleEdit = (messageId: string, contentmess: string) => {
+//   setEditingMessageId(messageId);
+//   setEditedMessage(contentmess);
+//   setContextMenuVisible(false);
+//   setEditMenuVisible(true);
+//   setComent(contentmess);
+// };
+// const handleSaveEdit = async () => {
+//   setEditMenuVisible(false);
+//   if (editingMessageId === null) {
+//     console.log('id2なし');
+//   }
+//   {
+//     await apiClient.edit.$post({ body: { editingMessageId, editedMessage } });
+//     await LookMessage();
+//     setEditingMessageId(null);
+//     setEditedMessage('');
+//   }
+// };
+// const handleRightClick =
+//   (messageId: string, contentmess: string) =>
+//   (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+//     e.preventDefault();
+//     setContextMenuVisible(true);
+//     setSelectedMessageId(messageId);
+//     setContextMenuPosition({ x: e.clientX, y: e.clientY });
+//     setEditingMessageId(messageId);
+//     setEditedMessage(contentmess);
+//     setComent(contentmess);
+//   };

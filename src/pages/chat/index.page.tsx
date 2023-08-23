@@ -290,7 +290,6 @@ const App: React.FC = () => {
   //フレンド認証
   const Friendauth = useAuth();
 
-
   const sendFriendId = useSendFriendId();
   //フレンド送信
   const SendFriend = async () => {
