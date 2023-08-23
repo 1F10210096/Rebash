@@ -33,15 +33,14 @@ export function useLookRoom() {
   return lookRoom;
 }
 
-
 export function useLookMessage() {
   const [user] = useAtom(userAtom);
 
-  async function lookMessage(roomId:string) {
+  async function lookMessage(roomId: string) {
     if (!user) return;
 
     const messages = await apiClient.message_get.$post({ body: { roomId } });
-    return messages
+    return messages;
   }
 
   return lookMessage;

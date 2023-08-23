@@ -36,8 +36,8 @@ import { apiClient } from 'src/utils/apiClient';
 import { useAuth, useSendFriendId } from 'src/utils/friend';
 import { useInputComment, useLookMessage, useLookRoom } from 'src/utils/message';
 import { useLookmystatus, useMybirth, useMymessage } from 'src/utils/myinfo';
-import styles from './index.module.css';
 import { useHandleConfirm, useSearchId } from 'src/utils/room';
+import styles from './index.module.css';
 dayjs.extend(customParseFormat);
 const App: React.FC = () => {
   const [user] = useAtom(userAtom);
@@ -227,13 +227,11 @@ const App: React.FC = () => {
     assert(confirm, 'roomなし');
   };
 
-
   const searchId = useSearchId();
   //room検索
   const SearchId = async () => {
     await searchId(searchRoomId);
   };
-
 
   const mymessage = useMymessage();
   //自分のコメント設定
@@ -645,7 +643,7 @@ const App: React.FC = () => {
         }
         visible={popconfirmVisible}
         onVisibleChange={(visible) => setPopconfirmVisible(visible)}
-        onConfirm={Confirm }
+        onConfirm={Confirm}
         onCancel={() => setPopconfirmVisible(false)}
         okText="Add"
         cancelText="Cancel"
