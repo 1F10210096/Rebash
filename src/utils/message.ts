@@ -14,7 +14,7 @@ export function useInputComment() {
     if (name === undefined) {
       console.log('usernameなし');
     } else {
-      await apiClient.message.post({ body: { roomId, sender_id, content, name } });
+      const message = await apiClient.message.post({ body: { roomId, sender_id, content, name } });
     }
   }
 
