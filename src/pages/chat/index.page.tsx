@@ -41,7 +41,12 @@ import {
   useLookFriendRoom,
   useSendFriendId,
 } from 'src/utils/friend';
-import { useInputComment, useLookMessage, useLookRoom, useRightClickHandler } from 'src/utils/message';
+import {
+  useInputComment,
+  useLookMessage,
+  useLookRoom,
+  useRightClickHandler,
+} from 'src/utils/message';
 import { useLookmystatus, useMybirth, useMymessage } from 'src/utils/myinfo';
 import { useHandleConfirm, useSearchId } from 'src/utils/room';
 import styles from './index.module.css';
@@ -347,10 +352,10 @@ const App: React.FC = () => {
   const contextMenu = (
     <Menu>
       <Menu.Item>
-        <Button >Button 1</Button>
+        <Button>Button 1</Button>
       </Menu.Item>
       <Menu.Item>
-        <Button >Button 2</Button>
+        <Button>Button 2</Button>
       </Menu.Item>
     </Menu>
   );
@@ -504,8 +509,9 @@ const App: React.FC = () => {
                     }}
                   >
                     <div
-                      className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                        }`}
+                      className={`${styles.commentBubble} ${
+                        message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                      }`}
                     >
                       <div className={styles.username}>{message.username}</div>
                       <div className={styles.content}>{message.contentmess}</div>
