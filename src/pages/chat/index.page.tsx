@@ -45,7 +45,7 @@ import {
   useLookFriendRoom,
   useSendFriendId,
 } from 'src/utils/friend';
-import { useDeletemsg, useInputComment, useLookMessage, useLookRoom } from 'src/utils/message';
+import { useDeleteMsg, useInputComment, useLookMessage, useLookRoom } from 'src/utils/message';
 import { useLookmystatus, useMybirth, useMymessage } from 'src/utils/myinfo';
 import { useHandleConfirm, useSearchId } from 'src/utils/room';
 import styles from './index.module.css';
@@ -318,11 +318,8 @@ const App: React.FC = () => {
     assert(InputComment, 'コメントなし');
   };
 
-  const deletemsg = useDeletemsg();
+  const deleteMsg = useDeleteMsg();
   //メッセージ削除
-  const DelMsg = async (del_messe: string) => {
-    await deletemsg(del_messe);
-  };
 
   const lookRoom = useLookRoom();
   //ルーム選択
@@ -398,6 +395,7 @@ const App: React.FC = () => {
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
     messageId: string
   ) => {
+    e.preventDefault();
     setContextMenuVisible1(true);
     setContextMenuPosition1({ x: e.clientX, y: e.clientY });
     setSelectedMsg(messageId);
@@ -426,6 +424,7 @@ const App: React.FC = () => {
     Roomlist();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Roomlist, createUserdata, user]);
+
   return (
     <Layout hasSider>
       <div
@@ -568,7 +567,6 @@ const App: React.FC = () => {
                 <div
                   key={msg.id2}
                   onContextMenu={(e) => {
-                    e.preventDefault(); // Prevent the default browser context menu
                     handleContextMenu4(e, msg.id2);
                   }}
                 >
@@ -585,22 +583,24 @@ const App: React.FC = () => {
                       }}
                     >
                       <button onClick={enterEditMode}>Edit</button>
-                      editMode ?
-                      <>
-                        <textarea
-                          value={editedMessage}
-                          onChange={(e) => setEditedMessage(e.target.value)}
-                        />
-                        <div className={styles.content}>{msg.contentmess}</div>
-                      </>
-                      <>
-                        <div>
-                          <button onClick={() => saveEditedMessage(msg.id2)}>Save</button>
-                          <button onClick={exitEditMode}>Cancel</button>
-                        </div>
-                        <button onClick={enterEditMode}>Edit</button>
-                      </>
-                      <button onClick={() => DelMsg(msg.id2)}>Delete</button>
+                      <button onClick={() => deleteMsg(msg.id2)}>Delete</button>
+                      {editMode ? (
+                        <>
+                          <textarea
+                            value={editedMessage}
+                            onChange={(e) => setEditedMessage(e.target.value)}
+                          />
+                          <div className={styles.content}>{msg.contentmess}</div>
+                          <div>
+                            <button onClick={() => saveEditedMessage(msg.id2)}>保存</button>
+                            <button onClick={exitEditMode}>キャンセル</button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className={styles.content}>{msg.contentmess}</div>
+                        </>
+                      )}
                     </div>
                   )}
 
