@@ -491,11 +491,14 @@ const App: React.FC = () => {
           style={{ width: 300 }}
         />
       </Sider>
-      <Layout className="site-layout" style={{ marginLeft: 100 }}>
-        <Header style={{ padding: 0, background: colorBgContainer }} />
-        <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-          <div style={{ padding: 24, textAlign: 'center', background: colorBgContainer }}>
-            <p>long content</p>
+      <Layout className="site-layout" style={{ marginLeft: 200, width: 700 }}>
+        <Header
+          style={{ padding: 0, background: colorBgContainer, marginLeft: 120, width: 1200 }}
+        />
+        <Content style={{ margin: '50px 120px 0', overflow: 'initial' }}>
+          <div
+            style={{ padding: 24, textAlign: 'center', background: colorBgContainer, width: 1200 }}
+          >
             {messages
               .sort((a, b) => a.sent_at - b.sent_at)
               .map((message, index) => (
@@ -521,7 +524,6 @@ const App: React.FC = () => {
               ))}
           </div>
         </Content>
-        <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
       </Layout>
       {contextMenuVisible && contextMenuPosition && (
         <div style={{ position: 'fixed', top: contextMenuPosition.y, left: contextMenuPosition.x }}>
