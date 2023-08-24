@@ -66,7 +66,7 @@ const App: React.FC = () => {
   const mediaStreamRef = useRef<MediaStream | undefined>();
   const [searchRoomId, setSearchRoomId] = useState('');
   const [value, setValue] = useState('');
-  const [select_messe, setSelectMessage] = useState('');
+  const [selected_messe, setSelectedMessage] = useState('');
   const [birth, setBirth] = useState('2015/01/05');
   const [anotherOptions, setAnotherOptions] = useState<{ value: string }[]>([]);
   const [inputValue, setInputValue] = useState('');
@@ -386,7 +386,7 @@ const App: React.FC = () => {
   };
 
   const lookFriend = useLookFriend();
-  //フレンド削除
+  //フレンドの情報を見る
   const Friend_info = async (friend: string) => {
     setIsModalOpen(true);
     const friend_info = await lookFriend(friend);
@@ -413,11 +413,9 @@ const App: React.FC = () => {
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
     messageId: string
   ) => {
-    e.preventDefault();
-    console.log('asdadadwadd--');
     setContextMenuVisible1(true);
     setContextMenuPosition1({ x: e.clientX, y: e.clientY });
-    setSelectMessage(messageId);
+    setSelectedMessage(messageId);
   };
 
   const [editMode, setEditMode] = useState(false);
@@ -581,15 +579,14 @@ const App: React.FC = () => {
           >
             {messages
               .sort((a, b) => a.sent_at - b.sent_at)
-              .map((message, index) => (
+              .map((msg, index) => (
                 <div
-                  key={message.id2}
+                  key={msg.id2}
                   onContextMenu={(e) => {
                     e.preventDefault(); // Prevent the default browser context menu
-                    handleContextMenu4(e, message.id2);
+                    handleContextMenu4(e, msg.id2);
                   }}
                 >
-                  <React.Fragment key={message.id2}>
                     {index !== 0 && <Divider orientation="left" plain />}
 
                     {contextMenuVisible1 && (
@@ -609,28 +606,27 @@ const App: React.FC = () => {
                             onChange={(e) => setEditedMessage(e.target.value)}
                           />
                         ) : (
-                          <div className={styles.content}>{message.contentmess}</div>
+                          <div className={styles.content}>{msg.contentmess}</div>
                         )}
                         {editMode ? (
                           <div>
-                            <button onClick={() => saveEditedMessage(message.id2)}>Save</button>
+                            <button onClick={() => saveEditedMessage(msg.id2)}>Save</button>
                             <button onClick={exitEditMode}>Cancel</button>
                           </div>
                         ) : (
                           <button onClick={() => enterEditMode()}>Edit</button>
                         )}
-                        <button onClick={() => Del_Messe(message.id2)}>Delete</button>
+                        <button onClick={() => Del_Messe(msg.id2)}>Delete</button>
                       </div>
                     )}
 
                     <div
-                      className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                      className={`${styles.commentBubble} ${msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
                         }`}
                     >
-                      <div className={styles.username}>{message.username}</div>
-                      <div className={styles.content}>{message.contentmess}</div>
+                      <div className={styles.username}>{msg.username}</div>
+                      <div className={styles.content}>{msg.contentmess}</div>
                     </div>
-                  </React.Fragment>
                 </div>
               ))}
           </div>
