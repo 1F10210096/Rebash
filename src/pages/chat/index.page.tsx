@@ -600,8 +600,8 @@ const App: React.FC = () => {
                           zIndex: 999,
                         }}
                       >
-                        <button>Edit</button>
-                        <button>Delete</button>
+                        <button >Edit</button>
+                        <button onClick={() => Del_Messe(message.id2)}>Delete</button>
                       </div>
                     )}
 
