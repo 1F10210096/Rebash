@@ -147,6 +147,12 @@ const App: React.FC = () => {
     } as MenuItem;
   }
 
+  
+const subMenu = getItem('Submenu', 'sub3', <SettingOutlined />, [
+  getItem('Option 7', '7'),
+  getItem('Option 8', '8'),
+]);
+
   // const friendMenu: MenuProps['items'] = [
   //   UserOutlined,
   //   VideoCameraOutlined,
