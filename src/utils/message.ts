@@ -59,7 +59,7 @@ export function useLookMessage() {
 //   } catch (error) {
 //     await LookMessage();
 //   }
-// };export function useDeleteMsg() {
+
 export function useDeleteMsg() {
   const [user] = useAtom(userAtom);
 

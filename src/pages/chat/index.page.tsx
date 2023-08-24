@@ -464,7 +464,7 @@ const App: React.FC = () => {
           // onSelect={({ key }) => LookF(key)}
           style={{ width: 300 }}
         >
-          <Menu.Item key="friend" icon={<UserOutlined />} onClick={showFriendListDrawer}>
+          <Menu.Item icon={<UserOutlined />} onClick={showFriendListDrawer}>
             Navigation One
           </Menu.Item>
         </Menu>
@@ -563,6 +563,7 @@ const App: React.FC = () => {
           >
             {messages
               .sort((a, b) => a.sent_at - b.sent_at)
+              // eslint-disable-next-line complexity
               .map((msg, index) => (
                 <div
                   key={msg.id2}
@@ -597,17 +598,16 @@ const App: React.FC = () => {
                           </div>
                         </>
                       ) : (
-                        <>
-                          <div className={styles.content}>{msg.contentmess}</div>
-                        </>
+
+                        <div className={styles.content}>{msg.contentmess}</div>
+
                       )}
                     </div>
                   )}
 
                   <div
-                    className={`${styles.commentBubble} ${
-                      msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                    }`}
+                    className={`${styles.commentBubble} ${msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                      }`}
                   >
                     <div className={styles.username}>{msg.username}</div>
                     <div className={styles.content}>{msg.contentmess}</div>
