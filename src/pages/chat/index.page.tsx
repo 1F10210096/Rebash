@@ -1,10 +1,13 @@
 import type { MessageModel } from '$/commonTypesWithClient/models';
 import {
+  AppstoreOutlined,
   CheckOutlined,
   CloseOutlined,
+  MailOutlined,
   PlusOutlined,
   SearchOutlined,
   SendOutlined,
+  SettingOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import type { DatePickerProps, DrawerProps, MenuProps, RadioChangeEvent } from 'antd';
@@ -25,6 +28,7 @@ import {
   theme,
 } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
+import type { ItemType } from 'antd/es/menu/hooks/useItems';
 import type { UploadFile } from 'antd/es/upload/interface';
 import assert from 'assert';
 import dayjs from 'dayjs';
@@ -41,13 +45,7 @@ import {
   useLookFriendRoom,
   useSendFriendId,
 } from 'src/utils/friend';
-import {
-  useDelete,
-  useInputComment,
-  useLookMessage,
-  useLookRoom,
-  useRightClickHandler,
-} from 'src/utils/message';
+import { useDeleteMsg, useInputComment, useLookMessage, useLookRoom } from 'src/utils/message';
 import { useLookmystatus, useMybirth, useMymessage } from 'src/utils/myinfo';
 import { useHandleConfirm, useSearchId } from 'src/utils/room';
 import styles from './index.module.css';
@@ -69,7 +67,7 @@ const App: React.FC = () => {
   const mediaStreamRef = useRef<MediaStream | undefined>();
   const [searchRoomId, setSearchRoomId] = useState('');
   const [value, setValue] = useState('');
-  const [options, setOptions] = useState('');
+  const [selectedmsg, setSelectedMsg] = useState('');
   const [birth, setBirth] = useState('2015/01/05');
   const [anotherOptions, setAnotherOptions] = useState<{ value: string }[]>([]);
   const [inputValue, setInputValue] = useState('');
@@ -80,6 +78,7 @@ const App: React.FC = () => {
   const backgroundColor = '#02021e';
   const { Header, Content, Footer, Sider } = Layout;
   const roomNames = aroom;
+
   const dateFormat = 'YYYY/MM/DD';
   const customFormat: DatePickerProps['format'] = (value) =>
     `custom format: ${value.format(dateFormat)}`;
@@ -150,21 +149,50 @@ const App: React.FC = () => {
     } as MenuItem;
   }
 
-  // const friendMenu: MenuProps['items'] = [
-  //   UserOutlined,
-  //   VideoCameraOutlined,
-  //   UploadOutlined,
-  //   BarChartOutlined,
-  //   CloudOutlined,
-  //   AppstoreOutlined,
-  //   TeamOutlined,
-  //   ShopOutlined,
-  // ].map((icon, index) => ({
-  //   key: String(index + 1),
-  //   icon: React.createElement(icon),
-  //   label: `nav ${index + 1}`,
-  // }));
-  const items: MenuProps['items'] = [
+  const subMenu = getItem('Submenu', 'sub3', <SettingOutlined />, [
+    getItem('Option 7', '7'),
+    getItem('Option 8', '8'),
+  ]);
+
+  const items: ItemType[] = [
+    {
+      label: 'Navigation One',
+      key: 'mail',
+      icon: <MailOutlined />,
+    },
+    {
+      label: 'Navigation Two',
+      key: 'app',
+      icon: <AppstoreOutlined />,
+      disabled: true,
+    },
+    {
+      label: 'Navigation Three - Submenu',
+      key: 'SubMenu',
+      icon: <SettingOutlined />,
+      children: [
+        {
+          type: 'group',
+          children: [
+            getItem(
+              'DM',
+              'grp',
+              null,
+              friend.map((friend) => getItem(friend, friend)),
+              'group'
+            ),
+          ],
+        },
+      ],
+    },
+    {
+      label: (
+        <a href="https://ant.design" target="_blank" rel="noopener noreferrer">
+          Navigation Four - Link
+        </a>
+      ),
+      key: 'alipay',
+    },
     getItem(
       'Group',
       'grp',
@@ -290,11 +318,8 @@ const App: React.FC = () => {
     assert(InputComment, 'コメントなし');
   };
 
-  const delete_messe = useDelete();
+  const deleteMsg = useDeleteMsg();
   //メッセージ削除
-  const Del_Messe = async (del_messe: string) => {
-    await delete_messe(del_messe);
-  };
 
   const lookRoom = useLookRoom();
   //ルーム選択
@@ -343,7 +368,7 @@ const App: React.FC = () => {
   };
 
   const lookFriend = useLookFriend();
-  //フレンド削除
+  //フレンドの情報を見る
   const Friend_info = async (friend: string) => {
     setIsModalOpen(true);
     const friend_info = await lookFriend(friend);
@@ -351,16 +376,6 @@ const App: React.FC = () => {
     setFriend_birth(friend_info.birth);
     setFriend_messe(friend_info.comment);
   };
-
-  const {
-    contextMenuVisible,
-    selectedMessageId,
-    contextMenuPosition,
-    editingMessageId,
-    editedMessage,
-    comment,
-    handleRightClick,
-  } = useRightClickHandler();
 
   const contextMenu = (
     <Menu>
@@ -372,12 +387,44 @@ const App: React.FC = () => {
       </Menu.Item>
     </Menu>
   );
+  const [contextMenuVisible1, setContextMenuVisible1] = useState(false);
+  const [contextMenuPosition1, setContextMenuPosition1] = useState({ x: 0, y: 0 });
+
+  //右クリックで編集削除
+  const handleContextMenu4 = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    messageId: string
+  ) => {
+    e.preventDefault();
+    setContextMenuVisible1(true);
+    setContextMenuPosition1({ x: e.clientX, y: e.clientY });
+    setSelectedMsg(messageId);
+  };
+
+  const [editMode, setEditMode] = useState(false);
+  const [editedMessage, setEditedMessage] = useState('');
+
+  const saveEditedMessage = (messageId: string) => {
+    console.log(messageId);
+    setEditMode(false);
+  };
+
+  const enterEditMode = () => {
+    setEditMode(true);
+    setEditedMessage(message);
+  };
+
+  const exitEditMode = () => {
+    setEditMode(false);
+    setEditedMessage('');
+  };
 
   useEffect(() => {
     createUserdata();
     Roomlist();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Roomlist, createUserdata, user]);
+
   return (
     <Layout hasSider>
       <div
@@ -416,7 +463,11 @@ const App: React.FC = () => {
           items={items1}
           // onSelect={({ key }) => LookF(key)}
           style={{ width: 300 }}
-        />
+        >
+          <Menu.Item icon={<UserOutlined />} onClick={showFriendListDrawer}>
+            Navigation One
+          </Menu.Item>
+        </Menu>
       </Sider>
       <Space direction="vertical">
         <Space>
@@ -512,49 +563,59 @@ const App: React.FC = () => {
           >
             {messages
               .sort((a, b) => a.sent_at - b.sent_at)
-              .map((message, index) => (
-                <React.Fragment key={message.id2}>
+              // eslint-disable-next-line complexity
+              .map((msg, index) => (
+                <div
+                  key={msg.id2}
+                  onContextMenu={(e) => {
+                    handleContextMenu4(e, msg.id2);
+                  }}
+                >
                   {index !== 0 && <Divider orientation="left" plain />}
-                  <div
-                    onContextMenu={(e) => {
-                      e.preventDefault(); // 通常のコンテキストメニューを抑制
-                      const position = { x: e.clientX, y: e.clientY };
-                      handleRightClick(message.id2);
-                    }}
-                  >
-                    {contextMenuVisible && (
-                      <div
-                        style={{
-                          position: 'absolute',
-                          background: 'white',
-                          boxShadow: '1px 1px 5px rgb(0 0 0 / 20%)',
-                          padding: '5px',
-                          zIndex: 999,
-                        }}
-                      >
-                        <button>Edit</button>
-                        <button>Delete</button>
-                      </div>
-                    )}
+
+                  {contextMenuVisible1 && (
                     <div
-                      className={`${styles.commentBubble} ${
-                        message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                      }`}
+                      style={{
+                        position: 'absolute',
+                        background: 'white',
+                        boxShadow: '1px 1px 5px rgb(0 0 0 / 20%)',
+                        padding: '5px',
+                        zIndex: 999,
+                      }}
                     >
-                      <div className={styles.username}>{message.username}</div>
-                      <div className={styles.content}>{message.contentmess}</div>
+                      <button onClick={enterEditMode}>Edit</button>
+                      <button onClick={() => deleteMsg(msg.id2)}>Delete</button>
+                      {editMode ? (
+                        <>
+                          <textarea
+                            value={editedMessage}
+                            onChange={(e) => setEditedMessage(e.target.value)}
+                          />
+                          <div className={styles.content}>{msg.contentmess}</div>
+                          <div>
+                            <button onClick={() => saveEditedMessage(msg.id2)}>保存</button>
+                            <button onClick={exitEditMode}>キャンセル</button>
+                          </div>
+                        </>
+                      ) : (
+                        <div className={styles.content}>{msg.contentmess}</div>
+                      )}
                     </div>
+                  )}
+
+                  <div
+                    className={`${styles.commentBubble} ${
+                      msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                    }`}
+                  >
+                    <div className={styles.username}>{msg.username}</div>
+                    <div className={styles.content}>{msg.contentmess}</div>
                   </div>
-                </React.Fragment>
+                </div>
               ))}
           </div>
         </Content>
       </Layout>
-      {contextMenuVisible && contextMenuPosition && (
-        <div style={{ position: 'fixed', top: contextMenuPosition.y, left: contextMenuPosition.x }}>
-          {contextMenu}
-        </div>
-      )}
       <div style={{ position: 'relative' }}>
         <Button type="primary" onClick={LookMessage}>
           Open Modal with customized button props
@@ -679,4 +740,5 @@ const App: React.FC = () => {
     </Layout>
   );
 };
+
 export default App;

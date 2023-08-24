@@ -1,5 +1,5 @@
 import { useAtom } from 'jotai';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from './apiClient';
 
@@ -59,25 +59,20 @@ export function useLookMessage() {
 //   } catch (error) {
 //     await LookMessage();
 //   }
-// };
-// const handleDelete = async (messageId: string) => {
-//   try {
-//     await apiClient.deleteMessage.$post({ body: { messageId } });
-//     await LookMessage();
-//   } catch (error) {
-//     await LookMessage();
-//   }
-// };
-export function useDelete() {
+
+export function useDeleteMsg() {
   const [user] = useAtom(userAtom);
 
-  async function delete_messe(messageId: string) {
-    if (!user) return;
+  const deleteMsg = useCallback(
+    async (messageId: string) => {
+      if (!user) return;
 
-    await apiClient.deleteMessage.$post({ body: { messageId } });
-  }
+      await apiClient.deleteMessage.$post({ body: { messageId } });
+    },
+    [user]
+  );
 
-  return delete_messe;
+  return deleteMsg;
 }
 
 // const handleEdit = (messageId: string, contentmess: string) => {
