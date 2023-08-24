@@ -66,7 +66,7 @@ const App: React.FC = () => {
   const mediaStreamRef = useRef<MediaStream | undefined>();
   const [searchRoomId, setSearchRoomId] = useState('');
   const [value, setValue] = useState('');
-  const [options, setOptions] = useState('');
+  const [select_messe, setSelectMessage] = useState('');
   const [birth, setBirth] = useState('2015/01/05');
   const [anotherOptions, setAnotherOptions] = useState<{ value: string }[]>([]);
   const [inputValue, setInputValue] = useState('');
@@ -432,7 +432,7 @@ const App: React.FC = () => {
     setContextMenuVisible1(true);
     setContextMenuPosition1({ x: e.clientX, y: e.clientY });
     // Save the messageId to know which message's context menu is being opened
-    setSelectedMessageId(messageId);
+    setSelectMessage(messageId);
   };
   useEffect(() => {
     createUserdata();
@@ -572,21 +572,24 @@ const App: React.FC = () => {
           style={{ padding: 0, background: colorBgContainer, marginLeft: 120, width: 1200 }}
         />
         <Content style={{ margin: '50px 120px 0', overflow: 'initial' }}>
+
           <div
             style={{ padding: 24, textAlign: 'center', background: colorBgContainer, width: 1200 }}
           >
             {messages
               .sort((a, b) => a.sent_at - b.sent_at)
               .map((message, index) => (
-                <React.Fragment key={message.id2}>
-                  {index !== 0 && <Divider orientation="left" plain />}
-                  <div
-                    key={message.id2}
-                    onContextMenu={(e) => {
-                      e.preventDefault(); // Prevent the default browser context menu
-                      handleContextMenu4(e, message.id2);
-                    }}
-                  >
+                <div
+                  key={message.id2}
+                  onContextMenu={(e) => {
+                    e.preventDefault(); // Prevent the default browser context menu
+                    handleContextMenu4(e, message.id2);
+                  }}
+                >
+                  <React.Fragment key={message.id2}>
+
+                    {index !== 0 && <Divider orientation="left" plain />}
+
                     {contextMenuVisible1 && (
                       <div
                         style={{
@@ -601,18 +604,19 @@ const App: React.FC = () => {
                         <button>Delete</button>
                       </div>
                     )}
-                  </div>
 
-                  <div
-                    className={`${styles.commentBubble} ${
-                      message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                    }`}
-                  >
-                    <div className={styles.username}>{message.username}</div>
-                    <div className={styles.content}>{message.contentmess}</div>
-                  </div>
-                </React.Fragment>
-              ))}
+
+                    <div
+                      className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                        }`}
+                    >
+                      <div className={styles.username}>{message.username}</div>
+                      <div className={styles.content}>{message.contentmess}</div>
+                    </div>
+                  </React.Fragment>
+                </div>
+              )
+              )}
           </div>
         </Content>
       </Layout>
@@ -740,7 +744,5 @@ const App: React.FC = () => {
     </Layout>
   );
 };
+
 export default App;
-function setSelectedMessageId(messageId: any) {
-  throw new Error('Function not implemented.');
-}
