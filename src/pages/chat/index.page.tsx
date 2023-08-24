@@ -21,7 +21,6 @@ import {
   Menu,
   Modal,
   Popconfirm,
-  Radio,
   Space,
   theme,
 } from 'antd';
@@ -35,7 +34,13 @@ import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from 'src/utils/apiClient';
-import { useAuth, useDeleteFriendId, useLookFriendRoom, useSendFriendId } from 'src/utils/friend';
+import {
+  useAuth,
+  useDeleteFriendId,
+  useLookFriend,
+  useLookFriendRoom,
+  useSendFriendId,
+} from 'src/utils/friend';
 import { useInputComment, useLookMessage, useLookRoom } from 'src/utils/message';
 import { useLookmystatus, useMybirth, useMymessage } from 'src/utils/myinfo';
 import { useHandleConfirm, useSearchId } from 'src/utils/room';
@@ -76,7 +81,9 @@ const App: React.FC = () => {
   const [friend, setFriend] = useState<string[]>([]);
   const [receive_friend, setReceive_friend] = useState<string[]>([]);
   const [searchfriend, setSearchFriend] = useState('');
-  const [del_friend, setDel_Friend] = useState('');
+  const [friend_messe, setFriend_messe] = useState('');
+  const [friend_birth, setFriend_birth] = useState('');
+
   const [look_friend, setLookFriend] = useState<string[]>([]);
   const [open2, setOpen2] = useState(false);
   const [placement, setPlacement] = useState<DrawerProps['placement']>('left');
@@ -163,6 +170,19 @@ const App: React.FC = () => {
       'group'
     ),
   ];
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal2 = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk2 = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel2 = () => {
+    setIsModalOpen(false);
+  };
 
   const onSelect = (data: string) => {
     console.log('onSelect', data);
@@ -233,12 +253,12 @@ const App: React.FC = () => {
   //自分のステータス確認
   const MyStatus = async () => {
     if (!user) return;
-    setmyId(user.id)
+    setmyId(user.id);
     const userStatus = await lookmystatus();
     assert(userStatus, 'myStatusなし');
     setMessage(userStatus.comment);
     setBirth(userStatus.birth);
-    setARoomId(userStatus.roomId)
+    setARoomId(userStatus.roomId);
   };
 
   const mybirth = useMybirth();
@@ -261,9 +281,9 @@ const App: React.FC = () => {
   const lookRoom = useLookRoom();
   //ルーム選択
   const Lookroom = async (key: string) => {
-    setRoomId(key)
-    console.log(key)
-    console.log(roomId_select)
+    setRoomId(key);
+    console.log(key);
+    console.log(roomId_select);
   };
 
   const lookMessage = useLookMessage();
@@ -295,13 +315,23 @@ const App: React.FC = () => {
     const friendasse = await lookFriendRoom();
     assert(friendasse, 'friendなし');
     setFriend(friendasse.friend);
-    console.log(friendasse.friend)
+    console.log(friendasse.friend);
   };
 
   const deleteFriendId = useDeleteFriendId();
   //フレンド削除
-  const DeleteFriendId = async (del_friend:string) => {
-    await deleteFriendId(del_friend); // del_friendを適切な値に置き換える必要があります
+  const DeleteFriendId = async (del_friend: string) => {
+    await deleteFriendId(del_friend);
+  };
+
+  const lookFriend = useLookFriend();
+  //フレンド削除
+  const Friend_info = async (friend: string) => {
+    setIsModalOpen(true);
+    const friend_info = await lookFriend(friend);
+    assert(friend_info, 'friendなし');
+    setFriend_birth(friend_info.birth);
+    setFriend_messe(friend_info.comment);
   };
 
   useEffect(() => {
@@ -346,7 +376,7 @@ const App: React.FC = () => {
           defaultSelectedKeys={['0']}
           items={items1}
           // onSelect={({ key }) => LookF(key)}
-          style={{ width: 300 }} // ここで幅を指定
+          style={{ width: 300 }}
         >
           <div style={{ left: 40 }}>{myId}</div>
         </Menu>
@@ -367,11 +397,27 @@ const App: React.FC = () => {
             {friend.map((friendName, index) => (
               <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
                 <p style={{ marginRight: '10px' }}>Friend: {friendName}</p>
-                <Button type="primary" icon={<SendOutlined />} onClick={() => Friendauth(friendName)} size="small" />
-                <Button type="primary" icon={<SendOutlined />} onClick={() => DeleteFriendId(friendName)} size="small" />
+                <Button
+                  type="primary"
+                  icon={<SendOutlined />}
+                  onClick={() => Friendauth(friendName)}
+                  size="small"
+                />
+                <Button type="primary" onClick={() => Friend_info(friendName)}>
+                  Open Modal
+                </Button>
+                <Modal
+                  title="Basic Modal"
+                  open={isModalOpen}
+                  onOk={handleOk2}
+                  onCancel={handleCancel2}
+                >
+                  <p>{friend_messe}</p>
+                  <p>{friend_birth}</p>
+                  <p>Some contents...</p>
+                </Modal>
               </div>
             ))}
-            {/* その他のコンテンツ */}
           </Drawer>
         </Space>
       </Space>
@@ -408,15 +454,15 @@ const App: React.FC = () => {
           top: 120,
           bottom: 0,
         }}
-        width={300} // 幅を指定
+        width={300}
       >
         <Menu
           theme="dark"
           mode="inline"
           defaultSelectedKeys={['4']}
-          items={items}       //room選び
+          items={items} //room選び
           onSelect={({ key }) => Lookroom(key)}
-          style={{ width: 300 }} // ここで幅を指定
+          style={{ width: 300 }}
         />
       </Sider>
       <Layout className="site-layout" style={{ marginLeft: 100 }}>
@@ -430,8 +476,9 @@ const App: React.FC = () => {
                 <React.Fragment key={message.id2}>
                   {index !== 0 && <Divider orientation="left" plain />}
                   <div
-                    className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                      }`}
+                    className={`${styles.commentBubble} ${
+                      message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                    }`}
                   >
                     <div className={styles.username}>{message.username}</div>
                     <div className={styles.content}>{message.contentmess}</div>

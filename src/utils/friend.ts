@@ -71,7 +71,7 @@ export function useDeleteFriendId() {
 export function useLookFriend() {
   const [user] = useAtom(userAtom);
 
-  async function lookFriend(friend: string[]) {
+  async function lookFriend(friend: string) {
     if (!user) return null;
 
     const userId = user.id;

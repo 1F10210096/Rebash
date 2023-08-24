@@ -27,10 +27,10 @@ export function useLookRoom() {
 
   async function lookRoom(roomId3: string) {
     if (!user) return;
-    console.log(roomId3)
+    console.log(roomId3);
     const roomId = await apiClient.room.$post({ body: { roomId3 } });
-    console.log(roomId)
-    return roomId
+    console.log(roomId);
+    return roomId;
   }
 
   return lookRoom;
