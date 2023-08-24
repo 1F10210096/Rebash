@@ -61,17 +61,10 @@ export function useDeleteFriendId() {
   return deleteFriendId;
 }
 
-// const LookF = async (key: string) => {
-//   if (!user) return;
-//   const userId1 = user.id;
-//   const userId = key;
-//   const userinfo = await apiClient.userinfo.$post({ body: { userId } });
-// };
-
 export function useLookFriend() {
   const [user] = useAtom(userAtom);
 
-  async function lookFriend(friend: string[]) {
+  async function lookFriend(friend: string) {
     if (!user) return null;
 
     const userId = user.id;

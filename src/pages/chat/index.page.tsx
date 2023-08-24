@@ -21,7 +21,6 @@ import {
   Menu,
   Modal,
   Popconfirm,
-  Radio,
   Space,
   theme,
 } from 'antd';
@@ -35,15 +34,27 @@ import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from 'src/utils/apiClient';
-import { useAuth, useDeleteFriendId, useLookFriendRoom, useSendFriendId } from 'src/utils/friend';
-import { useInputComment, useLookMessage, useLookRoom } from 'src/utils/message';
+import {
+  useAuth,
+  useDeleteFriendId,
+  useLookFriend,
+  useLookFriendRoom,
+  useSendFriendId,
+} from 'src/utils/friend';
+import {
+  useDelete,
+  useInputComment,
+  useLookMessage,
+  useLookRoom,
+  useRightClickHandler,
+} from 'src/utils/message';
 import { useLookmystatus, useMybirth, useMymessage } from 'src/utils/myinfo';
 import { useHandleConfirm, useSearchId } from 'src/utils/room';
 import styles from './index.module.css';
 dayjs.extend(customParseFormat);
 const App: React.FC = () => {
   const [user] = useAtom(userAtom);
-  const [roomId, setRoomId] = useState('');
+  const [roomId_select, setRoomId] = useState('');
   const [roomId2, setRoomId2] = useState('');
   const [aroom, setARoomId] = useState<string[]>([]);
   const [message, setMessage] = useState('');
@@ -65,6 +76,7 @@ const App: React.FC = () => {
   const [popconfirmVisible, setPopconfirmVisible] = useState(false);
   const [popsearchVisible, setsearchVisible] = useState(false);
   const [open, setOpen] = useState(false);
+  const [open3, setOpen3] = useState(false);
   const backgroundColor = '#02021e';
   const { Header, Content, Footer, Sider } = Layout;
   const roomNames = aroom;
@@ -75,21 +87,30 @@ const App: React.FC = () => {
   const [friend, setFriend] = useState<string[]>([]);
   const [receive_friend, setReceive_friend] = useState<string[]>([]);
   const [searchfriend, setSearchFriend] = useState('');
-  const [del_friend, setDel_Friend] = useState('');
+  const [friend_messe, setFriend_messe] = useState('');
+  const [friend_birth, setFriend_birth] = useState('');
+  const [showFriendList, setShowFriendList] = useState(false);
   const [look_friend, setLookFriend] = useState<string[]>([]);
   const [open2, setOpen2] = useState(false);
   const [placement, setPlacement] = useState<DrawerProps['placement']>('left');
+  const [placement2, setPlacement2] = useState<DrawerProps['placement']>('left');
+  const showFriendListDrawer = () => {
+    setShowFriendList(true);
+  };
+  const onCloseFriendListDrawer = () => {
+    setShowFriendList(false);
+  };
 
   const showDrawer1 = () => {
-    setOpen(true);
+    setOpen3(true);
   };
 
   const onClose1 = () => {
-    setOpen(false);
+    setOpen3(false);
   };
 
-  const onChange = (e: RadioChangeEvent) => {
-    setPlacement(e.target.value);
+  const onChange4 = (e: RadioChangeEvent) => {
+    setPlacement2(e.target.value);
   };
   const showModal1 = () => {
     setOpen1(true);
@@ -161,6 +182,19 @@ const App: React.FC = () => {
       'group'
     ),
   ];
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal2 = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk2 = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel2 = () => {
+    setIsModalOpen(false);
+  };
 
   const onSelect = (data: string) => {
     console.log('onSelect', data);
@@ -208,10 +242,9 @@ const App: React.FC = () => {
   const { TextArea } = Input;
 
   const handleConfirm = useHandleConfirm();
-  //確認ボタン
+  //ルーム追加
   const Confirm = async () => {
-    const confirm = await handleConfirm(inputValue);
-    assert(confirm, 'roomなし');
+    await handleConfirm(roomId2);
   };
 
   const searchId = useSearchId();
@@ -231,10 +264,13 @@ const App: React.FC = () => {
   const lookmystatus = useLookmystatus();
   //自分のステータス確認
   const MyStatus = async () => {
+    if (!user) return;
+    setmyId(user.id);
     const userStatus = await lookmystatus();
     assert(userStatus, 'myStatusなし');
     setMessage(userStatus.comment);
     setBirth(userStatus.birth);
+    setARoomId(userStatus.roomId);
   };
 
   const mybirth = useMybirth();
@@ -249,21 +285,23 @@ const App: React.FC = () => {
   //メッセージ送信
   const inputcomment = async () => {
     console.log(value);
-    console.log(roomId);
-    const InputComment = await inputComment(roomId, value);
+    console.log(roomId_select);
+    const InputComment = await inputComment(roomId_select, value);
     assert(InputComment, 'コメントなし');
   };
 
-  const lookRoom = useLookRoom();
-  //メッセージ送信
-  const Lookroom = async () => {
-    if (!user) return;
-    const userId = user.id;
-    const userLookroom = await lookRoom(roomId);
-    assert(userLookroom, 'Roomなし');
+  const delete_messe = useDelete();
+  //メッセージ削除
+  const Del_Messe = async (del_messe: string) => {
+    await delete_messe(del_messe);
+  };
 
-    setMessages(userLookroom);
-    setmyId(userId);
+  const lookRoom = useLookRoom();
+  //ルーム選択
+  const Lookroom = async (key: string) => {
+    setRoomId(key);
+    console.log(key);
+    console.log(roomId_select);
   };
 
   const lookMessage = useLookMessage();
@@ -271,7 +309,7 @@ const App: React.FC = () => {
   const LookMessage = async () => {
     if (!user) return;
     const userId = user.id;
-    const userLooKmessage = await lookMessage(roomId);
+    const userLooKmessage = await lookMessage(roomId_select);
     assert(userLooKmessage, 'Roomなし');
 
     setMessages(userLooKmessage);
@@ -294,14 +332,46 @@ const App: React.FC = () => {
   const LookFriendRoom = async () => {
     const friendasse = await lookFriendRoom();
     assert(friendasse, 'friendなし');
-    setReceive_friend(friendasse.friend);
+    setFriend(friendasse.friend);
+    console.log(friendasse.friend);
   };
 
   const deleteFriendId = useDeleteFriendId();
   //フレンド削除
-  const handleDeleteFriendId = async () => {
-    await deleteFriendId(del_friend); // del_friendを適切な値に置き換える必要があります
+  const DeleteFriendId = async (del_friend: string) => {
+    await deleteFriendId(del_friend);
   };
+
+  const lookFriend = useLookFriend();
+  //フレンド削除
+  const Friend_info = async (friend: string) => {
+    setIsModalOpen(true);
+    const friend_info = await lookFriend(friend);
+    assert(friend_info, 'friendなし');
+    setFriend_birth(friend_info.birth);
+    setFriend_messe(friend_info.comment);
+  };
+
+  const {
+    contextMenuVisible,
+    selectedMessageId,
+    contextMenuPosition,
+    editingMessageId,
+    editedMessage,
+    comment,
+    handleRightClick,
+  } = useRightClickHandler();
+
+  const contextMenu = (
+    <Menu>
+      <Menu.Item>
+        <Button>Button 1</Button>
+      </Menu.Item>
+      <Menu.Item>
+        <Button>Button 2</Button>
+      </Menu.Item>
+    </Menu>
+  );
 
   useEffect(() => {
     createUserdata();
@@ -345,38 +415,49 @@ const App: React.FC = () => {
           defaultSelectedKeys={['0']}
           items={items1}
           // onSelect={({ key }) => LookF(key)}
-          style={{ width: 300 }} // ここで幅を指定
-        >
-          <div style={{ left: 40 }}>{myId}</div>
-        </Menu>
+          style={{ width: 300 }}
+        />
       </Sider>
-      <Space>
-        <Radio.Group value={placement} onChange={onChange}>
-          <Radio value="top">top</Radio>
-          <Radio value="right">right</Radio>
-          <Radio value="bottom">bottom</Radio>
-          <Radio value="left">left</Radio>
-        </Radio.Group>
-        <Button type="primary" onClick={showDrawer1}>
-          Open
-        </Button>
+      <Space direction="vertical">
+        <Space>
+          <Button type="primary" onClick={showDrawer1}>
+            Open
+          </Button>
+          <Drawer
+            title="Basic Drawer"
+            placement={placement}
+            closable={false}
+            onClose={onClose1}
+            open={open3}
+            key={placement}
+          >
+            {friend.map((friendName, index) => (
+              <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
+                <p style={{ marginRight: '10px' }}>Friend: {friendName}</p>
+                <Button
+                  type="primary"
+                  icon={<SendOutlined />}
+                  onClick={() => Friendauth(friendName)}
+                  size="small"
+                />
+                <Button type="primary" onClick={() => Friend_info(friendName)}>
+                  Open Modal
+                </Button>
+                <Modal
+                  title="Basic Modal"
+                  open={isModalOpen}
+                  onOk={handleOk2}
+                  onCancel={handleCancel2}
+                >
+                  <p>{friend_messe}</p>
+                  <p>{friend_birth}</p>
+                  <p>Some contents...</p>
+                </Modal>
+              </div>
+            ))}
+          </Drawer>
+        </Space>
       </Space>
-      <Drawer
-        title="Basic Drawer"
-        placement={placement}
-        closable={false}
-        onClose={onClose1}
-        open={open2}
-        onClick={LookFriendRoom}
-        key={placement}
-      >
-        <p>Friend List:</p>
-        <ul>
-          {friend.map((friendName, index) => (
-            <li key={index}>{friendName}</li>
-          ))}
-        </ul>
-      </Drawer>
       <>
         <Drawer title="your profile" placement="right" onClose={onClose} open={open} width={800}>
           <p>{user?.displayName}</p>
@@ -410,44 +491,76 @@ const App: React.FC = () => {
           top: 120,
           bottom: 0,
         }}
-        width={300} // 幅を指定
+        width={300}
       >
         <Menu
           theme="dark"
           mode="inline"
           defaultSelectedKeys={['4']}
-          items={items}
-          onSelect={({ key }) => lookRoom(key)}
-          style={{ width: 300 }} // ここで幅を指定
+          items={items} //room選び
+          onSelect={({ key }) => Lookroom(key)}
+          style={{ width: 300 }}
         />
       </Sider>
-      <Layout className="site-layout" style={{ marginLeft: 100 }}>
-        <Header style={{ padding: 0, background: colorBgContainer }} />
-        <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-          <div style={{ padding: 24, textAlign: 'center', background: colorBgContainer }}>
-            <p>long content</p>
+      <Layout className="site-layout" style={{ marginLeft: 200, width: 700 }}>
+        <Header
+          style={{ padding: 0, background: colorBgContainer, marginLeft: 120, width: 1200 }}
+        />
+        <Content style={{ margin: '50px 120px 0', overflow: 'initial' }}>
+          <div
+            style={{ padding: 24, textAlign: 'center', background: colorBgContainer, width: 1200 }}
+          >
             {messages
               .sort((a, b) => a.sent_at - b.sent_at)
               .map((message, index) => (
                 <React.Fragment key={message.id2}>
                   {index !== 0 && <Divider orientation="left" plain />}
                   <div
-                    className={`${styles.commentBubble} ${
-                      message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                    }`}
+                    onContextMenu={(e) => {
+                      e.preventDefault(); // 通常のコンテキストメニューを抑制
+                      const position = { x: e.clientX, y: e.clientY };
+                      handleRightClick(message.id2);
+                    }}
                   >
-                    <div className={styles.username}>{message.username}</div>
-                    <div className={styles.content}>{message.contentmess}</div>
+                    {contextMenuVisible && (
+                      <div
+                        style={{
+                          position: 'absolute',
+                          background: 'white',
+                          boxShadow: '1px 1px 5px rgb(0 0 0 / 20%)',
+                          padding: '5px',
+                          zIndex: 999,
+                        }}
+                      >
+                        <button>Edit</button>
+                        <button>Delete</button>
+                      </div>
+                    )}
+                    <div
+                      className={`${styles.commentBubble} ${
+                        message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                      }`}
+                    >
+                      <div className={styles.username}>{message.username}</div>
+                      <div className={styles.content}>{message.contentmess}</div>
+                    </div>
                   </div>
                 </React.Fragment>
               ))}
           </div>
         </Content>
-        <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
       </Layout>
+      {contextMenuVisible && contextMenuPosition && (
+        <div style={{ position: 'fixed', top: contextMenuPosition.y, left: contextMenuPosition.x }}>
+          {contextMenu}
+        </div>
+      )}
       <div style={{ position: 'relative' }}>
-        <Button type="primary" onClick={showModal1}>
+        <Button type="primary" onClick={LookMessage}>
           Open Modal with customized button props
+        </Button>
+        <Button type="primary" onClick={LookFriendRoom}>
+          setfriend
         </Button>
         <Modal
           title="Basic Modal"
@@ -511,8 +624,8 @@ const App: React.FC = () => {
       <Popconfirm
         title={
           <Input
-            value={roomId}
-            onChange={(e) => setRoomId(e.target.value)}
+            value={roomId2}
+            onChange={(e) => setRoomId2(e.target.value)}
             onPressEnter={Confirm}
             placeholder="RoomIdを入力してください"
           />

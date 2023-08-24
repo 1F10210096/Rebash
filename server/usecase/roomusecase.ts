@@ -16,7 +16,7 @@ export const roomUsecase = {
   room: async (roomId3: string): Promise<RoomModel[]> => {
     const room = await roomsRepository.findRoom(roomId3);
     assert(room, 'userなし');
-    await Promise.all(room.map(roomsRepository.save)); // すべてのコメントを保存
+    await Promise.all(room.map(roomsRepository.save));
     return room;
   },
   serch: async (searchRoomId: string, userId: UserId): Promise<RoomModel> => {

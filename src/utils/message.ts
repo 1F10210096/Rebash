@@ -1,4 +1,5 @@
 import { useAtom } from 'jotai';
+import { useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from './apiClient';
 
@@ -27,7 +28,10 @@ export function useLookRoom() {
 
   async function lookRoom(roomId3: string) {
     if (!user) return;
-    await apiClient.message_get2.$post({ body: { roomId3 } });
+    console.log(roomId3);
+    const roomId = await apiClient.room.$post({ body: { roomId3 } });
+    console.log(roomId);
+    return roomId;
   }
 
   return lookRoom;
@@ -64,6 +68,17 @@ export function useLookMessage() {
 //     await LookMessage();
 //   }
 // };
+export function useDelete() {
+  const [user] = useAtom(userAtom);
+
+  async function delete_messe(messageId: string) {
+    if (!user) return;
+
+    await apiClient.deleteMessage.$post({ body: { messageId } });
+  }
+
+  return delete_messe;
+}
 
 // const handleEdit = (messageId: string, contentmess: string) => {
 //   setEditingMessageId(messageId);
@@ -84,14 +99,32 @@ export function useLookMessage() {
 //     setEditedMessage('');
 //   }
 // };
-// const handleRightClick =
-//   (messageId: string, contentmess: string) =>
-//   (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-//     e.preventDefault();
-//     setContextMenuVisible(true);
-//     setSelectedMessageId(messageId);
-//     setContextMenuPosition({ x: e.clientX, y: e.clientY });
-//     setEditingMessageId(messageId);
-//     setEditedMessage(contentmess);
-//     setComent(contentmess);
-//   };
+export const useRightClickHandler = () => {
+  const [contextMenuVisible, setContextMenuVisible] = useState(false);
+  const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
+  const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number } | null>(
+    null
+  );
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [editedMessage, setEditedMessage] = useState<string>('');
+  const [comment, setComment] = useState<string>('');
+
+  const handleRightClick =
+    (messageId: string) => (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.preventDefault();
+      setContextMenuVisible(true);
+      setSelectedMessageId(messageId);
+      setContextMenuPosition({ x: e.clientX, y: e.clientY });
+      setEditingMessageId(messageId);
+    };
+
+  return {
+    contextMenuVisible,
+    selectedMessageId,
+    contextMenuPosition,
+    editingMessageId,
+    editedMessage,
+    comment,
+    handleRightClick,
+  };
+};
