@@ -50,3 +50,10 @@ model infomessage {
   sent_at   Int
   username  String
 }
+
+model DM {
+  roomId    String   @id
+  comment   String[]
+  createdAt DateTime
+  userasse  String[]
+}

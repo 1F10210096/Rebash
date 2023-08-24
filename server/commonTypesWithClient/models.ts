@@ -50,3 +50,10 @@ export type InfoMessageModel = {
   sent_at: number;
   username: string;
 };
+
+export type DM = {
+  roomId: string;
+  comment: string[];
+  created: number;
+  userasse: string[];
+};
