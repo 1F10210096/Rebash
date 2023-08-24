@@ -68,6 +68,17 @@ export function useLookMessage() {
 //     await LookMessage();
 //   }
 // };
+export function useDelete() {
+  const [user] = useAtom(userAtom);
+
+  async function delete_messe(messageId: string) {
+    if (!user) return;
+
+    await apiClient.deleteMessage.$post({ body: { messageId } });
+  }
+
+  return  delete_messe;
+}
 
 // const handleEdit = (messageId: string, contentmess: string) => {
 //   setEditingMessageId(messageId);

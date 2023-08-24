@@ -42,6 +42,7 @@ import {
   useSendFriendId,
 } from 'src/utils/friend';
 import {
+  useDelete,
   useInputComment,
   useLookMessage,
   useLookRoom,
@@ -283,6 +284,13 @@ const App: React.FC = () => {
     assert(InputComment, 'コメントなし');
   };
 
+  const delete_messe = useDelete()
+  //メッセージ削除
+  const Del_Messe = async (del_messe: string) => {
+    await delete_messe(del_messe)
+  };
+
+
   const lookRoom = useLookRoom();
   //ルーム選択
   const Lookroom = async (key: string) => {
@@ -338,6 +346,7 @@ const App: React.FC = () => {
     setFriend_birth(friend_info.birth);
     setFriend_messe(friend_info.comment);
   };
+
 
   const {
     contextMenuVisible,
@@ -511,10 +520,23 @@ const App: React.FC = () => {
                       handleRightClick(message.id2);
                     }}
                   >
+                    {contextMenuVisible && (
+                      <div
+                        style={{
+                          position: 'absolute',
+                          background: 'white',
+                          boxShadow: '1px 1px 5px rgb(0 0 0 / 20%)',
+                          padding: '5px',
+                          zIndex: 999,
+                        }}
+                      >
+                        <button >Edit</button>
+                        <button >Delete</button>
+                      </div>
+                    )}
                     <div
-                      className={`${styles.commentBubble} ${
-                        message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                      }`}
+                      className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                        }`}
                     >
                       <div className={styles.username}>{message.username}</div>
                       <div className={styles.content}>{message.contentmess}</div>
