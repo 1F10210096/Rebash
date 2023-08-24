@@ -232,6 +232,8 @@ const App: React.FC = () => {
   const lookmystatus = useLookmystatus();
   //自分のステータス確認
   const MyStatus = async () => {
+    if (!user) return;
+    setmyId(user.id)
     const userStatus = await lookmystatus();
     assert(userStatus, 'myStatusなし');
     setMessage(userStatus.comment);
@@ -292,12 +294,13 @@ const App: React.FC = () => {
   const LookFriendRoom = async () => {
     const friendasse = await lookFriendRoom();
     assert(friendasse, 'friendなし');
-    setReceive_friend(friendasse.friend);
+    setFriend(friendasse.friend);
+    console.log(friendasse.friend)
   };
 
   const deleteFriendId = useDeleteFriendId();
   //フレンド削除
-  const handleDeleteFriendId = async () => {
+  const DeleteFriendId = async (del_friend:string) => {
     await deleteFriendId(del_friend); // del_friendを適切な値に置き換える必要があります
   };
 
@@ -348,33 +351,30 @@ const App: React.FC = () => {
           <div style={{ left: 40 }}>{myId}</div>
         </Menu>
       </Sider>
-      <Space>
-        <Radio.Group value={placement2} onChange={onChange4}>
-          <Radio value="top">top</Radio>
-          <Radio value="right">right</Radio>
-          <Radio value="bottom">bottom</Radio>
-          <Radio value="left">left</Radio>
-        </Radio.Group>
-        <Button type="primary" onClick={showDrawer1}>
-          Open
-        </Button>
+      <Space direction="vertical">
+        <Space>
+          <Button type="primary" onClick={showDrawer1}>
+            Open
+          </Button>
+          <Drawer
+            title="Basic Drawer"
+            placement={placement}
+            closable={false}
+            onClose={onClose1}
+            open={open3}
+            key={placement}
+          >
+            {friend.map((friendName, index) => (
+              <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
+                <p style={{ marginRight: '10px' }}>Friend: {friendName}</p>
+                <Button type="primary" icon={<SendOutlined />} onClick={() => Friendauth(friendName)} size="small" />
+                <Button type="primary" icon={<SendOutlined />} onClick={() => DeleteFriendId(friendName)} size="small" />
+              </div>
+            ))}
+            {/* その他のコンテンツ */}
+          </Drawer>
+        </Space>
       </Space>
-      <Drawer
-        title="Basic Drawer"
-        placement={placement}
-        closable={false}
-        onClose={onClose1}
-        open={open2}
-        onClick={LookFriendRoom}
-        key={placement}
-      >
-        <p>Friend List:</p>
-        <ul>
-          {friend.map((friendName, index) => (
-            <li key={index}>{friendName}</li>
-          ))}
-        </ul>
-      </Drawer>
       <>
         <Drawer title="your profile" placement="right" onClose={onClose} open={open} width={800}>
           <p>{user?.displayName}</p>
@@ -445,6 +445,9 @@ const App: React.FC = () => {
       <div style={{ position: 'relative' }}>
         <Button type="primary" onClick={LookMessage}>
           Open Modal with customized button props
+        </Button>
+        <Button type="primary" onClick={LookFriendRoom}>
+          setfriend
         </Button>
         <Modal
           title="Basic Modal"

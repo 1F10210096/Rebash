@@ -24,7 +24,6 @@ export function useHandleConfirm() {
   async function handleConfirm(inputValue: string) {
     if (!user) return;
     console.log(inputValue);
-
     const roomId = inputValue;
     const userId = user.id;
     await apiClient.user.post({ body: { roomId, userId } });
