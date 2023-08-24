@@ -1,10 +1,13 @@
 import type { MessageModel } from '$/commonTypesWithClient/models';
 import {
+  AppstoreOutlined,
   CheckOutlined,
   CloseOutlined,
+  MailOutlined,
   PlusOutlined,
   SearchOutlined,
   SendOutlined,
+  SettingOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import type { DatePickerProps, DrawerProps, MenuProps, RadioChangeEvent } from 'antd';
@@ -41,13 +44,7 @@ import {
   useLookFriendRoom,
   useSendFriendId,
 } from 'src/utils/friend';
-import {
-  useDelete,
-  useInputComment,
-  useLookMessage,
-  useLookRoom,
-  useRightClickHandler,
-} from 'src/utils/message';
+import { useDelete, useInputComment, useLookMessage, useLookRoom } from 'src/utils/message';
 import { useLookmystatus, useMybirth, useMymessage } from 'src/utils/myinfo';
 import { useHandleConfirm, useSearchId } from 'src/utils/room';
 import styles from './index.module.css';
@@ -165,6 +162,67 @@ const App: React.FC = () => {
   //   label: `nav ${index + 1}`,
   // }));
   const items: MenuProps['items'] = [
+    {
+      label: 'Navigation One',
+      key: 'mail',
+      icon: <MailOutlined />,
+    },
+    {
+      label: 'Navigation Two',
+      key: 'app',
+      icon: <AppstoreOutlined />,
+      disabled: true,
+    },
+    {
+      label: 'Navigation Three - Submenu',
+      key: 'SubMenu',
+      icon: <SettingOutlined />,
+      children: [
+        {
+          type: 'group',
+          label: 'Item 1',
+          children: [
+            {
+              label: 'Option 1',
+              key: 'setting:1',
+            },
+            {
+              label: 'Option 2',
+              key: 'setting:2',
+            },
+          ],
+        },
+        {
+          type: 'group',
+          label: 'Item 2',
+          children: [
+            {
+              label: 'Option 3',
+              key: 'setting:3',
+            },
+            {
+              label: 'Option 4',
+              key: 'setting:4',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      label: (
+        <a href="https://ant.design" target="_blank" rel="noopener noreferrer">
+          Navigation Four - Link
+        </a>
+      ),
+      key: 'alipay',
+    },
+    getItem(
+      'Group',
+      'grp',
+      null,
+      aroom.map((room) => getItem(room, room)),
+      'group'
+    ),
     getItem(
       'Group',
       'grp',
@@ -352,16 +410,6 @@ const App: React.FC = () => {
     setFriend_messe(friend_info.comment);
   };
 
-  const {
-    contextMenuVisible,
-    selectedMessageId,
-    contextMenuPosition,
-    editingMessageId,
-    editedMessage,
-    comment,
-    handleRightClick,
-  } = useRightClickHandler();
-
   const contextMenu = (
     <Menu>
       <Menu.Item>
@@ -372,7 +420,20 @@ const App: React.FC = () => {
       </Menu.Item>
     </Menu>
   );
+  const [contextMenuVisible1, setContextMenuVisible1] = useState(false);
+  const [contextMenuPosition1, setContextMenuPosition1] = useState({ x: 0, y: 0 });
 
+  const handleContextMenu4 = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    messageId: string
+  ) => {
+    e.preventDefault(); // Prevent the default browser context menu
+    console.log('asdadadwadd--');
+    setContextMenuVisible1(true);
+    setContextMenuPosition1({ x: e.clientX, y: e.clientY });
+    // Save the messageId to know which message's context menu is being opened
+    setSelectedMessageId(messageId);
+  };
   useEffect(() => {
     createUserdata();
     Roomlist();
@@ -416,7 +477,11 @@ const App: React.FC = () => {
           items={items1}
           // onSelect={({ key }) => LookF(key)}
           style={{ width: 300 }}
-        />
+        >
+          <Menu.Item key="friend" icon={<UserOutlined />} onClick={showFriendListDrawer}>
+            Navigation One
+          </Menu.Item>
+        </Menu>
       </Sider>
       <Space direction="vertical">
         <Space>
@@ -516,13 +581,13 @@ const App: React.FC = () => {
                 <React.Fragment key={message.id2}>
                   {index !== 0 && <Divider orientation="left" plain />}
                   <div
+                    key={message.id2}
                     onContextMenu={(e) => {
-                      e.preventDefault(); // 通常のコンテキストメニューを抑制
-                      const position = { x: e.clientX, y: e.clientY };
-                      handleRightClick(message.id2);
+                      e.preventDefault(); // Prevent the default browser context menu
+                      handleContextMenu4(e, message.id2);
                     }}
                   >
-                    {contextMenuVisible && (
+                    {contextMenuVisible1 && (
                       <div
                         style={{
                           position: 'absolute',
@@ -536,25 +601,21 @@ const App: React.FC = () => {
                         <button>Delete</button>
                       </div>
                     )}
-                    <div
-                      className={`${styles.commentBubble} ${
-                        message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                      }`}
-                    >
-                      <div className={styles.username}>{message.username}</div>
-                      <div className={styles.content}>{message.contentmess}</div>
-                    </div>
+                  </div>
+
+                  <div
+                    className={`${styles.commentBubble} ${
+                      message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                    }`}
+                  >
+                    <div className={styles.username}>{message.username}</div>
+                    <div className={styles.content}>{message.contentmess}</div>
                   </div>
                 </React.Fragment>
               ))}
           </div>
         </Content>
       </Layout>
-      {contextMenuVisible && contextMenuPosition && (
-        <div style={{ position: 'fixed', top: contextMenuPosition.y, left: contextMenuPosition.x }}>
-          {contextMenu}
-        </div>
-      )}
       <div style={{ position: 'relative' }}>
         <Button type="primary" onClick={LookMessage}>
           Open Modal with customized button props
@@ -680,3 +741,6 @@ const App: React.FC = () => {
   );
 };
 export default App;
+function setSelectedMessageId(messageId: any) {
+  throw new Error('Function not implemented.');
+}
