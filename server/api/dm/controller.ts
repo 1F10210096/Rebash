@@ -1,9 +1,9 @@
-import { userUsecase } from '$/usecase/userusecase';
+import { DirectMsgUsecase } from '$/usecase/directmsgusecase';
 import { defineController } from './$relay';
 
 export default defineController(() => ({
   post: async ({ body, user }) => ({
     status: 201,
-    body: await userUsecase.del_friend(body.partnerId, user.id),
+    body: await DirectMsgUsecase.create(body.roomId, user.id),
   }),
 }));
