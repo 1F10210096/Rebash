@@ -60,14 +60,6 @@ export function useLookMessage() {
 //     await LookMessage();
 //   }
 // };
-// const handleDelete = async (messageId: string) => {
-//   try {
-//     await apiClient.deleteMessage.$post({ body: { messageId } });
-//     await LookMessage();
-//   } catch (error) {
-//     await LookMessage();
-//   }
-// };
 export function useDelete() {
   const [user] = useAtom(userAtom);
 

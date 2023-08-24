@@ -423,17 +423,38 @@ const App: React.FC = () => {
   const [contextMenuVisible1, setContextMenuVisible1] = useState(false);
   const [contextMenuPosition1, setContextMenuPosition1] = useState({ x: 0, y: 0 });
 
+  //右クリックで編集削除
   const handleContextMenu4 = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
     messageId: string
   ) => {
-    e.preventDefault(); // Prevent the default browser context menu
+    e.preventDefault();
     console.log('asdadadwadd--');
     setContextMenuVisible1(true);
-    setContextMenuPosition1({ x: e.clientX, y: e.clientY });
-    // Save the messageId to know which message's context menu is being opened
+    setContextMenuPosition1({ x: e.clientX, y: e.clientY })
     setSelectMessage(messageId);
   };
+
+  const [editMode, setEditMode] = useState(false);
+  const [editedMessage, setEditedMessage] = useState('');
+
+  const saveEditedMessage = (messageId: string) => {
+    console.log(messageId)
+    setEditMode(false);
+  };
+
+  
+
+  const enterEditMode = () => {
+    setEditMode(true);
+    setEditedMessage(message);
+  };
+
+  const exitEditMode = () => {
+    setEditMode(false);
+    setEditedMessage('');
+  };
+
   useEffect(() => {
     createUserdata();
     Roomlist();
@@ -600,7 +621,23 @@ const App: React.FC = () => {
                           zIndex: 999,
                         }}
                       >
-                        <button >Edit</button>
+                        <button onClick={() => enterEditMode()}>Edit</button>
+                        {editMode ? (
+                          <textarea
+                            value={editedMessage}
+                            onChange={(e) => setEditedMessage(e.target.value)}
+                          />
+                        ) : (
+                          <div className={styles.content}>{message.contentmess}</div>
+                        )}
+                        {editMode ? (
+                          <div>
+                            <button onClick={() => saveEditedMessage(message.id2)}>Save</button>
+                            <button onClick={exitEditMode}>Cancel</button>
+                          </div>
+                        ) : (
+                          <button onClick={() => enterEditMode()}>Edit</button>
+                        )}
                         <button onClick={() => Del_Messe(message.id2)}>Delete</button>
                       </div>
                     )}
