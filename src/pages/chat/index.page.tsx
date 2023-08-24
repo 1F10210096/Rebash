@@ -431,7 +431,7 @@ const App: React.FC = () => {
     e.preventDefault();
     console.log('asdadadwadd--');
     setContextMenuVisible1(true);
-    setContextMenuPosition1({ x: e.clientX, y: e.clientY })
+    setContextMenuPosition1({ x: e.clientX, y: e.clientY });
     setSelectMessage(messageId);
   };
 
@@ -439,11 +439,9 @@ const App: React.FC = () => {
   const [editedMessage, setEditedMessage] = useState('');
 
   const saveEditedMessage = (messageId: string) => {
-    console.log(messageId)
+    console.log(messageId);
     setEditMode(false);
   };
-
-  
 
   const enterEditMode = () => {
     setEditMode(true);
@@ -593,7 +591,6 @@ const App: React.FC = () => {
           style={{ padding: 0, background: colorBgContainer, marginLeft: 120, width: 1200 }}
         />
         <Content style={{ margin: '50px 120px 0', overflow: 'initial' }}>
-
           <div
             style={{ padding: 24, textAlign: 'center', background: colorBgContainer, width: 1200 }}
           >
@@ -608,7 +605,6 @@ const App: React.FC = () => {
                   }}
                 >
                   <React.Fragment key={message.id2}>
-
                     {index !== 0 && <Divider orientation="left" plain />}
 
                     {contextMenuVisible1 && (
@@ -642,18 +638,17 @@ const App: React.FC = () => {
                       </div>
                     )}
 
-
                     <div
-                      className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                        }`}
+                      className={`${styles.commentBubble} ${
+                        message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                      }`}
                     >
                       <div className={styles.username}>{message.username}</div>
                       <div className={styles.content}>{message.contentmess}</div>
                     </div>
                   </React.Fragment>
                 </div>
-              )
-              )}
+              ))}
           </div>
         </Content>
       </Layout>
