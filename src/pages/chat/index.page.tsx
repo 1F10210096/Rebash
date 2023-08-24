@@ -584,7 +584,7 @@ const App: React.FC = () => {
                         zIndex: 999,
                       }}
                     >
-                      <button onClick={() => enterEditMode()}>Edit</button>
+                      <button onClick={enterEditMode}>Edit</button>
                       editMode ?
                       <>
                         <textarea
