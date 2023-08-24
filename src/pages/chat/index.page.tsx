@@ -6,9 +6,6 @@ import {
   SearchOutlined,
   SendOutlined,
   UserOutlined,
-  MailOutlined,
-  AppstoreOutlined,
-  SettingOutlined,
 } from '@ant-design/icons';
 import type { DatePickerProps, DrawerProps, MenuProps, RadioChangeEvent } from 'antd';
 import {
@@ -104,7 +101,6 @@ const App: React.FC = () => {
     setShowFriendList(false);
   };
 
-
   const showDrawer1 = () => {
     setOpen3(true);
   };
@@ -169,67 +165,6 @@ const App: React.FC = () => {
   //   label: `nav ${index + 1}`,
   // }));
   const items: MenuProps['items'] = [
-    {
-      label: 'Navigation One',
-      key: 'mail',
-      icon: <MailOutlined />,
-    },
-    {
-      label: 'Navigation Two',
-      key: 'app',
-      icon: <AppstoreOutlined />,
-      disabled: true,
-    },
-    {
-      label: 'Navigation Three - Submenu',
-      key: 'SubMenu',
-      icon: <SettingOutlined />,
-      children: [
-        {
-          type: 'group',
-          label: 'Item 1',
-          children: [
-            {
-              label: 'Option 1',
-              key: 'setting:1',
-            },
-            {
-              label: 'Option 2',
-              key: 'setting:2',
-            },
-          ],
-        },
-        {
-          type: 'group',
-          label: 'Item 2',
-          children: [
-            {
-              label: 'Option 3',
-              key: 'setting:3',
-            },
-            {
-              label: 'Option 4',
-              key: 'setting:4',
-            },
-          ],
-        },
-      ],
-    },
-    {
-      label: (
-        <a href="https://ant.design" target="_blank" rel="noopener noreferrer">
-          Navigation Four - Link
-        </a>
-      ),
-      key: 'alipay',
-    },
-    getItem(
-      'Group',
-      'grp',
-      null,
-      aroom.map((room) => getItem(room, room)),
-      'group'
-    ),
     getItem(
       'Group',
       'grp',
@@ -355,12 +290,11 @@ const App: React.FC = () => {
     assert(InputComment, 'コメントなし');
   };
 
-  const delete_messe = useDelete()
+  const delete_messe = useDelete();
   //メッセージ削除
   const Del_Messe = async (del_messe: string) => {
-    await delete_messe(del_messe)
+    await delete_messe(del_messe);
   };
-
 
   const lookRoom = useLookRoom();
   //ルーム選択
@@ -417,7 +351,6 @@ const App: React.FC = () => {
     setFriend_birth(friend_info.birth);
     setFriend_messe(friend_info.comment);
   };
-
 
   const {
     contextMenuVisible,
@@ -483,11 +416,7 @@ const App: React.FC = () => {
           items={items1}
           // onSelect={({ key }) => LookF(key)}
           style={{ width: 300 }}
-        >
-          <Menu.Item key="friend" icon={<UserOutlined />} onClick={showFriendListDrawer}>
-            Navigation One
-          </Menu.Item>
-        </Menu>
+        />
       </Sider>
       <Space direction="vertical">
         <Space>
@@ -603,13 +532,14 @@ const App: React.FC = () => {
                           zIndex: 999,
                         }}
                       >
-                        <button >Edit</button>
-                        <button >Delete</button>
+                        <button>Edit</button>
+                        <button>Delete</button>
                       </div>
                     )}
                     <div
-                      className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                        }`}
+                      className={`${styles.commentBubble} ${
+                        message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                      }`}
                     >
                       <div className={styles.username}>{message.username}</div>
                       <div className={styles.content}>{message.contentmess}</div>

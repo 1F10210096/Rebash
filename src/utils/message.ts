@@ -77,7 +77,7 @@ export function useDelete() {
     await apiClient.deleteMessage.$post({ body: { messageId } });
   }
 
-  return  delete_messe;
+  return delete_messe;
 }
 
 // const handleEdit = (messageId: string, contentmess: string) => {
