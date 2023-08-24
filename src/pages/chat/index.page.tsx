@@ -28,6 +28,7 @@ import {
   theme,
 } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
+import type { ItemType } from 'antd/es/menu/hooks/useItems';
 import type { UploadFile } from 'antd/es/upload/interface';
 import assert from 'assert';
 import dayjs from 'dayjs';
@@ -44,7 +45,7 @@ import {
   useLookFriendRoom,
   useSendFriendId,
 } from 'src/utils/friend';
-import { useDelete, useInputComment, useLookMessage, useLookRoom } from 'src/utils/message';
+import { useDeletemsg, useInputComment, useLookMessage, useLookRoom } from 'src/utils/message';
 import { useLookmystatus, useMybirth, useMymessage } from 'src/utils/myinfo';
 import { useHandleConfirm, useSearchId } from 'src/utils/room';
 import styles from './index.module.css';
@@ -66,7 +67,7 @@ const App: React.FC = () => {
   const mediaStreamRef = useRef<MediaStream | undefined>();
   const [searchRoomId, setSearchRoomId] = useState('');
   const [value, setValue] = useState('');
-  const [selected_msg, setSelectedMsg] = useState('');
+  const [selectedmsg, setSelectedMsg] = useState('');
   const [birth, setBirth] = useState('2015/01/05');
   const [anotherOptions, setAnotherOptions] = useState<{ value: string }[]>([]);
   const [inputValue, setInputValue] = useState('');
@@ -77,6 +78,7 @@ const App: React.FC = () => {
   const backgroundColor = '#02021e';
   const { Header, Content, Footer, Sider } = Layout;
   const roomNames = aroom;
+
   const dateFormat = 'YYYY/MM/DD';
   const customFormat: DatePickerProps['format'] = (value) =>
     `custom format: ${value.format(dateFormat)}`;
@@ -147,27 +149,12 @@ const App: React.FC = () => {
     } as MenuItem;
   }
 
-  
-const subMenu = getItem('Submenu', 'sub3', <SettingOutlined />, [
-  getItem('Option 7', '7'),
-  getItem('Option 8', '8'),
-]);
+  const subMenu = getItem('Submenu', 'sub3', <SettingOutlined />, [
+    getItem('Option 7', '7'),
+    getItem('Option 8', '8'),
+  ]);
 
-  // const friendMenu: MenuProps['items'] = [
-  //   UserOutlined,
-  //   VideoCameraOutlined,
-  //   UploadOutlined,
-  //   BarChartOutlined,
-  //   CloudOutlined,
-  //   AppstoreOutlined,
-  //   TeamOutlined,
-  //   ShopOutlined,
-  // ].map((icon, index) => ({
-  //   key: String(index + 1),
-  //   icon: React.createElement(icon),
-  //   label: `nav ${index + 1}`,
-  // }));
-  const items: MenuProps['items'] = [
+  const items: ItemType[] = [
     {
       label: 'Navigation One',
       key: 'mail',
@@ -206,13 +193,6 @@ const subMenu = getItem('Submenu', 'sub3', <SettingOutlined />, [
       ),
       key: 'alipay',
     },
-    getItem(
-      'Group',
-      'grp',
-      null,
-      aroom.map((room) => getItem(room, room)),
-      'group'
-    ),
     getItem(
       'Group',
       'grp',
@@ -338,10 +318,10 @@ const subMenu = getItem('Submenu', 'sub3', <SettingOutlined />, [
     assert(InputComment, 'コメントなし');
   };
 
-  const delete_messe = useDelete();
+  const deletemsg = useDeletemsg();
   //メッセージ削除
-  const Del_Messe = async (del_messe: string) => {
-    await delete_messe(del_messe);
+  const DelMsg = async (del_messe: string) => {
+    await deletemsg(del_messe);
   };
 
   const lookRoom = useLookRoom();
@@ -605,23 +585,22 @@ const subMenu = getItem('Submenu', 'sub3', <SettingOutlined />, [
                       }}
                     >
                       <button onClick={() => enterEditMode()}>Edit</button>
-                      {editMode ? (
+                      editMode ?
+                      <>
                         <textarea
                           value={editedMessage}
                           onChange={(e) => setEditedMessage(e.target.value)}
                         />
-                      ) : (
                         <div className={styles.content}>{msg.contentmess}</div>
-                      )}
-                      {editMode ? (
+                      </>
+                      <>
                         <div>
                           <button onClick={() => saveEditedMessage(msg.id2)}>Save</button>
                           <button onClick={exitEditMode}>Cancel</button>
                         </div>
-                      ) : (
-                        <button onClick={() => enterEditMode()}>Edit</button>
-                      )}
-                      <button onClick={() => Del_Messe(msg.id2)}>Delete</button>
+                        <button onClick={enterEditMode}>Edit</button>
+                      </>
+                      <button onClick={() => DelMsg(msg.id2)}>Delete</button>
                     </div>
                   )}
 
