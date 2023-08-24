@@ -1,6 +1,7 @@
 import { useAtom } from 'jotai';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from './apiClient';
+import { useState } from 'react';
 
 export function useInputComment() {
   const [user] = useAtom(userAtom);
@@ -87,14 +88,31 @@ export function useLookMessage() {
 //     setEditedMessage('');
 //   }
 // };
-// const handleRightClick =
-//   (messageId: string, contentmess: string) =>
-//   (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-//     e.preventDefault();
-//     setContextMenuVisible(true);
-//     setSelectedMessageId(messageId);
-//     setContextMenuPosition({ x: e.clientX, y: e.clientY });
-//     setEditingMessageId(messageId);
-//     setEditedMessage(contentmess);
-//     setComent(contentmess);
-//   };
+export const useRightClickHandler = () => {
+  const [contextMenuVisible, setContextMenuVisible] = useState(false);
+  const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
+  const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number } | null>(null);
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [editedMessage, setEditedMessage] = useState<string>('');
+  const [comment, setComment] = useState<string>('');
+
+  const handleRightClick = (messageId: string) => (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    setContextMenuVisible(true);
+    setSelectedMessageId(messageId);
+    setContextMenuPosition({ x: e.clientX, y: e.clientY });
+    setEditingMessageId(messageId);
+  };
+
+  return {
+    contextMenuVisible,
+    selectedMessageId,
+    contextMenuPosition,
+    editingMessageId,
+    editedMessage,
+    comment,
+    handleRightClick,
+  };
+};

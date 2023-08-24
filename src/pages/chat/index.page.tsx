@@ -41,7 +41,7 @@ import {
   useLookFriendRoom,
   useSendFriendId,
 } from 'src/utils/friend';
-import { useInputComment, useLookMessage, useLookRoom } from 'src/utils/message';
+import { useInputComment, useLookMessage, useLookRoom, useRightClickHandler } from 'src/utils/message';
 import { useLookmystatus, useMybirth, useMymessage } from 'src/utils/myinfo';
 import { useHandleConfirm, useSearchId } from 'src/utils/room';
 import styles from './index.module.css';
@@ -334,6 +334,27 @@ const App: React.FC = () => {
     setFriend_messe(friend_info.comment);
   };
 
+  const {
+    contextMenuVisible,
+    selectedMessageId,
+    contextMenuPosition,
+    editingMessageId,
+    editedMessage,
+    comment,
+    handleRightClick,
+  } = useRightClickHandler();
+
+  const contextMenu = (
+    <Menu>
+      <Menu.Item>
+        <Button >Button 1</Button>
+      </Menu.Item>
+      <Menu.Item>
+        <Button >Button 2</Button>
+      </Menu.Item>
+    </Menu>
+  );
+
   useEffect(() => {
     createUserdata();
     Roomlist();
@@ -476,12 +497,19 @@ const App: React.FC = () => {
                 <React.Fragment key={message.id2}>
                   {index !== 0 && <Divider orientation="left" plain />}
                   <div
-                    className={`${styles.commentBubble} ${
-                      message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                    }`}
+                    onContextMenu={(e) => {
+                      e.preventDefault(); // 通常のコンテキストメニューを抑制
+                      const position = { x: e.clientX, y: e.clientY };
+                      handleRightClick(message.id2);
+                    }}
                   >
-                    <div className={styles.username}>{message.username}</div>
-                    <div className={styles.content}>{message.contentmess}</div>
+                    <div
+                      className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                        }`}
+                    >
+                      <div className={styles.username}>{message.username}</div>
+                      <div className={styles.content}>{message.contentmess}</div>
+                    </div>
                   </div>
                 </React.Fragment>
               ))}
@@ -489,6 +517,11 @@ const App: React.FC = () => {
         </Content>
         <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
       </Layout>
+      {contextMenuVisible && contextMenuPosition && (
+        <div style={{ position: 'fixed', top: contextMenuPosition.y, left: contextMenuPosition.x }}>
+          {contextMenu}
+        </div>
+      )}
       <div style={{ position: 'relative' }}>
         <Button type="primary" onClick={LookMessage}>
           Open Modal with customized button props
