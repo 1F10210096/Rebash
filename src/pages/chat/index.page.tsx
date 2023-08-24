@@ -66,7 +66,7 @@ const App: React.FC = () => {
   const mediaStreamRef = useRef<MediaStream | undefined>();
   const [searchRoomId, setSearchRoomId] = useState('');
   const [value, setValue] = useState('');
-  const [selected_messe, setSelectedMessage] = useState('');
+  const [selected_msg, setSelectedMsg] = useState('');
   const [birth, setBirth] = useState('2015/01/05');
   const [anotherOptions, setAnotherOptions] = useState<{ value: string }[]>([]);
   const [inputValue, setInputValue] = useState('');
@@ -190,7 +190,6 @@ const App: React.FC = () => {
             ),
           ],
         },
-
       ],
     },
     {
@@ -415,7 +414,7 @@ const App: React.FC = () => {
   ) => {
     setContextMenuVisible1(true);
     setContextMenuPosition1({ x: e.clientX, y: e.clientY });
-    setSelectedMessage(messageId);
+    setSelectedMsg(messageId);
   };
 
   const [editMode, setEditMode] = useState(false);
@@ -587,46 +586,47 @@ const App: React.FC = () => {
                     handleContextMenu4(e, msg.id2);
                   }}
                 >
-                    {index !== 0 && <Divider orientation="left" plain />}
+                  {index !== 0 && <Divider orientation="left" plain />}
 
-                    {contextMenuVisible1 && (
-                      <div
-                        style={{
-                          position: 'absolute',
-                          background: 'white',
-                          boxShadow: '1px 1px 5px rgb(0 0 0 / 20%)',
-                          padding: '5px',
-                          zIndex: 999,
-                        }}
-                      >
-                        <button onClick={() => enterEditMode()}>Edit</button>
-                        {editMode ? (
-                          <textarea
-                            value={editedMessage}
-                            onChange={(e) => setEditedMessage(e.target.value)}
-                          />
-                        ) : (
-                          <div className={styles.content}>{msg.contentmess}</div>
-                        )}
-                        {editMode ? (
-                          <div>
-                            <button onClick={() => saveEditedMessage(msg.id2)}>Save</button>
-                            <button onClick={exitEditMode}>Cancel</button>
-                          </div>
-                        ) : (
-                          <button onClick={() => enterEditMode()}>Edit</button>
-                        )}
-                        <button onClick={() => Del_Messe(msg.id2)}>Delete</button>
-                      </div>
-                    )}
-
+                  {contextMenuVisible1 && (
                     <div
-                      className={`${styles.commentBubble} ${msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                        }`}
+                      style={{
+                        position: 'absolute',
+                        background: 'white',
+                        boxShadow: '1px 1px 5px rgb(0 0 0 / 20%)',
+                        padding: '5px',
+                        zIndex: 999,
+                      }}
                     >
-                      <div className={styles.username}>{msg.username}</div>
-                      <div className={styles.content}>{msg.contentmess}</div>
+                      <button onClick={() => enterEditMode()}>Edit</button>
+                      {editMode ? (
+                        <textarea
+                          value={editedMessage}
+                          onChange={(e) => setEditedMessage(e.target.value)}
+                        />
+                      ) : (
+                        <div className={styles.content}>{msg.contentmess}</div>
+                      )}
+                      {editMode ? (
+                        <div>
+                          <button onClick={() => saveEditedMessage(msg.id2)}>Save</button>
+                          <button onClick={exitEditMode}>Cancel</button>
+                        </div>
+                      ) : (
+                        <button onClick={() => enterEditMode()}>Edit</button>
+                      )}
+                      <button onClick={() => Del_Messe(msg.id2)}>Delete</button>
                     </div>
+                  )}
+
+                  <div
+                    className={`${styles.commentBubble} ${
+                      msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                    }`}
+                  >
+                    <div className={styles.username}>{msg.username}</div>
+                    <div className={styles.content}>{msg.contentmess}</div>
+                  </div>
                 </div>
               ))}
           </div>
