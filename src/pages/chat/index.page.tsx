@@ -180,32 +180,17 @@ const App: React.FC = () => {
       children: [
         {
           type: 'group',
-          label: 'Item 1',
           children: [
-            {
-              label: 'Option 1',
-              key: 'setting:1',
-            },
-            {
-              label: 'Option 2',
-              key: 'setting:2',
-            },
+            getItem(
+              'DM',
+              'grp',
+              null,
+              friend.map((friend) => getItem(friend, friend)),
+              'group'
+            ),
           ],
         },
-        {
-          type: 'group',
-          label: 'Item 2',
-          children: [
-            {
-              label: 'Option 3',
-              key: 'setting:3',
-            },
-            {
-              label: 'Option 4',
-              key: 'setting:4',
-            },
-          ],
-        },
+
       ],
     },
     {
@@ -639,9 +624,8 @@ const App: React.FC = () => {
                     )}
 
                     <div
-                      className={`${styles.commentBubble} ${
-                        message.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                      }`}
+                      className={`${styles.commentBubble} ${message.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                        }`}
                     >
                       <div className={styles.username}>{message.username}</div>
                       <div className={styles.content}>{message.contentmess}</div>
