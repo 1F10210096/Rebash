@@ -2,8 +2,11 @@ import type { UserId } from '$/commonTypesWithClient/branded';
 import type { DMModel } from '$/commonTypesWithClient/models';
 
 export type Methods = {
+  get: {
+    resBody: string;
+  };
   post: {
-    reqBody: { roomId: string; partnerId: string; userId: UserId };
+    reqBody: { partnerId: string; userId: UserId };
     resBody: DMModel;
   };
 };

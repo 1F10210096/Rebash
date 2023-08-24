@@ -1,17 +1,25 @@
 import type { UserId } from '$/commonTypesWithClient/branded';
 import type { DMModel } from '$/commonTypesWithClient/models';
 import { directMsgRepositry } from '$/repository/directMsgRepositry';
+import assert from 'assert';
 export const DirectMsgUsecase = {
-  create: async (roomId: string, userId: UserId) => {
+  create: async (roomId: string, partnerId: string, userId: UserId) => {
     const newDirectMsg: DMModel = {
       roomId,
       comment: [],
       created: Date.now(),
-      userasse: [userId],
+      myId: userId,
+      partnerId,
     };
     await directMsgRepositry.save(newDirectMsg);
     console.log(newDirectMsg);
     console.log('a');
     return newDirectMsg;
+  },
+  roomId: async (roomId: string, userId: string): Promise<DMModel> => {
+    console.log(roomId);
+    const user = await directMsgRepositry.findUser(roomId);
+    assert(user, 'userなし');
+    return user;
   },
 };

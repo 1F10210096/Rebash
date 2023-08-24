@@ -7,7 +7,8 @@ const toDMModel = (prismaDM: DM): DMModel => ({
   roomId: roomIdParser.parse(prismaDM.roomId),
   comment: prismaDM.comment,
   created: prismaDM.createdAt.getTime(),
-  userasse: prismaDM.userasse,
+  myId: prismaDM.myId,
+  partnerId: prismaDM.partnerId,
 });
 export const directMsgRepositry = {
   save: async (dM: DMModel) => {
@@ -15,14 +16,24 @@ export const directMsgRepositry = {
       where: { roomId: dM.roomId },
       update: {
         comment: dM.comment,
-        userasse: dM.userasse,
+        myId: dM.myId,
+        partnerId: dM.partnerId,
       },
       create: {
         roomId: dM.roomId,
         comment: dM.comment,
         createdAt: new Date(dM.created),
-        userasse: dM.userasse,
+        myId: dM.myId,
+        partnerId: dM.partnerId,
       },
     });
+  },
+  findUser: async (roomId: string): Promise<DMModel | undefined> => {
+    console.log(roomId);
+    const roomlist = await prismaClient.dM.findMany();
+    console.log('ads2');
+    const room = roomlist.find((room) => room.roomId === roomId);
+    console.log(room);
+    return room && toDMModel(room);
   },
 };
