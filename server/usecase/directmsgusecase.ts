@@ -1,26 +1,76 @@
-import type { UserId } from '$/commonTypesWithClient/branded';
-import type { DMModel } from '$/commonTypesWithClient/models';
-import { directMsgRepositry } from '$/repository/directMsgRepositry';
+import type { DMMsgModel } from '$/commonTypesWithClient/models';
+import { DMMsgRepository } from '$/repository/DMMsgRepositry';
+import { messageRepository } from '$/repository/messageRepositry';
 import assert from 'assert';
 import { randomUUID } from 'crypto';
-export const DirectMsgUsecase = {
-  create: async (partnerId: string, userId: UserId) => {
-    const newDirectMsg: DMModel = {
-      roomId: randomUUID(),
-      comment: [],
-      created: Date.now(),
-      myId: userId,
-      partnerId,
+export const DMMsgUsecase = {
+  create: async (roomId: string, sender_id: string, content: string, name: string) => {
+    console.log(content);
+    const newMessage: DMMsgModel = {
+      id2: randomUUID(),
+      room: roomId,
+      sender_Id: sender_id,
+      contentmess: content,
+      sent_at: Date.now(),
+      username: name,
     };
-    await directMsgRepositry.save(newDirectMsg);
-    console.log(newDirectMsg);
+    await DMMsgRepository.save(newMessage);
+    console.log(newMessage);
     console.log('a');
-    return newDirectMsg;
+    return newMessage;
   },
-  roomId: async (roomId: string, userId: string): Promise<DMModel> => {
-    console.log(roomId);
-    const user = await directMsgRepositry.findUser(roomId);
-    assert(user, 'userなし');
-    return user;
+  // createinfo: async (
+  //   Id: string,
+  //   roomId: string,
+  //   sender_id: string,
+  //   content: string,
+  //   sent_at_time: number,
+  //   name: string
+  // ) => {
+  //   const newinfoMessage: DMMsgModel = {
+  //     id2: Id,
+  //     room: roomId,
+  //     sender_Id: sender_id,
+  //     contentmess: content,
+  //     sent_at: sent_at_time,
+  //     username: name,
+  //   };
+  //   await DMMsgRepository.infosave(newinfoMessage);
+  //   return newinfoMessage;
+  // },
+  room: async (roomId: string): Promise<DMMsgModel[]> => {
+    const roomList = await DMMsgRepository.findMessage(roomId);
+    assert(roomList && roomList.length > 0, 'コメントが見つかりません');
+    await Promise.all(roomList.map(messageRepository.save)); // すべてのコメントを保存
+    return roomList;
   },
+  edit: async (editingMessageId: string | null, editedMessage: string): Promise<DMMsgModel> => {
+    const message = await DMMsgRepository.editMessage(editingMessageId);
+    assert(message, 'コメントが見つかりません');
+    message.contentmess = editedMessage;
+    await messageRepository.save(message);
+    return message;
+  },
+  delete: async (messageId: string): Promise<DMMsgModel> => {
+    const message = await DMMsgRepository.delete(messageId);
+    assert(message, 'コメントが見つかりません');
+    return message;
+  },
+  // infoMessage: async (messageId: string): Promise<InfoMessageModel> => {
+  //   const message = await messageRepository.editMessage(messageId);
+  //   // console.log(message)
+  //   assert(message, 'コメントが見つかりません');
+  //   const infoMessage = await messageUsecase.createinfo(
+  //     message.id2,
+  //     message.room,
+  //     message.sender_Id,
+  //     message.contentmess,
+  //     message.sent_at,
+  //     message.username
+  //   );
+  //   console.log(infoMessage);
+  //   await messageRepository.infosave(infoMessage);
+  //   console.log('daaw');
+  //   return infoMessage;
+  // },
 };

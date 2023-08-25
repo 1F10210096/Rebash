@@ -37,6 +37,7 @@ import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
+import { useCreateDM, useSearchDM } from 'src/utils/DM';
 import { apiClient } from 'src/utils/apiClient';
 import {
   useAuth,
@@ -49,7 +50,6 @@ import { useDeleteMsg, useInputComment, useLookMessage, useLookRoom } from 'src/
 import { useLookmystatus, useMybirth, useMymessage } from 'src/utils/myinfo';
 import { useHandleConfirm, useSearchId } from 'src/utils/room';
 import styles from './index.module.css';
-import { useCreateDM, useSearchDM } from 'src/utils/DM';
 dayjs.extend(customParseFormat);
 const App: React.FC = () => {
   const [user] = useAtom(userAtom);
@@ -379,23 +379,21 @@ const App: React.FC = () => {
     setFriend_messe(friend_info.comment);
   };
 
-  const createDM = useCreateDM()
+  const createDM = useCreateDM();
   //DM作成
   const createdDM = async (partnerId: string) => {
-    const DMRoom = await createDM(partnerId)
+    const DMRoom = await createDM(partnerId);
     assert(DMRoom, 'DMRoomなし');
     //他の機能追加する予定
-  }
+  };
 
-  const searchDM = useSearchDM()
-  //DM作成
+  const searchDM = useSearchDM();
+  //DM探す
   const serchedDM = async (partnerId: string) => {
-    const DMRoom = await searchDM(partnerId)
+    const DMRoom = await searchDM(partnerId);
     assert(DMRoom, 'DMRoomなし');
     //他の機能追加する予定
-  }
-
-
+  };
 
   const contextMenu = (
     <Menu>
@@ -624,8 +622,9 @@ const App: React.FC = () => {
                   )}
 
                   <div
-                    className={`${styles.commentBubble} ${msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                      }`}
+                    className={`${styles.commentBubble} ${
+                      msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                    }`}
                   >
                     <div className={styles.username}>{msg.username}</div>
                     <div className={styles.content}>{msg.contentmess}</div>
