@@ -1,5 +1,4 @@
-import { DMMsgModel } from "$/commonTypesWithClient/models";
-
+import type { DMMsgModel } from '$/commonTypesWithClient/models';
 
 export type Methods = {
   post: {

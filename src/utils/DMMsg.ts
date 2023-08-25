@@ -13,15 +13,17 @@ export function useDMInputComment() {
       const sender_id = user.id;
       const content = value;
       const name = user.displayName;
-      
+
       if (name === undefined) {
         console.log('usernameなし');
       } else {
-        const message = await apiClient.message.post({ body: { roomId, sender_id, content, name } });
+        const message = await apiClient.message.post({
+          body: { roomId, sender_id, content, name },
+        });
         return message;
       }
     },
-    [user] 
+    [user]
   );
 
   return dMInputComment;
