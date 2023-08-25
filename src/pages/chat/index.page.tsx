@@ -382,19 +382,19 @@ const App: React.FC = () => {
   };
 
   const lookFriendRoom = useLookFriendRoom();
-// フレンド一覧
-const LookFriendRoom = async () => {
-  try {
-    const friendasse = await lookFriendRoom();
-    if (friendasse === null || friendasse === undefined) {
-      console.log('a');
-    } else {
-      setFriend(friendasse.friend);
+  // フレンド一覧
+  const LookFriendRoom = async () => {
+    try {
+      const friendasse = await lookFriendRoom();
+      if (friendasse === null || friendasse === undefined) {
+        console.log('a');
+      } else {
+        setFriend(friendasse.friend);
+      }
+    } catch (error) {
+      console.error('Error fetching friend room:', error);
     }
-  } catch (error) {
-    console.error('Error fetching friend room:', error);
-  }
-};
+  };
 
   const deleteFriendId = useDeleteFriendId();
   //フレンド削除
@@ -515,7 +515,7 @@ const LookFriendRoom = async () => {
           mode="inline"
           defaultSelectedKeys={['0']}
           items={items1}
-          onSelect={({ key }) => createdDM(key)}
+          onClick={({ key }) => Friend_info(key)}
           style={{ width: 300 }}
         >
           <Menu.Item icon={<UserOutlined />} onClick={showFriendListDrawer}>
@@ -554,6 +554,9 @@ const LookFriendRoom = async () => {
                   onOk={handleOk2}
                   onCancel={handleCancel2}
                 >
+                  <Button type="primary" onClick={() => createdDM(friendName)}>
+                    DM作成
+                  </Button>
                   <p>{friend_messe}</p>
                   <p>{friend_birth}</p>
                   <p>Some contents...</p>
