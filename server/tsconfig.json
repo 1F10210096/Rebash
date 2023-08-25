@@ -25,7 +25,8 @@
     ".eslintrc.js",
     "index.ts",
     "api/index.mjs",
-    "api/voice/index.ts"
+    "api/voice/index.ts",
+    "api/dmMsg"
   ],
   "exclude": ["node_modules"]
 }
