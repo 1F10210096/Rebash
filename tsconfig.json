@@ -31,7 +31,9 @@
     "src/pages/index.page.tsx",
     "node_modules/@types",
     "server/api/index.mjs",
-    "server/api/voice/index.ts"
-, "src/pages/title/index.page.tsx"  ],
+    "server/api/voice/index.ts",
+    "src/pages/title/index.page.tsx",
+    "server/api/dmMsg"
+  ],
   "exclude": ["node_modules", "server"]
 }
