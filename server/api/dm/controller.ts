@@ -1,4 +1,4 @@
-import { DirectMsgUsecase } from '$/usecase/directmsgusecase';
+import { DirectMsgUsecase } from '$/usecase/DMMsg';
 import { defineController } from './$relay';
 
 export default defineController(() => ({
