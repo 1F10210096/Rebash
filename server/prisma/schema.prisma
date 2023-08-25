@@ -58,3 +58,12 @@ model DM {
   myId      String
   partnerId String
 }
+
+model DMmessage {
+  id2       String   @id
+  roomId    String
+  sender_id String
+  content   String
+  sent_at   DateTime
+  username  String
+}

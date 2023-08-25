@@ -37,6 +37,7 @@ import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
+import { useCreateDM, useSearchDM } from 'src/utils/DM';
 import { apiClient } from 'src/utils/apiClient';
 import {
   useAuth,
@@ -86,6 +87,7 @@ const App: React.FC = () => {
   const [friend, setFriend] = useState<string[]>([]);
   const [receive_friend, setReceive_friend] = useState<string[]>([]);
   const [searchfriend, setSearchFriend] = useState('');
+  const [partnerId, setPartnerId] = useState('');
   const [friend_messe, setFriend_messe] = useState('');
   const [friend_birth, setFriend_birth] = useState('');
   const [showFriendList, setShowFriendList] = useState(false);
@@ -375,6 +377,22 @@ const App: React.FC = () => {
     assert(friend_info, 'friendなし');
     setFriend_birth(friend_info.birth);
     setFriend_messe(friend_info.comment);
+  };
+
+  const createDM = useCreateDM();
+  //DM作成
+  const createdDM = async (partnerId: string) => {
+    const DMRoom = await createDM(partnerId);
+    assert(DMRoom, 'DMRoomなし');
+    //他の機能追加する予定
+  };
+
+  const searchDM = useSearchDM();
+  //DM探す
+  const serchedDM = async (partnerId: string) => {
+    const DMRoom = await searchDM(partnerId);
+    assert(DMRoom, 'DMRoomなし');
+    //他の機能追加する予定
   };
 
   const contextMenu = (
