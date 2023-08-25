@@ -49,6 +49,7 @@ import { useDeleteMsg, useInputComment, useLookMessage, useLookRoom } from 'src/
 import { useLookmystatus, useMybirth, useMymessage } from 'src/utils/myinfo';
 import { useHandleConfirm, useSearchId } from 'src/utils/room';
 import styles from './index.module.css';
+import { useCreateDM, useSearchDM } from 'src/utils/DM';
 dayjs.extend(customParseFormat);
 const App: React.FC = () => {
   const [user] = useAtom(userAtom);
@@ -86,6 +87,7 @@ const App: React.FC = () => {
   const [friend, setFriend] = useState<string[]>([]);
   const [receive_friend, setReceive_friend] = useState<string[]>([]);
   const [searchfriend, setSearchFriend] = useState('');
+  const [partnerId, setPartnerId] = useState('');
   const [friend_messe, setFriend_messe] = useState('');
   const [friend_birth, setFriend_birth] = useState('');
   const [showFriendList, setShowFriendList] = useState(false);
@@ -377,6 +379,24 @@ const App: React.FC = () => {
     setFriend_messe(friend_info.comment);
   };
 
+  const createDM = useCreateDM()
+  //DM作成
+  const createdDM = async (partnerId: string) => {
+    const DMRoom = await createDM(partnerId)
+    assert(DMRoom, 'DMRoomなし');
+    //他の機能追加する予定
+  }
+
+  const searchDM = useSearchDM()
+  //DM作成
+  const serchedDM = async (partnerId: string) => {
+    const DMRoom = await searchDM(partnerId)
+    assert(DMRoom, 'DMRoomなし');
+    //他の機能追加する予定
+  }
+
+
+
   const contextMenu = (
     <Menu>
       <Menu.Item>
@@ -604,9 +624,8 @@ const App: React.FC = () => {
                   )}
 
                   <div
-                    className={`${styles.commentBubble} ${
-                      msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                    }`}
+                    className={`${styles.commentBubble} ${msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                      }`}
                   >
                     <div className={styles.username}>{msg.username}</div>
                     <div className={styles.content}>{msg.contentmess}</div>
