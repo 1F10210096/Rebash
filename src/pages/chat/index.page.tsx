@@ -249,6 +249,7 @@ const App: React.FC = () => {
     setARoomId(roomlist.roomId);
   }, []);
   const createUserdata = useCallback(async () => {
+    console.log("a")
     const user1 = await apiClient.roomlist.$post();
     console.log(user1);
     if (user1 === null) {
@@ -275,6 +276,7 @@ const App: React.FC = () => {
   //ルーム追加
   const Confirm = async () => {
     await handleConfirm(roomId2);
+    await Roomlist();
   };
 
   const searchId = useSearchId();
@@ -318,6 +320,7 @@ const App: React.FC = () => {
     console.log(roomId_select);
     const InputComment = await inputComment(roomId_select, value);
     assert(InputComment, 'コメントなし');
+    await LookMessage();
   };
 
   const deleteMsg = useDeleteMsg();
@@ -329,6 +332,7 @@ const App: React.FC = () => {
     setRoomId(key);
     console.log(key);
     console.log(roomId_select);
+    await LookMessage();
   };
 
   const lookMessage = useLookMessage();
@@ -355,13 +359,19 @@ const App: React.FC = () => {
   };
 
   const lookFriendRoom = useLookFriendRoom();
-  //フレンド一覧
-  const LookFriendRoom = async () => {
+// フレンド一覧
+const LookFriendRoom = async () => {
+  try {
     const friendasse = await lookFriendRoom();
-    assert(friendasse, 'friendなし');
-    setFriend(friendasse.friend);
-    console.log(friendasse.friend);
-  };
+    if (friendasse === null || friendasse === undefined) {
+      console.log('a');
+    } else {
+      setFriend(friendasse.friend);
+    }
+  } catch (error) {
+    console.error('Error fetching friend room:', error);
+  }
+};
 
   const deleteFriendId = useDeleteFriendId();
   //フレンド削除
@@ -389,7 +399,7 @@ const App: React.FC = () => {
 
   const searchDM = useSearchDM();
   //DM探す
-  const serchedDM = async (partnerId: string) => {
+  const searchedDM = async (partnerId: string) => {
     const DMRoom = await searchDM(partnerId);
     assert(DMRoom, 'DMRoomなし');
     //他の機能追加する予定
@@ -440,6 +450,9 @@ const App: React.FC = () => {
   useEffect(() => {
     createUserdata();
     Roomlist();
+    LookMessage();
+    Roomlist();
+    LookFriendRoom();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Roomlist, createUserdata, user]);
 
@@ -479,7 +492,7 @@ const App: React.FC = () => {
           mode="inline"
           defaultSelectedKeys={['0']}
           items={items1}
-          // onSelect={({ key }) => LookF(key)}
+          onSelect={({ key }) => createdDM(key)}
           style={{ width: 300 }}
         >
           <Menu.Item icon={<UserOutlined />} onClick={showFriendListDrawer}>
@@ -622,9 +635,8 @@ const App: React.FC = () => {
                   )}
 
                   <div
-                    className={`${styles.commentBubble} ${
-                      msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                    }`}
+                    className={`${styles.commentBubble} ${msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                      }`}
                   >
                     <div className={styles.username}>{msg.username}</div>
                     <div className={styles.content}>{msg.contentmess}</div>
@@ -635,12 +647,6 @@ const App: React.FC = () => {
         </Content>
       </Layout>
       <div style={{ position: 'relative' }}>
-        <Button type="primary" onClick={LookMessage}>
-          Open Modal with customized button props
-        </Button>
-        <Button type="primary" onClick={LookFriendRoom}>
-          setfriend
-        </Button>
         <Modal
           title="Basic Modal"
           open={open1}
