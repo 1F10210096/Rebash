@@ -30,6 +30,8 @@ const App: React.FC = () => {
   const [myId, setmyId] = useState<string>('');
   const [roomId_select, setRoomId] = useState('');
   const [value, setValue] = useState('');
+  const [selectedmsg, setSelectedMsg] = useState('');
+  const [message, setMessage] = useState('');
   type MenuItem = Required<MenuProps>['items'][number];
   function getItem(
     label: React.ReactNode,
@@ -113,6 +115,39 @@ const App: React.FC = () => {
     assert(InputComment, 'コメントなし');
     await LookMessage();
   };
+
+  const [contextMenuVisible1, setContextMenuVisible1] = useState(false);
+  const [contextMenuPosition1, setContextMenuPosition1] = useState({ x: 0, y: 0 });
+
+    //右クリックで編集削除
+    const handleContextMenu4 = (
+      e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+      messageId: string
+    ) => {
+      e.preventDefault();
+      setContextMenuVisible1(true);
+      setContextMenuPosition1({ x: e.clientX, y: e.clientY });
+      setSelectedMsg(messageId);
+    };
+  
+    const [editMode, setEditMode] = useState(false);
+    const [editedMessage, setEditedMessage] = useState('');
+  
+    const saveEditedMessage = (messageId: string) => {
+      console.log(messageId);
+      setEditMode(false);
+    };
+  
+    const enterEditMode = () => {
+      setEditMode(true);
+      setEditedMessage(message);
+    };
+  
+    const exitEditMode = () => {
+      setEditMode(false);
+      setEditedMessage('');
+    };
+
 
   return (
     <Layout hasSider>
