@@ -158,13 +158,18 @@ const App: React.FC = () => {
     children?: MenuItem[],
     type?: 'group'
   ): MenuItem {
+    const effectiveLabel = label ?? "Default Label";
     return {
       key,
       icon,
       children,
-      label,
+      label: effectiveLabel,
       type,
-      onClick: () => searchDM(label),
+      onClick: () => {
+        if (label !== null && label !== undefined) {
+          searchedDM(label.toString());
+        }
+      },
     } as MenuItem;
   }
 
@@ -417,7 +422,7 @@ const LookFriendRoom = async () => {
 
   const searchDM = useSearchDM();
   //DM探す
-  const searchedDM = async (partnerId: string) => {
+  const searchedDM = async (partnerId: string | undefined | null) => {
     const DMRoom = await searchDM(partnerId);
     assert(DMRoom, 'DMRoomなし');
     //他の機能追加する予定
