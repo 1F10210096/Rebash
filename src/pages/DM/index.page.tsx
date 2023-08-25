@@ -15,10 +15,18 @@ import {
 } from '@ant-design/icons';
 import Sider from "antd/es/layout/Sider";
 import { useLookFriendRoom } from "src/utils/friend";
+import { useSearchDM } from "src/utils/DM";
+import assert from "assert";
+import { useLookMessage } from "src/utils/message";
+import { useAtom } from "jotai";
+import { userAtom } from "src/atoms/user";
+import type { MessageModel } from "$/commonTypesWithClient/models";
+
 const App: React.FC = () => {
-  
+  const [user] = useAtom(userAtom);
   const [showFriendList, setShowFriendList] = useState(false);
   const [friend, setFriend] = useState<string[]>([]);
+  const [messages, setMessages] = useState<MessageModel[]>([]);
   type MenuItem = Required<MenuProps>['items'][number];
   function getItem(
     label: React.ReactNode,
@@ -64,7 +72,26 @@ const App: React.FC = () => {
       console.error('Error fetching friend room:', error);
     }
   };
-  
+
+  const searchDM = useSearchDM();
+  //DM探す
+  const searchedDM = async (partnerId: string | undefined | null) => {
+    const DMRoom = await searchDM(partnerId);
+    assert(DMRoom, 'DMRoomなし');
+    //他の機能追加する予定
+  };
+
+  const lookMessage = useLookMessage();
+  //メッセージを映す
+  const LookMessage = async () => {
+    if (!user) return;
+    const userId = user.id;
+    const userLooKmessage = await lookMessage(roomId_select);
+    assert(userLooKmessage, 'Roomなし');
+
+    setMessages(userLooKmessage);
+    setmyId(userId);
+  };
 
   return (
     <Layout hasSider>
