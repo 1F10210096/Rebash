@@ -15,9 +15,9 @@ import {
 } from '@ant-design/icons';
 import Sider from "antd/es/layout/Sider";
 import { useLookFriendRoom } from "src/utils/friend";
-import { useSearchDM } from "src/utils/DM";
+import { useCreateDM, useSearchDM } from "src/utils/DM";
 import assert from "assert";
-import { useLookMessage } from "src/utils/message";
+import { useInputComment, useLookMessage } from "src/utils/message";
 import { useAtom } from "jotai";
 import { userAtom } from "src/atoms/user";
 import type { MessageModel } from "$/commonTypesWithClient/models";
@@ -29,6 +29,7 @@ const App: React.FC = () => {
   const [messages, setMessages] = useState<MessageModel[]>([]);
   const [myId, setmyId] = useState<string>('');
   const [roomId_select, setRoomId] = useState('');
+  const [value, setValue] = useState('');
   type MenuItem = Required<MenuProps>['items'][number];
   function getItem(
     label: React.ReactNode,
@@ -75,6 +76,14 @@ const App: React.FC = () => {
     }
   };
 
+  const createDM = useCreateDM();
+  //DM作成
+  const createdDM = async (partnerId: string) => {
+    const DMRoom = await createDM(partnerId);
+    assert(DMRoom, 'DMRoomなし');
+    //他の機能追加する予定
+  };
+  
   const searchDM = useSearchDM();
   //DM探す
   const searchedDM = async (partnerId: string | undefined | null) => {
@@ -93,6 +102,16 @@ const App: React.FC = () => {
 
     setMessages(userLooKmessage);
     setmyId(userId);
+  };
+
+  const inputComment = useInputComment();
+  //メッセージ送信
+  const inputcomment = async () => {
+    console.log(value);
+    console.log(roomId_select);
+    const InputComment = await inputComment(roomId_select, value);
+    assert(InputComment, 'コメントなし');
+    await LookMessage();
   };
 
   return (
