@@ -51,9 +51,10 @@ export type InfoMessageModel = {
   username: string;
 };
 
-export type DM = {
+export type DMModel = {
   roomId: string;
   comment: string[];
   created: number;
-  userasse: string[];
+  myId: string;
+  partnerId: string;
 };

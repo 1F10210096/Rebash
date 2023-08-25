@@ -55,5 +55,6 @@ model DM {
   roomId    String   @id
   comment   String[]
   createdAt DateTime
-  userasse  String[]
+  myId      String
+  partnerId String
 }
