@@ -515,7 +515,7 @@ const App: React.FC = () => {
           mode="inline"
           defaultSelectedKeys={['0']}
           items={items1}
-          onClick={({ key }) => Friend_info(key)}
+          // onSelect={({ key }) => LookF(key)}
           style={{ width: 300 }}
         >
           <Menu.Item icon={<UserOutlined />} onClick={showFriendListDrawer}>
