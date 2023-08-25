@@ -27,6 +27,8 @@ const App: React.FC = () => {
   const [showFriendList, setShowFriendList] = useState(false);
   const [friend, setFriend] = useState<string[]>([]);
   const [messages, setMessages] = useState<MessageModel[]>([]);
+  const [myId, setmyId] = useState<string>('');
+  const [roomId_select, setRoomId] = useState('');
   type MenuItem = Required<MenuProps>['items'][number];
   function getItem(
     label: React.ReactNode,
