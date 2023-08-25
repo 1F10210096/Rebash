@@ -151,6 +151,24 @@ const App: React.FC = () => {
     } as MenuItem;
   }
 
+  function getItem1(
+    label: React.ReactNode,
+    key: React.Key,
+    icon?: React.ReactNode,
+    children?: MenuItem[],
+    type?: 'group'
+  ): MenuItem {
+    return {
+      key,
+      icon,
+      children,
+      label,
+      type,
+      onClick: () => searchDM(label),
+    } as MenuItem;
+  }
+
+
   const subMenu = getItem('Submenu', 'sub3', <SettingOutlined />, [
     getItem('Option 7', '7'),
     getItem('Option 8', '8'),
@@ -176,13 +194,13 @@ const App: React.FC = () => {
         {
           type: 'group',
           children: [
-            getItem(
+            getItem1(
               'DM',
               'grp',
               null,
-              friend.map((friend) => getItem(friend, friend)),
+              friend.map((friendItem) => getItem(friendItem, friendItem)),
               'group'
-            ),
+            )
           ],
         },
       ],
