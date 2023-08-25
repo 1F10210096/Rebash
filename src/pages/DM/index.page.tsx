@@ -1,23 +1,53 @@
-// import React, { useEffect } from 'react';
-// import './App.css'; // CSSファイルをインポート
-// import particleText from './particleText'; // JavaScriptコードをインポート
+import type { MenuProps } from "antd";
+import { Button } from "antd";
+import { useState } from "react";
+import type MenuItem from "antd/es/menu/MenuItem";
+import {
+  AppstoreOutlined,
+  CheckOutlined,
+  CloseOutlined,
+  MailOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  SendOutlined,
+  SettingOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+const App: React.FC = () => {
+  const [friend, setFriend] = useState<string[]>([]);
+  type MenuItem = Required<MenuProps>['items'][number];
+  function getItem(
+    label: React.ReactNode,
+    key: React.Key,
+    icon?: React.ReactNode,
+    children?: MenuItem[],
+    type?: 'group'
+  ): MenuItem {
+    return {
+      key,
+      icon,
+      children,
+      label,
+      type,
+    } as MenuItem;
+  }
 
-// function App() {
-//   useEffect(() => {
-//     particleText(); // テキストパーティクルエフェクトを初期化
-//   }, []);
+  const items1: MenuProps['items'] = [
+    getItem(
+      'Friend',
+      'grp',
+      null,
+      friend.map((friend) => getItem(friend, friend)),
+      'group'
+    ),
+  ];
+  return (
+    <Button
+      icon={<SendOutlined />}
+      style={{ position: 'fixed', top: 750, right: 300 }}
+      type="primary"
+    />
+  )
+}
 
-//   return (
-//     <div className="App">
-//       <div id="wrapper">
-//         <canvas id="particle" />
-//       </div>
-
-//       <div id="main-area">
-//         <p>ここから次のコンテンツスタート<br /><a href="https://github.com/55Kaerukun/particleText.js" target="_blank">https://github.com/55Kaerukun/particleText.js</a></p>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default App;
+export default App;
