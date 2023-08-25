@@ -2,10 +2,11 @@ import type { UserId } from '$/commonTypesWithClient/branded';
 import type { DMModel } from '$/commonTypesWithClient/models';
 import { directMsgRepositry } from '$/repository/directMsgRepositry';
 import assert from 'assert';
+import { randomUUID } from 'crypto';
 export const DirectMsgUsecase = {
-  create: async (roomId: string, partnerId: string, userId: UserId) => {
+  create: async (partnerId: string, userId: UserId) => {
     const newDirectMsg: DMModel = {
-      roomId,
+      roomId: randomUUID(),
       comment: [],
       created: Date.now(),
       myId: userId,

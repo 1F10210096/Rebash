@@ -5,13 +5,13 @@ import { apiClient } from './apiClient';
 export function useSearchDM() {
   const [user] = useAtom(userAtom);
 
-  async function searchDM(roomId: string) {
+  async function searchDM(partnerId: string) {
     if (!user) return;
 
     const userId = user.id;
 
-    const serchDM = await apiClient.dm.post({ body: { roomId, userId } });
-    await apiClient.dmuser.post({ body: { searchRoomId, userId } });
+    const serchDM = await apiClient.dm.post({ body: { partnerId, userId } });
+    await apiClient.dmuser.post({ body: { partnerId, userId } });
     return serchDM;
   }
 
