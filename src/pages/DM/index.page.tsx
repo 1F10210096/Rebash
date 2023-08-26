@@ -1,26 +1,15 @@
-import type { MenuProps } from "antd";
-import { Button, Layout, Menu } from "antd";
-import { useEffect, useState } from "react";
-import type MenuItem from "antd/es/menu/MenuItem";
-import {
-  AppstoreOutlined,
-  CheckOutlined,
-  CloseOutlined,
-  MailOutlined,
-  PlusOutlined,
-  SearchOutlined,
-  SendOutlined,
-  SettingOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
+import type { MessageModel } from '$/commonTypesWithClient/models';
+import { SendOutlined, UserOutlined } from '@ant-design/icons';
+import type { MenuProps } from 'antd';
+import { Button, Layout, Menu } from 'antd';
+import assert from 'assert';
+import { useAtom } from 'jotai';
+import { useEffect, useState } from 'react';
+import { userAtom } from 'src/atoms/user';
+import { useCreateDM, useSearchDM } from 'src/utils/DM';
+import { useLookFriendRoom } from 'src/utils/friend';
+import { useInputComment, useLookMessage } from 'src/utils/message';
 const { Header, Content, Footer, Sider } = Layout;
-import { useLookFriendRoom } from "src/utils/friend";
-import { useCreateDM, useSearchDM } from "src/utils/DM";
-import assert from "assert";
-import { useInputComment, useLookMessage } from "src/utils/message";
-import { useAtom } from "jotai";
-import { userAtom } from "src/atoms/user";
-import type { MessageModel } from "$/commonTypesWithClient/models";
 
 const App: React.FC = () => {
   const [user] = useAtom(userAtom);
@@ -154,7 +143,6 @@ const App: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-
   return (
     <Layout hasSider>
       <Sider
@@ -174,7 +162,7 @@ const App: React.FC = () => {
           mode="inline"
           defaultSelectedKeys={['0']}
           items={items1}
-          // onSelect={({ key }) => LookF(key)}
+          onSelect={({ key }) => LookF(key)}
           style={{ width: 300 }}
         >
           <Menu.Item icon={<UserOutlined />} onClick={showFriendListDrawer}>
@@ -188,7 +176,7 @@ const App: React.FC = () => {
         type="primary"
       />
     </Layout>
-  )
-}
+  );
+};
 
 export default App;

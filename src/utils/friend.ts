@@ -1,7 +1,7 @@
 import { useAtom } from 'jotai';
+import { useCallback } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from './apiClient';
-import { useCallback } from 'react';
 
 export function useSendFriendId() {
   const [user] = useAtom(userAtom);
@@ -42,7 +42,6 @@ export function useLookFriendRoom() {
 
   return lookFriendRoom;
 }
-
 
 // const delete_friendId = async () => {
 //   if (!user) return;

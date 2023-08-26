@@ -158,7 +158,7 @@ const App: React.FC = () => {
     children?: MenuItem[],
     type?: 'group'
   ): MenuItem {
-    const effectiveLabel = label ?? "Default Label";
+    const effectiveLabel = label ?? 'Default Label';
     return {
       key,
       icon,
@@ -172,7 +172,6 @@ const App: React.FC = () => {
       },
     } as MenuItem;
   }
-
 
   const subMenu = getItem('Submenu', 'sub3', <SettingOutlined />, [
     getItem('Option 7', '7'),
@@ -205,7 +204,7 @@ const App: React.FC = () => {
               null,
               friend.map((friendItem) => getItem(friendItem, friendItem)),
               'group'
-            )
+            ),
           ],
         },
       ],
@@ -272,7 +271,7 @@ const App: React.FC = () => {
     setARoomId(roomlist.roomId);
   }, []);
   const createUserdata = useCallback(async () => {
-    console.log("a")
+    console.log('a');
     const user1 = await apiClient.roomlist.$post();
     console.log(user1);
     if (user1 === null) {
@@ -661,8 +660,9 @@ const App: React.FC = () => {
                   )}
 
                   <div
-                    className={`${styles.commentBubble} ${msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                      }`}
+                    className={`${styles.commentBubble} ${
+                      msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                    }`}
                   >
                     <div className={styles.username}>{msg.username}</div>
                     <div className={styles.content}>{msg.contentmess}</div>
