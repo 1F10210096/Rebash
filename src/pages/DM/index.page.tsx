@@ -9,6 +9,7 @@ import { userAtom } from 'src/atoms/user';
 import { useCreateDM, useSearchDM } from 'src/utils/DM';
 import { useLookFriendRoom } from 'src/utils/friend';
 import { useDeleteMsg, useInputComment } from 'src/utils/message';
+import { useLookmystatus } from 'src/utils/myinfo';
 import styles from '../index.module.css';
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -148,6 +149,18 @@ const App: React.FC = () => {
   const exitEditMode = () => {
     setEditMode(false);
     setEditedMessage('');
+  };
+
+  const lookmystatus = useLookmystatus();
+  //自分のステータス確認
+  const MyStatus = async () => {
+    if (!user) return;
+    setmyId(user.id);
+    const userStatus = await lookmystatus();
+    assert(userStatus, 'myStatusなし');
+    setMessage(userStatus.comment);
+    // setBirth(userStatus.birth);
+    // setARoomId(userStatus.roomId);
   };
 
   const deleteMsg = useDeleteMsg();
