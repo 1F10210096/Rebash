@@ -151,6 +151,29 @@ const App: React.FC = () => {
     } as MenuItem;
   }
 
+  function getItem1(
+    label: React.ReactNode,
+    key: React.Key,
+    icon?: React.ReactNode,
+    children?: MenuItem[],
+    type?: 'group'
+  ): MenuItem {
+    const effectiveLabel = label ?? "Default Label";
+    return {
+      key,
+      icon,
+      children,
+      label: effectiveLabel,
+      type,
+      onClick: () => {
+        if (label !== null && label !== undefined) {
+          searchedDM(label.toString());
+        }
+      },
+    } as MenuItem;
+  }
+
+
   const subMenu = getItem('Submenu', 'sub3', <SettingOutlined />, [
     getItem('Option 7', '7'),
     getItem('Option 8', '8'),
@@ -176,13 +199,13 @@ const App: React.FC = () => {
         {
           type: 'group',
           children: [
-            getItem(
+            getItem1(
               'DM',
               'grp',
               null,
-              friend.map((friend) => getItem(friend, friend)),
+              friend.map((friendItem) => getItem(friendItem, friendItem)),
               'group'
-            ),
+            )
           ],
         },
       ],
@@ -249,6 +272,7 @@ const App: React.FC = () => {
     setARoomId(roomlist.roomId);
   }, []);
   const createUserdata = useCallback(async () => {
+    console.log("a")
     const user1 = await apiClient.roomlist.$post();
     console.log(user1);
     if (user1 === null) {
@@ -275,6 +299,7 @@ const App: React.FC = () => {
   //ルーム追加
   const Confirm = async () => {
     await handleConfirm(roomId2);
+    await Roomlist();
   };
 
   const searchId = useSearchId();
@@ -318,6 +343,7 @@ const App: React.FC = () => {
     console.log(roomId_select);
     const InputComment = await inputComment(roomId_select, value);
     assert(InputComment, 'コメントなし');
+    await LookMessage();
   };
 
   const deleteMsg = useDeleteMsg();
@@ -329,6 +355,7 @@ const App: React.FC = () => {
     setRoomId(key);
     console.log(key);
     console.log(roomId_select);
+    await LookMessage();
   };
 
   const lookMessage = useLookMessage();
@@ -355,12 +382,18 @@ const App: React.FC = () => {
   };
 
   const lookFriendRoom = useLookFriendRoom();
-  //フレンド一覧
+  // フレンド一覧
   const LookFriendRoom = async () => {
-    const friendasse = await lookFriendRoom();
-    assert(friendasse, 'friendなし');
-    setFriend(friendasse.friend);
-    console.log(friendasse.friend);
+    try {
+      const friendasse = await lookFriendRoom();
+      if (friendasse === null || friendasse === undefined) {
+        console.log('a');
+      } else {
+        setFriend(friendasse.friend);
+      }
+    } catch (error) {
+      console.error('Error fetching friend room:', error);
+    }
   };
 
   const deleteFriendId = useDeleteFriendId();
@@ -389,7 +422,7 @@ const App: React.FC = () => {
 
   const searchDM = useSearchDM();
   //DM探す
-  const serchedDM = async (partnerId: string) => {
+  const searchedDM = async (partnerId: string | undefined | null) => {
     const DMRoom = await searchDM(partnerId);
     assert(DMRoom, 'DMRoomなし');
     //他の機能追加する予定
@@ -440,6 +473,9 @@ const App: React.FC = () => {
   useEffect(() => {
     createUserdata();
     Roomlist();
+    LookMessage();
+    Roomlist();
+    LookFriendRoom();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Roomlist, createUserdata, user]);
 
@@ -518,6 +554,9 @@ const App: React.FC = () => {
                   onOk={handleOk2}
                   onCancel={handleCancel2}
                 >
+                  <Button type="primary" onClick={() => createdDM(friendName)}>
+                    DM作成
+                  </Button>
                   <p>{friend_messe}</p>
                   <p>{friend_birth}</p>
                   <p>Some contents...</p>
@@ -622,9 +661,8 @@ const App: React.FC = () => {
                   )}
 
                   <div
-                    className={`${styles.commentBubble} ${
-                      msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                    }`}
+                    className={`${styles.commentBubble} ${msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                      }`}
                   >
                     <div className={styles.username}>{msg.username}</div>
                     <div className={styles.content}>{msg.contentmess}</div>
@@ -635,12 +673,6 @@ const App: React.FC = () => {
         </Content>
       </Layout>
       <div style={{ position: 'relative' }}>
-        <Button type="primary" onClick={LookMessage}>
-          Open Modal with customized button props
-        </Button>
-        <Button type="primary" onClick={LookFriendRoom}>
-          setfriend
-        </Button>
         <Modal
           title="Basic Modal"
           open={open1}

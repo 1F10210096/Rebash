@@ -1,6 +1,7 @@
 import { useAtom } from 'jotai';
 import { userAtom } from 'src/atoms/user';
 import { apiClient } from './apiClient';
+import { useCallback } from 'react';
 
 export function useSendFriendId() {
   const [user] = useAtom(userAtom);
@@ -31,16 +32,17 @@ export function useAuth() {
 export function useLookFriendRoom() {
   const [user] = useAtom(userAtom);
 
-  async function lookFriendRoom() {
+  const lookFriendRoom = useCallback(async () => {
     if (!user) return;
 
     const userId = user.id;
     const friend_asse = await apiClient.receive_friend.$post({ body: { userId } });
     return friend_asse;
-  }
+  }, [user]);
 
   return lookFriendRoom;
 }
+
 
 // const delete_friendId = async () => {
 //   if (!user) return;
