@@ -1,7 +1,7 @@
 import type { MessageModel } from '$/commonTypesWithClient/models';
 import { SendOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Button, Divider, Layout, Menu, theme } from 'antd';
+import { Button, Layout, Menu } from 'antd';
 import assert from 'assert';
 import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
@@ -9,7 +9,6 @@ import { userAtom } from 'src/atoms/user';
 import { useCreateDM, useSearchDM } from 'src/utils/DM';
 import { useLookFriendRoom } from 'src/utils/friend';
 import { useDeleteMsg, useInputComment, useLookMessage } from 'src/utils/message';
-import styles from '../index.module.css';
 const { Header, Content, Footer, Sider } = Layout;
 
 const App: React.FC = () => {
@@ -148,13 +147,6 @@ const App: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
-  const showDrawer = () => {
-    setOpen(true);
-  };
-
   return (
     <Layout hasSider>
       <Sider
@@ -181,69 +173,7 @@ const App: React.FC = () => {
           </Menu.Item>
         </Menu>
       </Sider>
-      <Layout className="site-layout" style={{ marginLeft: 200, width: 700 }}>
-        <Header
-          style={{ padding: 0, background: colorBgContainer, marginLeft: 120, width: 1200 }}
-        />
-        <Content style={{ margin: '50px 120px 0', overflow: 'initial' }}>
-          <div
-            style={{ padding: 24, textAlign: 'center', background: colorBgContainer, width: 1200 }}
-          >
-            {messages
-              .sort((a, b) => a.sent_at - b.sent_at)
-              // eslint-disable-next-line complexity
-              .map((msg, index) => (
-                <div
-                  key={msg.id2}
-                  onContextMenu={(e) => {
-                    handleContextMenu4(e, msg.id2);
-                  }}
-                >
-                  {index !== 0 && <Divider orientation="left" plain />}
 
-                  {contextMenuVisible1 && (
-                    <div
-                      style={{
-                        position: 'absolute',
-                        background: 'white',
-                        boxShadow: '1px 1px 5px rgb(0 0 0 / 20%)',
-                        padding: '5px',
-                        zIndex: 999,
-                      }}
-                    >
-                      <button onClick={enterEditMode}>Edit</button>
-                      <button onClick={() => deleteMsg(msg.id2)}>Delete</button>
-                      {editMode ? (
-                        <>
-                          <textarea
-                            value={editedMessage}
-                            onChange={(e) => setEditedMessage(e.target.value)}
-                          />
-                          <div className={styles.content}>{msg.contentmess}</div>
-                          <div>
-                            <button onClick={() => saveEditedMessage(msg.id2)}>保存</button>
-                            <button onClick={exitEditMode}>キャンセル</button>
-                          </div>
-                        </>
-                      ) : (
-                        <div className={styles.content}>{msg.contentmess}</div>
-                      )}
-                    </div>
-                  )}
-
-                  <div
-                    className={`${styles.commentBubble} ${
-                      msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                    }`}
-                  >
-                    <div className={styles.username}>{msg.username}</div>
-                    <div className={styles.content}>{msg.contentmess}</div>
-                  </div>
-                </div>
-              ))}
-          </div>
-        </Content>
-      </Layout>
       <Button
         icon={<SendOutlined />}
         style={{ position: 'fixed', top: 750, right: 300 }}
