@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { useCreateDM, useSearchDM } from 'src/utils/DM';
 import { useLookFriendRoom } from 'src/utils/friend';
-import { useDeleteMsg, useInputComment, useLookMessage } from 'src/utils/message';
+import { useDeleteMsg, useInputComment } from 'src/utils/message';
 import styles from '../index.module.css';
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -57,10 +57,10 @@ const App: React.FC = () => {
   const lookFriendRoom = useLookFriendRoom();
   // フレンド一覧
   const LookFriendRoom = async () => {
-    console.log("d90")
+    console.log('d90');
     try {
       const friendasse = await lookFriendRoom();
-      console.log(friendasse)
+      console.log(friendasse);
       if (friendasse === null || friendasse === undefined) {
         console.log('a');
       } else {
@@ -155,6 +155,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     // LookMessage();
+    LookFriendRoom();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -243,8 +244,9 @@ const App: React.FC = () => {
                   )}
 
                   <div
-                    className={`${styles.commentBubble} ${msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                      }`}
+                    className={`${styles.commentBubble} ${
+                      msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                    }`}
                   >
                     <div className={styles.username}>{msg.username}</div>
                     <div className={styles.content}>{msg.contentmess}</div>
