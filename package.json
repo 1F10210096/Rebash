@@ -34,7 +34,7 @@
     "@blueprintjs/select": "^5.0.8",
     "@types/antd": "^1.0.0",
     "@types/socket.io": "^3.0.2",
-    "antd": "^5.8.3",
+    "antd": "^5.8.4",
     "aspida": "^1.14.0",
     "axios": "^0.27.2",
     "compass-mixins": "^0.12.12",

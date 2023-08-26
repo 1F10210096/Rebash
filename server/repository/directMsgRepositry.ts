@@ -34,6 +34,10 @@ export const directMsgRepositry = {
     console.log('ads2');
     const room = roomlist.find((room) => room.roomId === roomId);
     console.log(room);
-    return room && toDMModel(room);
+    if (room !== undefined) {
+      return toDMModel(room);
+    } else {
+      return undefined;
+    }
   },
 };
