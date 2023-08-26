@@ -1,6 +1,6 @@
 import type { MenuProps } from "antd";
 import { Button, Layout, Menu } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type MenuItem from "antd/es/menu/MenuItem";
 import {
   AppstoreOutlined,
@@ -13,7 +13,7 @@ import {
   SettingOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import Sider from "antd/es/layout/Sider";
+const { Header, Content, Footer, Sider } = Layout;
 import { useLookFriendRoom } from "src/utils/friend";
 import { useCreateDM, useSearchDM } from "src/utils/DM";
 import assert from "assert";
@@ -85,7 +85,7 @@ const App: React.FC = () => {
     assert(DMRoom, 'DMRoomなし');
     //他の機能追加する予定
   };
-  
+
   const searchDM = useSearchDM();
   //DM探す
   const searchedDM = async (partnerId: string | undefined | null) => {
@@ -119,34 +119,40 @@ const App: React.FC = () => {
   const [contextMenuVisible1, setContextMenuVisible1] = useState(false);
   const [contextMenuPosition1, setContextMenuPosition1] = useState({ x: 0, y: 0 });
 
-    //右クリックで編集削除
-    const handleContextMenu4 = (
-      e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-      messageId: string
-    ) => {
-      e.preventDefault();
-      setContextMenuVisible1(true);
-      setContextMenuPosition1({ x: e.clientX, y: e.clientY });
-      setSelectedMsg(messageId);
-    };
-  
-    const [editMode, setEditMode] = useState(false);
-    const [editedMessage, setEditedMessage] = useState('');
-  
-    const saveEditedMessage = (messageId: string) => {
-      console.log(messageId);
-      setEditMode(false);
-    };
-  
-    const enterEditMode = () => {
-      setEditMode(true);
-      setEditedMessage(message);
-    };
-  
-    const exitEditMode = () => {
-      setEditMode(false);
-      setEditedMessage('');
-    };
+  //右クリックで編集削除
+  const handleContextMenu4 = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    messageId: string
+  ) => {
+    e.preventDefault();
+    setContextMenuVisible1(true);
+    setContextMenuPosition1({ x: e.clientX, y: e.clientY });
+    setSelectedMsg(messageId);
+  };
+
+  const [editMode, setEditMode] = useState(false);
+  const [editedMessage, setEditedMessage] = useState('');
+
+  const saveEditedMessage = (messageId: string) => {
+    console.log(messageId);
+    setEditMode(false);
+  };
+
+  const enterEditMode = () => {
+    setEditMode(true);
+    setEditedMessage(message);
+  };
+
+  const exitEditMode = () => {
+    setEditMode(false);
+    setEditedMessage('');
+  };
+
+  useEffect(() => {
+    LookMessage();
+    LookFriendRoom();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
 
   return (
@@ -156,10 +162,11 @@ const App: React.FC = () => {
           overflow: 'auto',
           height: '100vh',
           position: 'fixed',
-          left: 1700,
+          left: 0,
           top: 0,
           bottom: 0,
         }}
+        width={300}
       >
         <div className="demo-logo-vertical" />
         <Menu
