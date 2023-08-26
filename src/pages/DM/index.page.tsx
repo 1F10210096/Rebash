@@ -232,8 +232,9 @@ const App: React.FC = () => {
                   )}
 
                   <div
-                    className={`${styles.commentBubble} ${msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                      }`}
+                    className={`${styles.commentBubble} ${
+                      msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                    }`}
                   >
                     <div className={styles.username}>{msg.username}</div>
                     <div className={styles.content}>{msg.contentmess}</div>
