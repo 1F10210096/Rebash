@@ -57,11 +57,14 @@ const App: React.FC = () => {
   const lookFriendRoom = useLookFriendRoom();
   // フレンド一覧
   const LookFriendRoom = async () => {
+    console.log("d90")
     try {
       const friendasse = await lookFriendRoom();
+      console.log(friendasse)
       if (friendasse === null || friendasse === undefined) {
         console.log('a');
       } else {
+        console.log(friendasse);
         setFriend(friendasse.friend);
       }
     } catch (error) {
@@ -85,17 +88,17 @@ const App: React.FC = () => {
     //他の機能追加する予定
   };
 
-  const lookMessage = useLookMessage();
-  //メッセージを映す
-  const LookMessage = async () => {
-    if (!user) return;
-    const userId = user.id;
-    const userLooKmessage = await lookMessage(roomId_select);
-    assert(userLooKmessage, 'Roomなし');
+  // const lookMessage = useSearchDM();
+  // //メッセージを映す
+  // const search = async () => {
+  //   if (!user) return;
+  //   const userId = user.id;
+  //   const userLooKmessage = await lookMessage(roomId_select);
+  //   assert(userLooKmessage, 'Roomなし');
 
-    setMessages(userLooKmessage);
-    setmyId(userId);
-  };
+  //   setMessages(userLooKmessage);
+  //   setmyId(userId);
+  // };
 
   const inputComment = useInputComment();
   //メッセージ送信
@@ -104,7 +107,7 @@ const App: React.FC = () => {
     console.log(roomId_select);
     const InputComment = await inputComment(roomId_select, value);
     assert(InputComment, 'コメントなし');
-    await LookMessage();
+    // await LookMessage();
   };
 
   const [contextMenuVisible1, setContextMenuVisible1] = useState(false);
@@ -119,6 +122,14 @@ const App: React.FC = () => {
     setContextMenuVisible1(true);
     setContextMenuPosition1({ x: e.clientX, y: e.clientY });
     setSelectedMsg(messageId);
+  };
+
+  //ルーム選択
+  const Lookroom = async (key: string) => {
+    setRoomId(key);
+    console.log(key);
+    console.log(roomId_select);
+    // await LookMessage();
   };
 
   const [editMode, setEditMode] = useState(false);
@@ -143,8 +154,7 @@ const App: React.FC = () => {
   //メッセージ削除
 
   useEffect(() => {
-    LookMessage();
-    LookFriendRoom();
+    // LookMessage();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -174,6 +184,7 @@ const App: React.FC = () => {
           mode="inline"
           defaultSelectedKeys={['0']}
           items={items1}
+          onSelect={({ key }) => Lookroom(key)}
           style={{ width: 300 }}
         >
           <Menu.Item icon={<UserOutlined />} onClick={showFriendListDrawer}>
@@ -232,9 +243,8 @@ const App: React.FC = () => {
                   )}
 
                   <div
-                    className={`${styles.commentBubble} ${
-                      msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                    }`}
+                    className={`${styles.commentBubble} ${msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                      }`}
                   >
                     <div className={styles.username}>{msg.username}</div>
                     <div className={styles.content}>{msg.contentmess}</div>
@@ -249,6 +259,9 @@ const App: React.FC = () => {
         style={{ position: 'fixed', top: 750, right: 300 }}
         type="primary"
       />
+      <Button type="primary" onClick={() => LookFriendRoom()}>
+        DM作成
+      </Button>
     </Layout>
   );
 };

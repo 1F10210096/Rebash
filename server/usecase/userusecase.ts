@@ -137,6 +137,7 @@ export const userUsecase = {
     const user = await userrepository.findUser(userId);
     assert(user, 'userなし');
     console.log('a');
+    console.log(user);
 
     return user;
   },
