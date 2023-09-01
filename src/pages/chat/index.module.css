@@ -90,10 +90,10 @@
 .box1 {
 
   padding: 15px;
-  width: 250px;
+  width: 80%;
   height: 70px;
   margin-top: 25px;
-  margin-left:0px;
+  margin-left:10%;
   border-radius: 10px; /* 角を丸くする */
   background-color: rgb(103, 106, 131);
   position:'fixed'
