@@ -11,6 +11,7 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import type { DatePickerProps, DrawerProps, MenuProps, RadioChangeEvent } from 'antd';
+import { Upload } from 'antd';
 import {
   AutoComplete,
   Avatar,
@@ -50,6 +51,17 @@ import { useDeleteMsg, useInputComment, useLookMessage, useLookRoom } from 'src/
 import { useLookmystatus, useMybirth, useMymessage } from 'src/utils/myinfo';
 import { useHandleConfirm, useSearchId } from 'src/utils/room';
 import styles from './index.module.css';
+import type { RcFile, UploadProps } from 'antd/es/upload';
+
+const getBase64 = (file: RcFile): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+
+
 dayjs.extend(customParseFormat);
 const App: React.FC = () => {
   const [user] = useAtom(userAtom);
@@ -83,7 +95,6 @@ const App: React.FC = () => {
   const dateFormat = 'YYYY/MM/DD';
   const customFormat: DatePickerProps['format'] = (value) =>
     `custom format: ${value.format(dateFormat)}`;
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [friend, setFriend] = useState<string[]>([]);
   const [receive_friend, setReceive_friend] = useState<string[]>([]);
   const [searchfriend, setSearchFriend] = useState('');
@@ -95,12 +106,65 @@ const App: React.FC = () => {
   const [open2, setOpen2] = useState(false);
   const [placement, setPlacement] = useState<DrawerProps['placement']>('left');
   const [placement2, setPlacement2] = useState<DrawerProps['placement']>('left');
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState('');
+  const [previewTitle, setPreviewTitle] = useState('');
+  const [fileList, setFileList] = useState<UploadFile[]>([
+    {
+      uid: '-1',
+      name: 'image.png',
+      status: 'done',
+      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    },
+    {
+      uid: '-xxx',
+      percent: 50,
+      name: 'image.png',
+      status: 'uploading',
+      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    },
+    {
+      uid: '-5',
+      name: 'image.png',
+      status: 'error',
+    },
+  ]);
+
+  // eslint-disable-next-line complexity
+  const handlePreview = async (file: UploadFile) => {
+    if ((file.url === null) && (file.preview === null)) {
+      file.preview = await getBase64(file.originFileObj as RcFile);
+    }
+
+    setPreviewImage(file.url ?? (file.preview as string) ?? '');
+    setPreviewOpen(true);
+    if (file.url !== null && file.url !== undefined) {
+      setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
+    } else {
+      // Handle the case when file.url is null or undefined
+      setPreviewTitle(file.name || '');
+    }
+  };
+
+  const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>
+    setFileList(newFileList);
+
+
+  const handleCancel = () => setPreviewOpen(false);
+
   const showFriendListDrawer = () => {
     setShowFriendList(true);
   };
   const onCloseFriendListDrawer = () => {
     setShowFriendList(false);
   };
+
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
 
   const showDrawer1 = () => {
     setOpen3(true);
@@ -469,6 +533,8 @@ const App: React.FC = () => {
     setEditedMessage('');
   };
 
+
+
   useEffect(() => {
     createUserdata();
     Roomlist();
@@ -480,18 +546,31 @@ const App: React.FC = () => {
 
   return (
     <Layout hasSider>
+
+      <Upload
+        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+        listType="picture-circle"
+        fileList={fileList}
+        onPreview={handlePreview}
+        onChange={handleChange}
+      >
+        {fileList.length >= 8 ? null : uploadButton}
+      </Upload>
+      <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
+        <img alt="example" style={{ width: '100%' }} src={previewImage} />
+      </Modal>
+
       <div
         style={{
-          width: 300,
-          height: 120,
+          width: '18%',
+          height: '16%',
           background: backgroundColor,
           position: 'fixed',
         }}
       >
         <div className={styles.box1} onClick={showDrawer} />
-        <div style={{ left: 480 }}>{myId}</div>
         <Avatar
-          style={{ backgroundColor: '#87d068', right: 1850, top: 40, position: 'fixed' }}
+          style={{ backgroundColor: '#87d068', left: '3%', top: '5%', position: 'fixed' }}
           icon={<UserOutlined />}
         />
         <div style={{ top: 800 }} className="fuchidori">
@@ -501,7 +580,7 @@ const App: React.FC = () => {
       <Sider
         style={{
           overflow: 'auto',
-          height: '100vh',
+          height: '600vh',
           position: 'fixed',
           left: 1700,
           top: 0,
@@ -514,8 +593,8 @@ const App: React.FC = () => {
           mode="inline"
           defaultSelectedKeys={['0']}
           items={items1}
-          // onSelect={({ key }) => LookF(key)}
-          style={{ width: 300 }}
+        // onSelect={({ key }) => LookF(key)}
+
         >
           <Menu.Item icon={<UserOutlined />} onClick={showFriendListDrawer}>
             Navigation One
@@ -598,7 +677,7 @@ const App: React.FC = () => {
           top: 120,
           bottom: 0,
         }}
-        width={300}
+        width={'18%'}
       >
         <Menu
           theme="dark"
@@ -606,7 +685,7 @@ const App: React.FC = () => {
           defaultSelectedKeys={['4']}
           items={items} //room選び
           onSelect={({ key }) => Lookroom(key)}
-          style={{ width: 300 }}
+          style={{ width: '100%' }}
         />
       </Sider>
       <Layout className="site-layout" style={{ marginLeft: 200, width: 700 }}>
@@ -660,9 +739,8 @@ const App: React.FC = () => {
                   )}
 
                   <div
-                    className={`${styles.commentBubble} ${
-                      msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
-                    }`}
+                    className={`${styles.commentBubble} ${msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                      }`}
                   >
                     <div className={styles.username}>{msg.username}</div>
                     <div className={styles.content}>{msg.contentmess}</div>

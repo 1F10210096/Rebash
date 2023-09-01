@@ -1,14 +1,16 @@
 import type { MessageModel } from '$/commonTypesWithClient/models';
 import { SendOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Button, Layout, Menu } from 'antd';
+import { Button, Divider, Layout, Menu, theme } from 'antd';
 import assert from 'assert';
 import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import { userAtom } from 'src/atoms/user';
 import { useCreateDM, useSearchDM } from 'src/utils/DM';
 import { useLookFriendRoom } from 'src/utils/friend';
-import { useDeleteMsg, useInputComment, useLookMessage } from 'src/utils/message';
+import { useDeleteMsg, useInputComment } from 'src/utils/message';
+import { useLookmystatus } from 'src/utils/myinfo';
+import styles from '../index.module.css';
 const { Header, Content, Footer, Sider } = Layout;
 
 const App: React.FC = () => {
@@ -56,11 +58,14 @@ const App: React.FC = () => {
   const lookFriendRoom = useLookFriendRoom();
   // フレンド一覧
   const LookFriendRoom = async () => {
+    console.log('d90');
     try {
       const friendasse = await lookFriendRoom();
+      console.log(friendasse);
       if (friendasse === null || friendasse === undefined) {
         console.log('a');
       } else {
+        console.log(friendasse);
         setFriend(friendasse.friend);
       }
     } catch (error) {
@@ -84,17 +89,17 @@ const App: React.FC = () => {
     //他の機能追加する予定
   };
 
-  const lookMessage = useLookMessage();
-  //メッセージを映す
-  const LookMessage = async () => {
-    if (!user) return;
-    const userId = user.id;
-    const userLooKmessage = await lookMessage(roomId_select);
-    assert(userLooKmessage, 'Roomなし');
+  // const lookMessage = useSearchDM();
+  // //メッセージを映す
+  // const search = async () => {
+  //   if (!user) return;
+  //   const userId = user.id;
+  //   const userLooKmessage = await lookMessage(roomId_select);
+  //   assert(userLooKmessage, 'Roomなし');
 
-    setMessages(userLooKmessage);
-    setmyId(userId);
-  };
+  //   setMessages(userLooKmessage);
+  //   setmyId(userId);
+  // };
 
   const inputComment = useInputComment();
   //メッセージ送信
@@ -103,7 +108,7 @@ const App: React.FC = () => {
     console.log(roomId_select);
     const InputComment = await inputComment(roomId_select, value);
     assert(InputComment, 'コメントなし');
-    await LookMessage();
+    // await LookMessage();
   };
 
   const [contextMenuVisible1, setContextMenuVisible1] = useState(false);
@@ -118,6 +123,14 @@ const App: React.FC = () => {
     setContextMenuVisible1(true);
     setContextMenuPosition1({ x: e.clientX, y: e.clientY });
     setSelectedMsg(messageId);
+  };
+
+  //ルーム選択
+  const Lookroom = async (key: string) => {
+    setRoomId(key);
+    console.log(key);
+    console.log(roomId_select);
+    // await LookMessage();
   };
 
   const [editMode, setEditMode] = useState(false);
@@ -138,14 +151,33 @@ const App: React.FC = () => {
     setEditedMessage('');
   };
 
+  const lookmystatus = useLookmystatus();
+  //自分のステータス確認
+  const MyStatus = async () => {
+    if (!user) return;
+    setmyId(user.id);
+    const userStatus = await lookmystatus();
+    assert(userStatus, 'myStatusなし');
+    setMessage(userStatus.comment);
+    // setBirth(userStatus.birth);
+    // setARoomId(userStatus.roomId);
+  };
+
   const deleteMsg = useDeleteMsg();
   //メッセージ削除
 
   useEffect(() => {
-    LookMessage();
+    // LookMessage();
     LookFriendRoom();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
+  const showDrawer = () => {
+    setOpen(true);
+  };
 
   return (
     <Layout hasSider>
@@ -166,6 +198,7 @@ const App: React.FC = () => {
           mode="inline"
           defaultSelectedKeys={['0']}
           items={items1}
+          onSelect={({ key }) => Lookroom(key)}
           style={{ width: 300 }}
         >
           <Menu.Item icon={<UserOutlined />} onClick={showFriendListDrawer}>
@@ -173,12 +206,77 @@ const App: React.FC = () => {
           </Menu.Item>
         </Menu>
       </Sider>
+      <Layout className="site-layout" style={{ marginLeft: 200, width: 700 }}>
+        <Header
+          style={{ padding: 0, background: colorBgContainer, marginLeft: 120, width: 1200 }}
+        />
+        <Content style={{ margin: '50px 120px 0', overflow: 'initial' }}>
+          <div
+            style={{ padding: 24, textAlign: 'center', background: colorBgContainer, width: 1200 }}
+          >
+            {messages
+              .sort((a, b) => a.sent_at - b.sent_at)
+              // eslint-disable-next-line complexity
+              .map((msg, index) => (
+                <div
+                  key={msg.id2}
+                  onContextMenu={(e) => {
+                    handleContextMenu4(e, msg.id2);
+                  }}
+                >
+                  {index !== 0 && <Divider orientation="left" plain />}
 
+                  {contextMenuVisible1 && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        background: 'white',
+                        boxShadow: '1px 1px 5px rgb(0 0 0 / 20%)',
+                        padding: '5px',
+                        zIndex: 999,
+                      }}
+                    >
+                      <button onClick={enterEditMode}>Edit</button>
+                      <button onClick={() => deleteMsg(msg.id2)}>Delete</button>
+                      {editMode ? (
+                        <>
+                          <textarea
+                            value={editedMessage}
+                            onChange={(e) => setEditedMessage(e.target.value)}
+                          />
+                          <div className={styles.content}>{msg.contentmess}</div>
+                          <div>
+                            <button onClick={() => saveEditedMessage(msg.id2)}>保存</button>
+                            <button onClick={exitEditMode}>キャンセル</button>
+                          </div>
+                        </>
+                      ) : (
+                        <div className={styles.content}>{msg.contentmess}</div>
+                      )}
+                    </div>
+                  )}
+
+                  <div
+                    className={`${styles.commentBubble} ${
+                      msg.sender_Id === myId ? styles.myMessage : styles.otherMessage
+                    }`}
+                  >
+                    <div className={styles.username}>{msg.username}</div>
+                    <div className={styles.content}>{msg.contentmess}</div>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </Content>
+      </Layout>
       <Button
         icon={<SendOutlined />}
         style={{ position: 'fixed', top: 750, right: 300 }}
         type="primary"
       />
+      <Button type="primary" onClick={() => LookFriendRoom()}>
+        DM作成
+      </Button>
     </Layout>
   );
 };
