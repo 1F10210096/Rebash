@@ -86,6 +86,7 @@ try {
       }
     });
 
+    // eslint-disable-next-line complexity
     socket.on('ipaddr', () => {
       const ifaces = os.networkInterfaces();
 

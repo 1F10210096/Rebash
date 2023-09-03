@@ -109,48 +109,8 @@ const App: React.FC = () => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
-  const [fileList, setFileList] = useState<UploadFile[]>([
-    {
-      uid: '-1',
-      name: 'image.png',
-      status: 'done',
-      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
-    {
-      uid: '-xxx',
-      percent: 50,
-      name: 'image.png',
-      status: 'uploading',
-      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
-    {
-      uid: '-5',
-      name: 'image.png',
-      status: 'error',
-    },
-  ]);
-
-  // eslint-disable-next-line complexity
-  const handlePreview = async (file: UploadFile) => {
-    if ((file.url === null) && (file.preview === null)) {
-      file.preview = await getBase64(file.originFileObj as RcFile);
-    }
-
-    setPreviewImage(file.url ?? (file.preview as string) ?? '');
-    setPreviewOpen(true);
-    if (file.url !== null && file.url !== undefined) {
-      setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
-    } else {
-      // Handle the case when file.url is null or undefined
-      setPreviewTitle(file.name || '');
-    }
-  };
-
-  const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>
-    setFileList(newFileList);
 
 
-  const handleCancel = () => setPreviewOpen(false);
 
   const showFriendListDrawer = () => {
     setShowFriendList(true);
@@ -533,6 +493,37 @@ const App: React.FC = () => {
     setEditedMessage('');
   };
 
+  const [message1, setMessage1] = useState('');
+  const webSocketRef = useRef<WebSocket>();
+
+
+
+  const [inputText, setInputText] = useState<string>('');
+
+
+  const submit: React.FormEventHandler = useCallback(
+    async (event) => {
+      event.preventDefault();
+      const value = inputText;
+      console.log(value)
+      // InputComment 関数を呼び出してコメントを取得し、エラーがあれば 'コメントなし' を返す
+      const InputComment = await inputComment(roomId_select, value);
+      console.log(InputComment)
+      assert(InputComment, 'コメントなし');
+      if (user === null) return;
+      const userName: string | undefined = user.displayName;
+
+      if (userName !== undefined) {
+        // userName が undefined でない場合のみ WebSocket で送信する
+        webSocketRef.current?.send(value);
+        webSocketRef.current?.send(userName);
+      } else {
+        console.error('ユーザー名が定義されていません');
+      }
+    },
+    [inputComment, inputText, roomId_select, user]
+  );
+
 
 
   useEffect(() => {
@@ -546,20 +537,6 @@ const App: React.FC = () => {
 
   return (
     <Layout hasSider>
-
-      <Upload
-        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-        listType="picture-circle"
-        fileList={fileList}
-        onPreview={handlePreview}
-        onChange={handleChange}
-      >
-        {fileList.length >= 8 ? null : uploadButton}
-      </Upload>
-      <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
-        <img alt="example" style={{ width: '100%' }} src={previewImage} />
-      </Modal>
-
       <div
         style={{
           width: '18%',
@@ -792,23 +769,15 @@ const App: React.FC = () => {
           <p>Some contents...</p>
           <p>Some contents...</p>
         </Modal>
-        <AutoComplete
-          style={{ position: 'fixed', width: 800, height: 600, top: 750, right: 330 }}
-          // value={inputValue}
-          // options={autoCompleteOptions}
-          onSelect={onSelect}
-          onSearch={onChange3}
-          placeholder="input her"
-        />
+
+        <form onSubmit={submit}>
+          <h1 style={{ position: 'fixed', width: 600, height: 20, top: 750, right: 800 }}>{JSON.stringify(message)}</h1>
+          <input style={{ position: 'fixed', width: 600, height: 20, top: 750, right: 800 }} value={inputText} onChange={(e) => setInputText(e.target.value)} />
+          <button style={{ position: 'fixed', top: 750, right: 800 }} >送信</button>
+        </form>
         <br />
         <br />
       </div>
-      <Button
-        icon={<SendOutlined />}
-        style={{ position: 'fixed', top: 750, right: 300 }}
-        type="primary"
-        onClick={() => inputcomment()}
-      />
       <FloatButton icon={<SearchOutlined />} type="primary" style={{ top: 800, left: 75 }} />
       <Popconfirm
         title={
@@ -848,9 +817,9 @@ const App: React.FC = () => {
       >
         <Button
           icon={<SendOutlined />}
-          style={{ position: 'fixed', top: 750, right: 300 }}
+          style={{ position: 'fixed', top: 750, right: 100 }}
           type="primary"
-          onClick={() => inputcomment()}
+          onClick={submit}
         />
         <FloatButton
           icon={<SearchOutlined />}
